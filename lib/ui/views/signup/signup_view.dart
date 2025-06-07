@@ -270,12 +270,12 @@ class SignupView extends StackedView<SignupViewModel> {
                                 if (viewModel.isChecked) {
                                   viewModel.handleSignUP(
                                       context,
-                                      viewModel.emailController.text,
-                                      viewModel.passwordController.text,
-                                      viewModel.phoneController.text,
-                                      viewModel.firstNameController.text,
-                                      viewModel.lastNameController.text,
-                                      viewModel.zipCodeController.text,
+                                      viewModel.emailController.text.trim(),
+                                      viewModel.passwordController.text.trim(),
+                                      viewModel.phoneController.text.trim(),
+                                      viewModel.firstNameController.text.trim(),
+                                      viewModel.lastNameController.text.trim(),
+                                      viewModel.zipCodeController.text.trim(),
                                       viewModel.selectedValue.toString());
                                 } else {
                                   viewModel
