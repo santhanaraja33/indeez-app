@@ -68,6 +68,7 @@ class SignupView extends StackedView<SignupViewModel> {
                         children: [
                           AppCommonTextfield(
                             keyboardType: TextInputType.name,
+                            controller: viewModel.firstNameController,
                             label: Text(
                               ksFirstName,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -79,6 +80,7 @@ class SignupView extends StackedView<SignupViewModel> {
                           ),
                           AppCommonTextfield(
                             keyboardType: TextInputType.name,
+                            controller: viewModel.lastNameController,
                             label: Text(
                               ksLastName,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -90,6 +92,7 @@ class SignupView extends StackedView<SignupViewModel> {
                           ),
                           AppCommonTextfield(
                             keyboardType: TextInputType.emailAddress,
+                            controller: viewModel.emailController,
                             label: Text(
                               ksEmail,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -100,8 +103,9 @@ class SignupView extends StackedView<SignupViewModel> {
                             height: height_10,
                           ),
                           AppCommonTextfield(
-                            maxLength: 10,
+                            maxLength: 13,
                             keyboardType: TextInputType.phone,
+                            controller: viewModel.phoneController,
                             label: Text(
                               ksPhone,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -113,6 +117,7 @@ class SignupView extends StackedView<SignupViewModel> {
                           ),
                           AppCommonTextfield(
                             keyboardType: TextInputType.streetAddress,
+                            controller: viewModel.zipCodeController,
                             label: Text(
                               ksZipcode,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -150,6 +155,7 @@ class SignupView extends StackedView<SignupViewModel> {
                           AppCommonTextfield(
                             obscureText: viewModel.isPassword,
                             keyboardType: TextInputType.streetAddress,
+                            controller: viewModel.passwordController,
                             label: Text(
                               ksPassword,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -173,6 +179,7 @@ class SignupView extends StackedView<SignupViewModel> {
                           AppCommonTextfield(
                             obscureText: viewModel.isConfirmPassword,
                             keyboardType: TextInputType.streetAddress,
+                            controller: viewModel.cnfpasswordController,
                             label: Text(
                               ksConfirmPassword,
                               style: GoogleFonts.lato(color: kcTextGrey),
@@ -257,7 +264,24 @@ class SignupView extends StackedView<SignupViewModel> {
                             width: double.infinity,
                             backgroundColor: kcButtonColr,
                             onPressed: () {
-                              viewModel.navigationToWhoAreYou();
+                              bool isValid =
+                                  viewModel.validatePasswordAndProceed();
+                              if (isValid) {
+                                if (viewModel.isChecked) {
+                                  viewModel.handleSignUP(
+                                      context,
+                                      viewModel.emailController.text,
+                                      viewModel.passwordController.text,
+                                      viewModel.phoneController.text,
+                                      viewModel.firstNameController.text,
+                                      viewModel.lastNameController.text,
+                                      viewModel.zipCodeController.text,
+                                      viewModel.selectedValue.toString());
+                                } else {
+                                  viewModel
+                                      .showToast("Check the Privacy policy");
+                                }
+                              }
                             },
                             buttonName: ksNEXT,
                           ),

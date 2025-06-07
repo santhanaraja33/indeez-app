@@ -37,6 +37,10 @@ const String ksSendOTP = 'Send OTP';
 const String ksResendOTP = 'Resend OTP';
 const String ksForgotPassword = 'Forgot Password';
 const String ksSignup = 'Sign up';
+const String ksSignIn = 'Sign In';
+
+const String ksSignout = 'Sign Out';
+
 const String ksProfile = 'Profile';
 const String ksTac = 'Terms & Condition';
 const String ksLogout = 'Log out';

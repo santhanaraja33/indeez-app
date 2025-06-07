@@ -18,8 +18,6 @@ class PasswordView extends StackedView<PasswordViewModel> {
     PasswordViewModel viewModel,
     Widget? child,
   ) {
-    final TextEditingController emailController = TextEditingController();
-
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -45,7 +43,7 @@ class PasswordView extends StackedView<PasswordViewModel> {
                       height: height_10,
                     ),
                     AppCommonTextfield(
-                      controller: emailController,
+                      controller: viewModel.emailController,
                       // obscureText: viewModel.isPassword,
                       label: Text(
                         ksEmail,
@@ -56,14 +54,41 @@ class PasswordView extends StackedView<PasswordViewModel> {
                       height: height_20,
                     ),
 
+                    AppCommonTextfield(
+                      obscureText: viewModel.isPassword,
+                      keyboardType: TextInputType.streetAddress,
+                      controller: viewModel.passwordController,
+                      label: Text(
+                        ksPassword,
+                        style: GoogleFonts.lato(color: kcTextGrey),
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          viewModel.isPasswordShow();
+                        },
+                        child: Icon(
+                          viewModel.isPassword == true
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: kcTextGrey,
+                        ),
+                      ),
+                      onSubmitted: (p0) {},
+                    ),
+
+                    const SizedBox(
+                      height: height_20,
+                    ),
                     AppCommonButton(
                       width: double.infinity,
                       backgroundColor: kcButtonColr,
                       onPressed: () {
-                        final email = emailController.text.trim();
-                        viewModel.handleSignIn(email);
+                        final email = viewModel.emailController.text.trim();
+                        final password =
+                            viewModel.passwordController.text.trim();
+                        viewModel.handleSignIn(context, email, password);
                       },
-                      buttonName: ksOTP,
+                      buttonName: ksSignIn,
                     ),
 
                     // AppCommonTextfield(
@@ -126,6 +151,19 @@ class PasswordView extends StackedView<PasswordViewModel> {
                         ),
                         const Spacer(),
                       ],
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        viewModel.handleSignOut(context);
+                      },
+                      child: Text(
+                        ksSignout,
+                        style: GoogleFonts.lato(
+                          fontSize: size_16,
+                          fontWeight: FontWeight.bold,
+                          color: kcPinkColor,
+                        ),
+                      ),
                     ),
                   ],
                 ),

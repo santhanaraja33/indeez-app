@@ -7,6 +7,9 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class PasswordViewModel extends BaseViewModel {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   final navigationService = locator<NavigationService>();
   bool isPassword = true;
   void navigationToSignUP() {
@@ -22,24 +25,48 @@ class PasswordViewModel extends BaseViewModel {
     navigationService.navigateToForgotpasswordView();
   }
 
-  void handleSignIn(String email) async {
+  void handleSignIn(BuildContext context, String email, String password) async {
     try {
       if (email.isEmpty) {
         Fluttertoast.showToast(msg: "Email is required!");
         return;
       }
 
-      final result = await Amplify.Auth.signIn(username: email);
+      final result =
+          await Amplify.Auth.signIn(username: email, password: password);
 
-      // ignore: unrelated_type_equality_checks
-      if (result.nextStep.signInStep ==
-          'CONFIRM_SIGN_IN_WITH_CUSTOM_CHALLENGE') {
-        Fluttertoast.showToast(msg: "OTP sent to your email");
-        // Show OTP field in the UI here
+      print("password ${password}");
+
+      if (result.isSignedIn) {
+        Fluttertoast.showToast(msg: "Signed in successfully!");
+      } else {
+        switch (result.nextStep.signInStep) {
+          case AuthSignInStep.confirmSignUp:
+            Fluttertoast.showToast(msg: "Please confirm your account with OTP");
+            showOtpDialog(context, email);
+            break;
+          case AuthSignInStep.confirmSignInWithCustomChallenge:
+            Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
+            showOtpDialog(context, email);
+            break;
+          default:
+            print("Unhandled sign-in step: ${result.nextStep.signInStep}");
+        }
       }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error: ${e.message}");
+    }
+  }
+
+// Sign out
+
+  Future<void> handleSignOut(BuildContext context) async {
+    try {
+      await Amplify.Auth.signOut();
+      Fluttertoast.showToast(msg: "Signed out");
+    } on AuthException catch (e) {
+      Fluttertoast.showToast(msg: e.message);
     }
   }
 
@@ -53,6 +80,67 @@ class PasswordViewModel extends BaseViewModel {
       backgroundColor: Colors.black87,
       textColor: Colors.white,
       fontSize: 16.0,
+    );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  //OTP Popup
+  void showOtpDialog(BuildContext context, String email) {
+    final TextEditingController otpController = TextEditingController();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Enter OTP"),
+          content: TextField(
+            controller: otpController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              hintText: "Enter the 6-digit OTP",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final otp = otpController.text.trim();
+
+                if (otp.isEmpty) {
+                  Fluttertoast.showToast(msg: "Please enter OTP");
+                  return;
+                }
+
+                try {
+                  final result = await Amplify.Auth.confirmSignUp(
+                    username: email,
+                    confirmationCode: otp,
+                  );
+
+                  if (result.isSignUpComplete) {
+                    Fluttertoast.showToast(msg: "Sign-up confirmed!");
+                    Navigator.pop(context);
+                  } else {
+                    Fluttertoast.showToast(msg: "Confirmation incomplete");
+                  }
+                } on AuthException catch (e) {
+                  Fluttertoast.showToast(msg: e.message);
+                }
+              },
+              child: const Text("Confirm"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
