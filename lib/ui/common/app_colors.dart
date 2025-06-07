@@ -1,0 +1,28 @@
+import 'package:flutter/material.dart';
+
+const Color kcPrimaryColor = Color(0xFF9600FF);
+const Color kcPrimaryColorDark = Color(0xFF300151);
+const Color kcDarkGreyColor = Color(0xFF1A1B1E);
+const Color kcMediumGrey = Color(0xFF474A54);
+const Color kcLightGrey = Color.fromARGB(255, 187, 187, 187);
+const Color kcVeryLightGrey = Color(0xFFE3E3E3);
+const Color kcBackgroundColor = kcDarkGreyColor;
+const Color kcWhite = Colors.white;
+const Color kcTextGrey = Color.fromRGBO(178, 174, 169, 1);
+const Color kcLightGreen = Color.fromRGBO(164, 200, 189, 1);
+const Color kcPinkColor = Color.fromRGBO(224, 1, 190, 1);
+const Color kcimageDeactiveColor = Color.fromRGBO(181, 183, 90, 0.8);
+const Color kcImageActiveColor = Color.fromRGBO(216, 238, 94, 1);
+const Color kcBottombarSelectedColor = Color.fromRGBO(15, 170, 250, 1);
+const Color kcBgColor = Color.fromRGBO(28, 27, 34, 1);
+const Color kcSkyBlue = Color.fromRGBO(32, 244, 244, 1);
+const Color kcLGreen = Color.fromRGBO(13, 211, 98, 1);
+const Color kcLightBlack = Color.fromRGBO(34, 34, 34, 1);
+const Color kcPurple = Color.fromRGBO(136, 51, 141, 1);
+const Color kcYellow = Color.fromRGBO(252, 211, 2, 1);
+const Color kcBlack = Color.fromRGBO(0, 0, 0, 1);
+const Color kcTransparent = Color.fromRGBO(0, 0, 0, 0);
+const Color kcBlue = Color.fromRGBO(33, 150, 243, 1);
+const Color kcRed = Color.fromRGBO(244, 67, 54, 1);
+const Color kcButtonColr = Color.fromRGBO(247, 255, 1, 1);
+const Color kcDarkBlue = Color.fromRGBO(0, 0, 255, 1);
