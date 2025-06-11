@@ -3,9 +3,10 @@ buildscript {
         google()
         mavenCentral()
     }
+    ext.kotlin_version = '1.9.0' // make sure this matches plugin
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 allprojects {

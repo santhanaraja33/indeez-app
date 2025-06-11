@@ -1,5 +1,6 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_app/app/app.dart';
@@ -8,8 +9,9 @@ import 'package:music_app/app/app.router.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:email_validator/email_validator.dart';
 
-class PasswordViewModel extends BaseViewModel {
+class EmailViewModel extends BaseViewModel {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -38,31 +40,39 @@ class PasswordViewModel extends BaseViewModel {
         Fluttertoast.showToast(msg: "Email is required!");
         return;
       }
+      bool isValid = EmailValidator.validate(email);
+      if (!isValid) {
+        Fluttertoast.showToast(msg: "Please enter a valid email address.");
+        return;
+      }
+
       signOutGlobally();
       final result =
           await Amplify.Auth.signIn(username: email, password: password);
       print("user login result : ${result}");
-      // final result1 =
-      //     await Amplify.Auth.resetPassword(username: username)
-      //     await Amplify.Auth.confirmResetPassword(username: username, newPassword: newPassword, confirmationCode: confirmationCode)
 
-      // print("user login result : ${result1}");
+      showActionSheet(context);
 
       print("password ${password}");
       // OtpVerifyView(email: email);
       if (result.isSignedIn) {
         Fluttertoast.showToast(msg: "Signed in successfully!");
         isSignedIn = true;
-        navigationService.clearStackAndShow(Routes.homeView);
+        // navigationService.clearStackAndShow(Routes.homeView);
+        showActionSheet(context);
       } else {
         switch (result.nextStep.signInStep) {
           case AuthSignInStep.confirmSignUp:
             Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-            showOtpDialog(context, email);
+            showActionSheet(context);
+
+            // showOtpDialog(context, email);
             break;
           case AuthSignInStep.confirmSignInWithCustomChallenge:
             Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-            showOtpDialog(context, email);
+            showActionSheet(context);
+
+            // showOtpDialog(context, email);
             break;
           default:
             print("Unhandled sign-in step: ${result.nextStep.signInStep}");
@@ -131,6 +141,14 @@ class PasswordViewModel extends BaseViewModel {
     }
   }
 
+  Future<void> handleMoreOption(BuildContext context) async {
+    try {
+      await Amplify.Auth.signOut();
+      Fluttertoast.showToast(msg: "Signed out");
+    } on AuthException catch (e) {
+      Fluttertoast.showToast(msg: e.message);
+    }
+  }
   //Show Toast
 
   void showToast(String message) {
@@ -151,55 +169,42 @@ class PasswordViewModel extends BaseViewModel {
   }
 
   //OTP Popup
-  void showOtpDialog(BuildContext context, String email) {
-    final TextEditingController otpController = TextEditingController();
-
-    showDialog(
+  void showActionSheet(BuildContext context) {
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Enter OTP"),
-          content: TextField(
-            controller: otpController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              hintText: "Enter the 6-digit OTP",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final otp = otpController.text.trim();
-
-                if (otp.isEmpty) {
-                  Fluttertoast.showToast(msg: "Please enter OTP");
-                  return;
-                }
-
-                try {
-                  final result = await Amplify.Auth.confirmSignUp(
-                    username: email,
-                    confirmationCode: otp,
-                  );
-
-                  if (result.isSignUpComplete) {
-                    Fluttertoast.showToast(msg: "Sign-up confirmed!");
-                    Navigator.pop(context);
-                  } else {
-                    Fluttertoast.showToast(msg: "Confirmation incomplete");
+      builder: (BuildContext ctx) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                // leading: Icon(Icons.edit),
+                title: const Text('Use Password', textAlign: TextAlign.center),
+                onTap: () {
+                  if (kDebugMode) {
+                    print("Use password clicked");
+                    navigationService.replaceWithPasswordView();
                   }
-                } on AuthException catch (e) {
-                  Fluttertoast.showToast(msg: e.message);
-                }
-              },
-              child: const Text("Confirm"),
-            ),
-          ],
+                },
+              ),
+              ListTile(
+                // leading: Icon(Icons.share),
+                title:
+                    const Text('Use Biometrics', textAlign: TextAlign.center),
+                onTap: () {
+                  if (kDebugMode) {
+                    print("Biometrics clicked");
+                  }
+                },
+              ),
+              ListTile(
+                // leading: Icon(Icons.delete),
+                title: const Text('Cancel', textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
         );
       },
     );

@@ -32,3 +32,10 @@ const amplifyconfig = ''' {
     }
   }
 }''';
+
+/*
+amplify init
+amplify add auth
+# Select: Email based login
+amplify push
+*/

@@ -10,7 +10,7 @@ import 'package:stacked/stacked.dart';
 import 'otp_verify_viewmodel.dart';
 
 class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
-  const OtpVerifyView({Key? key}) : super(key: key);
+  const OtpVerifyView({Key? key, required String email}) : super(key: key);
 
   @override
   Widget builder(
