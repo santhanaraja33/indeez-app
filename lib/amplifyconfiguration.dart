@@ -17,7 +17,7 @@ const amplifyconfig = ''' {
         },
        "Auth": {
           "Default": {
-            "authenticationFlowType": "USER_SRP_AUTH",
+            "authenticationFlowType": "CUSTOM_AUTH",
             "usernameAttributes": ["email"],
             "signupAttributes": [
               "email", "name"

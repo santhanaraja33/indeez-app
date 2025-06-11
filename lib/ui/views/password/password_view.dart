@@ -91,27 +91,6 @@ class PasswordView extends StackedView<PasswordViewModel> {
                       buttonName: ksSignIn,
                     ),
 
-                    AppCommonTextfield(
-                      obscureText: viewModel.isPassword,
-                      label: Text(
-                        ksPassword,
-                        style: GoogleFonts.lato(color: kcTextGrey),
-                      ),
-                      onSubmitted: (p0) {
-                        viewModel.navigationToSignUP();
-                      },
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          viewModel.isPasswordShow();
-                        },
-                        child: Icon(
-                          viewModel.isPassword == true
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: kcTextGrey,
-                        ),
-                      ),
-                    ),
                     Row(
                       children: [
                         const Spacer(),
