@@ -7,15 +7,15 @@ import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked.dart';
-import 'password_viewmodel.dart';
+import 'email_viewmodel.dart';
 
-class PasswordView extends StackedView<PasswordViewModel> {
-  const PasswordView({Key? key}) : super(key: key);
+class EmailView extends StackedView<EmailViewModel> {
+  const EmailView({Key? key}) : super(key: key);
 
   @override
   Widget builder(
     BuildContext context,
-    PasswordViewModel viewModel,
+    EmailViewModel viewModel,
     Widget? child,
   ) {
     return PopScope(
@@ -54,28 +54,6 @@ class PasswordView extends StackedView<PasswordViewModel> {
                       height: height_20,
                     ),
 
-                    AppCommonTextfield(
-                      obscureText: viewModel.isPassword,
-                      keyboardType: TextInputType.streetAddress,
-                      controller: viewModel.passwordController,
-                      label: Text(
-                        ksPassword,
-                        style: GoogleFonts.lato(color: kcTextGrey),
-                      ),
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          viewModel.isPasswordShow();
-                        },
-                        child: Icon(
-                          viewModel.isPassword == true
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: kcTextGrey,
-                        ),
-                      ),
-                      onSubmitted: (p0) {},
-                    ),
-
                     const SizedBox(
                       height: height_20,
                     ),
@@ -86,29 +64,48 @@ class PasswordView extends StackedView<PasswordViewModel> {
                         final email = viewModel.emailController.text.trim();
                         final password =
                             viewModel.passwordController.text.trim();
-                        // viewModel.handleSignIn(context, email, password);
-
-                        viewModel.handleSignInWithOTP(context, email);
+                        viewModel.handleSignIn(context, email, password);
                       },
                       buttonName: ksSignIn,
                     ),
 
-                    Row(
+                    // AppCommonTextfield(
+                    //   obscureText: viewModel.isPassword,
+                    //   label: Text(
+                    //     ksPassword,
+                    //     style: GoogleFonts.lato(color: kcTextGrey),
+                    //   ),
+                    //   onSubmitted: (p0) {
+                    //     viewModel.navigationToSignUP();
+                    //   },
+                    //   suffixIcon: GestureDetector(
+                    //     onTap: () {
+                    //       viewModel.isPasswordShow();
+                    //     },
+                    //     child: Icon(
+                    //       viewModel.isPassword == true
+                    //           ? Icons.visibility_off
+                    //           : Icons.visibility,
+                    //       color: kcTextGrey,
+                    //     ),
+                    //   ),
+                    // ),
+                    const Row(
                       children: [
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () {
-                            viewModel.navigationToForgotPassword();
-                          },
-                          child: Text(
-                            ksForgotPassword,
-                            style: GoogleFonts.lato(
-                              fontSize: size_16,
-                              fontWeight: FontWeight.bold,
-                              color: kcPinkColor,
-                            ),
-                          ),
-                        ),
+                        Spacer(),
+                        // TextButton(
+                        //   onPressed: () {
+                        //     viewModel.navigationToForgotPassword();
+                        //   },
+                        //   child: Text(
+                        //     ksForgotPassword,
+                        //     style: GoogleFonts.lato(
+                        //       fontSize: size_16,
+                        //       fontWeight: FontWeight.bold,
+                        //       color: kcPinkColor,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     Row(
@@ -133,19 +130,19 @@ class PasswordView extends StackedView<PasswordViewModel> {
                         const Spacer(),
                       ],
                     ),
-                    // TextButton(
-                    //   onPressed: () {
-                    //     viewModel.handleSignOut(context);
-                    //   },
-                    //   child: Text(
-                    //     ksSignout,
-                    //     style: GoogleFonts.lato(
-                    //       fontSize: size_16,
-                    //       fontWeight: FontWeight.bold,
-                    //       color: kcPinkColor,
-                    //     ),
-                    //   ),
-                    // ),
+                    TextButton(
+                      onPressed: () {
+                        viewModel.showActionSheet(context);
+                      },
+                      child: Text(
+                        ksMoreOption,
+                        style: GoogleFonts.lato(
+                          fontSize: size_16,
+                          fontWeight: FontWeight.bold,
+                          color: kcPinkColor,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -157,8 +154,8 @@ class PasswordView extends StackedView<PasswordViewModel> {
   }
 
   @override
-  PasswordViewModel viewModelBuilder(
+  EmailViewModel viewModelBuilder(
     BuildContext context,
   ) =>
-      PasswordViewModel();
+      EmailViewModel();
 }

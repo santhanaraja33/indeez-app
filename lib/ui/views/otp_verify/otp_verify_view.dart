@@ -10,7 +10,7 @@ import 'package:stacked/stacked.dart';
 import 'otp_verify_viewmodel.dart';
 
 class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
-  const OtpVerifyView({Key? key}) : super(key: key);
+  const OtpVerifyView({Key? key, required String email}) : super(key: key);
 
   @override
   Widget builder(
@@ -18,6 +18,8 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
     OtpVerifyViewModel viewModel,
     Widget? child,
   ) {
+    String verifyCode = '';
+
     return Scaffold(
       body: Center(
         child: Stack(
@@ -25,7 +27,7 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
             const AppCommonBGImage(),
             Padding(
               padding:
-                  const EdgeInsets.only(left: padding_20, right: padding_20),
+                  const EdgeInsets.only(left: padding_10, right: padding_10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -44,22 +46,33 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                       color: kcWhite,
                     ),
                     fieldWidth: width_60,
-                    numberOfFields: 4,
+                    numberOfFields: 6,
                     borderColor: const Color(0xFF512DA8),
                     //set to true to show as box or false to show as dash
                     showFieldAsBox: true,
                     //runs when a code is typed in
                     onCodeChanged: (String code) {
                       //handle validation or checks here
+                      print("Entered code: $code");
+                      verifyCode = code;
                     },
                     //runs when every textfield is filled
-                    onSubmit: (String verificationCode) {}, // end onSubmit
+                    onSubmit: (String verificationCode) {
+                      verifyCode = verificationCode;
+
+                      // Handle the OTP submission
+                      // Optionally, you can navigate to another view or perform other actions
+                      // For example:
+                      // Navigator.pushNamed(context, '/nextView');
+                    }, // end onSubmit
                   ),
                   const SizedBox(
                     height: height_20,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      viewModel.handleResendOTP(context, "");
+                    },
                     child: Text(
                       ksResendOTP,
                       style: GoogleFonts.lato(
@@ -74,7 +87,8 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          viewModel.navigationToChangePassword();
+                          viewModel.showOtpDialog(
+                              context, verifyCode, viewModel.email);
                         },
                         child: Text(
                           ksNEXT,

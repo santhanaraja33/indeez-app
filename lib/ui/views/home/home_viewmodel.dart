@@ -26,9 +26,9 @@ class HomeViewModel extends BaseViewModel {
   final homeModel = [
     HomePageModel(
       bgImage:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/WyattBlair/paper-texture-2.png',
+          'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/homeImgs/DuzMancini/DuzMancini2.webp',
       musicImage1:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/WyattBlair/collage.png',
+          'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/homeImgs/DuzMancini/DuzMancini2.webp',
       commends: '4',
       reactions: '20',
       title: 'Wyatt Blair',
@@ -36,9 +36,9 @@ class HomeViewModel extends BaseViewModel {
     ),
     HomePageModel(
       bgImage:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/LostCat/paper-texture-1.png',
+          'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
       musicImage1:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/LostCat/collage.png',
+          'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
       commends: '9',
       reactions: '26',
       title: 'Lost Cat',
@@ -46,9 +46,9 @@ class HomeViewModel extends BaseViewModel {
     ),
     HomePageModel(
         bgImage:
-            'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/Klypi/paper-texture-1.png',
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
         musicImage1:
-            'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/Klypi/collage.png',
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
         commends: '9',
         reactions: '26',
         title: 'Lost Cat',

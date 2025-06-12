@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
@@ -18,6 +19,8 @@ class ForgotpasswordView extends StackedView<ForgotpasswordViewModel> {
     ForgotpasswordViewModel viewModel,
     Widget? child,
   ) {
+    String email = '';
+
     return Scaffold(
       body: Center(
         child: Stack(
@@ -38,6 +41,7 @@ class ForgotpasswordView extends StackedView<ForgotpasswordViewModel> {
                     ),
                   ),
                   AppCommonTextfield(
+                    controller: viewModel.emailController,
                     label: Text(
                       ksEmail,
                       style: GoogleFonts.lato(color: kcTextGrey),
@@ -49,7 +53,11 @@ class ForgotpasswordView extends StackedView<ForgotpasswordViewModel> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          viewModel.navigationToOTPView();
+                          email = viewModel.emailController.text.trim();
+                          if (kDebugMode) {
+                            print("Email submitted: $email");
+                          }
+                          viewModel.navigationToOTPView(context, email);
                         },
                         child: Text(
                           ksSendOTP,

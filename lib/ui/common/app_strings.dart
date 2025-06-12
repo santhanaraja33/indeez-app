@@ -40,6 +40,7 @@ const String ksSignup = 'Sign up';
 const String ksSignIn = 'Sign In';
 
 const String ksSignout = 'Sign Out';
+const String ksMoreOption = 'More Options';
 
 const String ksProfile = 'Profile';
 const String ksTac = 'Terms & Condition';

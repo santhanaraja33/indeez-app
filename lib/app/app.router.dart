@@ -35,6 +35,7 @@ import 'package:music_app/ui/views/swipe/swipe_view.dart' as _i9;
 import 'package:music_app/ui/views/userprofile/userprofile_view.dart' as _i16;
 import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i24;
+import 'package:music_app/ui/views/email/email_view.dart' as _i23;
 
 class Routes {
   static const homeView = '/home-view';
@@ -79,6 +80,8 @@ class Routes {
 
   static const calendarView = '/calendar-view';
 
+  static const emailView = '/email-view';
+
   static const all = <String>{
     homeView,
     startupView,
@@ -101,6 +104,7 @@ class Routes {
     searchDetailsView,
     notificationView,
     calendarView,
+    emailView,
   };
 }
 
@@ -190,6 +194,10 @@ class StackedRouter extends _i1.RouterBase {
       Routes.calendarView,
       page: _i22.CalendarView,
     ),
+    _i1.RouteDef(
+      Routes.emailView,
+      page: _i23.EmailView,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
@@ -261,7 +269,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i13.OtpVerifyView: (data) {
       return _i23.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i13.OtpVerifyView(),
+        builder: (context) => const _i13.OtpVerifyView(email: ""),
         settings: data,
       );
     },
@@ -316,6 +324,12 @@ class StackedRouter extends _i1.RouterBase {
     _i22.CalendarView: (data) {
       return _i23.MaterialPageRoute<dynamic>(
         builder: (context) => const _i22.CalendarView(),
+        settings: data,
+      );
+    },
+    _i23.EmailView: (data) {
+      return _i23.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i23.EmailView(),
         settings: data,
       );
     },
@@ -911,6 +925,20 @@ extension NavigatorStateExtension on _i24.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.calendarView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithEmailView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.emailView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
