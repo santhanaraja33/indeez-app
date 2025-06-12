@@ -86,7 +86,9 @@ class PasswordView extends StackedView<PasswordViewModel> {
                         final email = viewModel.emailController.text.trim();
                         final password =
                             viewModel.passwordController.text.trim();
-                        viewModel.handleSignIn(context, email, password);
+                        // viewModel.handleSignIn(context, email, password);
+
+                        viewModel.handleSignInWithOTP(context, email);
                       },
                       buttonName: ksSignIn,
                     ),

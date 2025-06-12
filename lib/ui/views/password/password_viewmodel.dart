@@ -25,6 +25,52 @@ class PasswordViewModel extends BaseViewModel {
     navigationService.navigateToForgotpasswordView();
   }
 
+  //Email OTP
+  void handleSignInWithOTP(BuildContext context, String email) async {
+    try {
+      if (email.isEmpty) {
+        Fluttertoast.showToast(msg: "Email is required!");
+        return;
+      }
+
+      final result = await Amplify.Auth.signIn(username: email);
+
+      if (result.nextStep.signInStep ==
+          'CONFIRM_SIGN_IN_WITH_CUSTOM_CHALLENGE') {
+        showOtpDialog(context, email);
+
+        final confirmRes =
+            await Amplify.Auth.confirmSignIn(confirmationValue: "123456");
+        if (confirmRes.isSignedIn) {
+          print("Signed in!");
+        } else {
+          print("Next step: ${confirmRes.nextStep.signInStep}");
+        }
+      }
+
+      // if (result.isSignedIn) {
+      //   Fluttertoast.showToast(msg: "Signed in successfully!");
+      // } else {
+      //   switch (result.nextStep.signInStep) {
+      //     case AuthSignInStep.confirmSignUp:
+      //       Fluttertoast.showToast(msg: "Please confirm your account with OTP");
+      //       showOtpDialog(context, email);
+      //       break;
+      //     case AuthSignInStep.confirmSignInWithCustomChallenge:
+      //       Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
+      //       showOtpDialog(context, email);
+      //       break;
+      //     default:
+      //       print("Unhandled sign-in step: ${result.nextStep.signInStep}");
+      //   }
+      // }
+    } on AuthException catch (e) {
+      Fluttertoast.showToast(msg: e.message);
+      print("Sign-in error: ${e.message}");
+    }
+  }
+
+// Email and Password
   void handleSignIn(BuildContext context, String email, String password) async {
     try {
       if (email.isEmpty) {
@@ -34,8 +80,6 @@ class PasswordViewModel extends BaseViewModel {
 
       final result =
           await Amplify.Auth.signIn(username: email, password: password);
-
-      print("password ${password}");
 
       if (result.isSignedIn) {
         Fluttertoast.showToast(msg: "Signed in successfully!");
