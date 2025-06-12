@@ -10,6 +10,7 @@ import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:local_auth/local_auth.dart';
 
 class EmailViewModel extends BaseViewModel {
   final TextEditingController emailController = TextEditingController();
@@ -17,6 +18,8 @@ class EmailViewModel extends BaseViewModel {
 
   final navigationService = locator<NavigationService>();
   bool isPassword = true;
+  final LocalAuthentication auth = LocalAuthentication();
+  String _message = "Not Authenticated";
 
   var isSignedIn = false;
   String? challengeHint;
@@ -56,27 +59,29 @@ class EmailViewModel extends BaseViewModel {
         ),
       );
       print("user login result : ${result}");
-
-      navigationService.clearStackAndShow(Routes.otpVerifyView);
-
-      // if (result.isSignedIn) {
-      //   Fluttertoast.showToast(msg: "Signed in successfully!");
-      //   navigationService.clearStackAndShow(Routes.otpVerifyView);
-      //   isSignedIn = true;
-      //   // navigationService.clearStackAndShow(Routes.homeView);
-      // } else {
-      //   switch (result.nextStep.signInStep) {
-      //     case AuthSignInStep.confirmSignUp:
-      //       Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-      //       break;
-      //     case AuthSignInStep.confirmSignInWithCustomChallenge:
-      //       Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-      //       // showOtpDialog(context, email);
-      //       break;
-      //     default:
-      //       print("Unhandled sign-in step: ${result.nextStep.signInStep}");
-      //   }
-      // }
+      //
+      // navigationService.clearStackAndShow(Routes.otpVerifyView);
+      print("user login result : ${email}");
+      navigationService
+          .clearStackAndShowView(OtpVerifyView(email: email.trim()));
+      if (result.isSignedIn) {
+        Fluttertoast.showToast(msg: "Signed in successfully!");
+        navigationService.clearStackAndShow(Routes.otpVerifyView);
+        isSignedIn = true;
+        // navigationService.clearStackAndShow(Routes.homeView);
+      } else {
+        switch (result.nextStep.signInStep) {
+          case AuthSignInStep.confirmSignUp:
+            Fluttertoast.showToast(msg: "Please confirm your account with OTP");
+            break;
+          case AuthSignInStep.confirmSignInWithCustomChallenge:
+            Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
+            // showOtpDialog(context, email);
+            break;
+          default:
+            print("Unhandled sign-in step: ${result.nextStep.signInStep}");
+        }
+      }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error fdsf: ${e.message}");
@@ -102,10 +107,13 @@ class EmailViewModel extends BaseViewModel {
 
   void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
     safePrint(
-      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
-      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
+      'A confirmation code has been sent to ${codeDeliveryDetails
+          .destination}. '
+          'Please check your ${codeDeliveryDetails.deliveryMedium
+          .name} for the code.',
     );
   }
+
 // Sign out
 
   Future<void> handleSignOut(BuildContext context) async {
@@ -125,6 +133,7 @@ class EmailViewModel extends BaseViewModel {
       Fluttertoast.showToast(msg: e.message);
     }
   }
+
   //Show Toast
 
   void showToast(String message) {
@@ -163,10 +172,17 @@ class EmailViewModel extends BaseViewModel {
               ),
               ListTile(
                 title:
-                    const Text('Use Biometrics', textAlign: TextAlign.center),
-                onTap: () {
+                const Text('Use Biometrics', textAlign: TextAlign.center),
+                onTap: () async {
                   if (kDebugMode) {
                     print("Biometrics clicked");
+                    authenticateWithBiometrics(ctx);
+                    _authenticate();
+                    // List<BiometricType> types =
+                    //     await auth.getAvailableBiometrics();
+                    // for (var type in types) {
+                    //   print(type); // face, fingerprint, etc.
+                    // }
                   }
                 },
               ),
@@ -181,5 +197,68 @@ class EmailViewModel extends BaseViewModel {
         );
       },
     );
+  }
+
+  Future<void> authenticateWithBiometrics(BuildContext context) async {
+    bool canCheck = await auth.canCheckBiometrics;
+    bool isDeviceSupported = await auth.isDeviceSupported();
+
+    if (!canCheck || !isDeviceSupported) {
+      print("Biometric authentication not available.");
+      return;
+    }
+
+    List<BiometricType> availableBiometrics =
+    await auth.getAvailableBiometrics();
+    print("Available biometrics: $availableBiometrics");
+
+    try {
+      bool didAuthenticate = await auth.authenticate(
+        localizedReason: 'Please authenticate to continue',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+          useErrorDialogs: true,
+        ),
+      );
+
+      if (didAuthenticate) {
+        print("Authenticated successfully!");
+      } else {
+        print("Authentication failed.");
+      }
+      Navigator.pop(context); // Close the bottom sheet after authentication
+    } catch (e) {
+      print("Error using biometrics: $e");
+    }
+  }
+
+  Future<void> _authenticate() async {
+    bool isAuthenticated = false;
+
+    try {
+      bool canCheckBiometrics = await auth.canCheckBiometrics;
+      bool isDeviceSupported = await auth.isDeviceSupported();
+
+      if (!canCheckBiometrics || !isDeviceSupported) {
+        // setState(() {
+        _message = "Biometric authentication not available.";
+        // });
+        return;
+      }
+
+      isAuthenticated = await auth.authenticate(
+        localizedReason: 'Please authenticate to continue',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+          useErrorDialogs: true,
+        ),
+      );
+    } catch (e) {
+      // setState(() {
+      _message = "Error: $e";
+      // });
+    }
   }
 }

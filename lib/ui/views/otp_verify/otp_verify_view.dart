@@ -87,7 +87,8 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          viewModel.showOtpDialog(context, verifyCode);
+                          viewModel.showOtpDialog(
+                              context, verifyCode, viewModel.email);
                         },
                         child: Text(
                           ksNEXT,

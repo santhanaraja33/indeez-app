@@ -15,17 +15,36 @@ class OtpVerifyViewModel extends BaseViewModel {
     navigationService.navigateToChangepasswordView();
   }
 
-  void showOtpDialog(BuildContext context, String otp) async {
+  void showOtpDialog(BuildContext context, String otp, String email) async {
     print("email str : ${otp}");
     if (otp.isEmpty) {
       Fluttertoast.showToast(msg: "Please enter OTP");
       return;
     }
     try {
-      final result =
+      signOutGlobally();
+
+      // final SignInResult result = await Amplify.Auth.signIn(
+      //   username: email.trim(),
+      //   password: "",
+      // );
+      print("result signin : ${email}");
+
+      final result = await Amplify.Auth.signIn(
+        username: email.trim(),
+        options: const SignInOptions(
+          pluginOptions: CognitoSignInPluginOptions(
+            authFlowType: AuthenticationFlowType.customAuthWithoutSrp,
+          ),
+        ),
+      );
+      print("user login result : ${result}");
+
+      final result1 =
           await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
-      print("result : ${result}");
-      if (result.isSignedIn) {
+      print("result : ${result1}");
+
+      if (result1.isSignedIn) {
         Fluttertoast.showToast(msg: "Sign in confirmed!");
         navigationService.clearStackAndShow(Routes.homeView);
       } else {
@@ -34,6 +53,23 @@ class OtpVerifyViewModel extends BaseViewModel {
     } on AuthException catch (e) {
       print("error : ${e.message}");
       Fluttertoast.showToast(msg: e.message);
+    }
+  }
+
+  Future<void> signOutGlobally() async {
+    final result = await Amplify.Auth.signOut(
+      options: const SignOutOptions(globalSignOut: true),
+    );
+    if (result is CognitoCompleteSignOut) {
+      safePrint('Sign out completed successfully');
+    } else if (result is CognitoPartialSignOut) {
+      final globalSignOutException = result.globalSignOutException!;
+      final accessToken = globalSignOutException.accessToken;
+      // Retry the global sign out using the access token, if desired
+      // ...
+      safePrint('Error signing user out: ${globalSignOutException.message}');
+    } else if (result is CognitoFailedSignOut) {
+      safePrint('Error signing user out: ${result.exception.message}');
     }
   }
 
