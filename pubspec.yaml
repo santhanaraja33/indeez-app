@@ -28,6 +28,7 @@ dependencies:
   fluttertoast: ^8.2.12
   email_validator: ^2.0.1
   local_auth: ^2.1.6  # check for latest version
+  shared_preferences: ^2.2.2  # check for latest version
 
 dev_dependencies:
   build_runner: ^2.4.5

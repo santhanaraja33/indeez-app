@@ -10,7 +10,9 @@ import 'package:stacked/stacked.dart';
 import 'otp_verify_viewmodel.dart';
 
 class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
-  const OtpVerifyView({Key? key, required String email}) : super(key: key);
+  final String email;
+
+  const OtpVerifyView({Key? key, required this.email}) : super(key: key);
 
   @override
   Widget builder(
@@ -87,8 +89,10 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          viewModel.showOtpDialog(
-                              context, verifyCode, viewModel.email);
+                          print("Entered email: $email");
+
+                          // viewModel.showOtpDialog(context, verifyCode, this.widget.email);
+                          viewModel.showOtpDialog(context, verifyCode, email);
                         },
                         child: Text(
                           ksNEXT,

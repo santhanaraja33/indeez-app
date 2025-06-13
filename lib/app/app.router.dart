@@ -5,6 +5,8 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:math';
+
 import 'package:flutter/material.dart' as _i23;
 import 'package:flutter/material.dart';
 import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart' as _i7;
@@ -275,7 +277,10 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i14.ChangepasswordView: (data) {
       return _i23.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i14.ChangepasswordView(),
+        builder: (context) => const _i14.ChangepasswordView(
+          "",
+          "",
+        ),
         settings: data,
       );
     },

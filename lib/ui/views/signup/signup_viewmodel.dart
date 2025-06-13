@@ -84,10 +84,10 @@ class SignupViewModel extends BaseViewModel {
 
       // Phone number basic validation
       final phoneRegex = RegExp(r'^\+\d{10,15}$');
-      if (!phoneRegex.hasMatch(phone)) {
-        Fluttertoast.showToast(msg: "Phone must be in 10 digits");
-        return;
-      }
+      // if (!phoneRegex.hasMatch(phone)) {
+      //   Fluttertoast.showToast(msg: "Phone must be in 10 digits");
+      //   return;
+      // }
 
       final result = await Amplify.Auth.signUp(
         username: email,
@@ -174,6 +174,15 @@ class SignupViewModel extends BaseViewModel {
                     username: email,
                     confirmationCode: otp,
                   );
+                  safePrint('User is signup : ${result}');
+
+                  try {
+                    final result = await Amplify.Auth.fetchAuthSession();
+                    safePrint('User is signed in: ${result.isSignedIn}');
+                    safePrint('User is signed in: ${result}');
+                  } on AuthException catch (e) {
+                    safePrint('Error retrieving auth session: ${e.message}');
+                  }
 
                   if (result.isSignUpComplete) {
                     Fluttertoast.showToast(msg: "Sign-up confirmed!");

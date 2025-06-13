@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,16 +26,6 @@ class ForgotpasswordViewModel extends BaseViewModel {
 
     print("user login result : ${result1}");
     navigationService.clearStackAndShow(Routes.otpVerifyView);
-
-    // switch (result1.nextStep.updateStep) {
-    //   case AuthResetPasswordStep.confirmResetPasswordWithCode:
-    //     final codeDeliveryDetails = result1.nextStep.codeDeliveryDetails!;
-    //     _handleCodeDelivery(codeDeliveryDetails);
-    //     print("ucodeDeliveryDetails : ${codeDeliveryDetails}");
-
-    //   case AuthResetPasswordStep.done:
-    //     safePrint('Successfully reset password');
-    // }
   }
 
   void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {

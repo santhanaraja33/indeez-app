@@ -6,6 +6,7 @@ import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerifyViewModel extends BaseViewModel {
   final navigationService = locator<NavigationService>();
@@ -13,6 +14,11 @@ class OtpVerifyViewModel extends BaseViewModel {
   final String email = '';
   void navigationToChangePassword() {
     navigationService.navigateToChangepasswordView();
+  }
+
+  Future<void> saveString(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
   }
 
   void showOtpDialog(BuildContext context, String otp, String email) async {
@@ -23,33 +29,27 @@ class OtpVerifyViewModel extends BaseViewModel {
     }
     try {
       signOutGlobally();
+      print("result email : ${email}");
 
-      // final SignInResult result = await Amplify.Auth.signIn(
-      //   username: email.trim(),
-      //   password: "",
-      // );
-      print("result signin : ${email}");
+      email = 'amuthakumari.g@gmail.com';
+//forgot password flow
+      await saveString('otp', otp.trim());
+      navigationService.clearStackAndShow(Routes.changepasswordView);
 
-      final result = await Amplify.Auth.signIn(
-        username: email.trim(),
-        options: const SignInOptions(
-          pluginOptions: CognitoSignInPluginOptions(
-            authFlowType: AuthenticationFlowType.customAuthWithoutSrp,
-          ),
-        ),
-      );
-      print("user login result : ${result}");
+//normal sign in
+      // final result1 =
+      //     await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
+      // print("result : ${result1}");
+      // final result2 = await Amplify.Auth.fetchAuthSession();
+      // safePrint('User is signed in: ${result2.isSignedIn}');
+      // safePrint('User is signed in: ${result2}');
 
-      final result1 =
-          await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
-      print("result : ${result1}");
-
-      if (result1.isSignedIn) {
-        Fluttertoast.showToast(msg: "Sign in confirmed!");
-        navigationService.clearStackAndShow(Routes.homeView);
-      } else {
-        Fluttertoast.showToast(msg: "Confirmation incomplete");
-      }
+      // if (result1.isSignedIn) {
+      //   Fluttertoast.showToast(msg: "Sign in confirmed!");
+      //   navigationService.clearStackAndShow(Routes.bottomBarView);
+      // } else {
+      //   Fluttertoast.showToast(msg: "Confirmation incomplete");
+      // }
     } on AuthException catch (e) {
       print("error : ${e.message}");
       Fluttertoast.showToast(msg: e.message);

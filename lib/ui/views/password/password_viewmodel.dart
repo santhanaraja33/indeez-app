@@ -42,36 +42,98 @@ class PasswordViewModel extends BaseViewModel {
       final result =
           await Amplify.Auth.signIn(username: email, password: password);
       print("user login result : ${result}");
-      // final result1 =
-      //     await Amplify.Auth.resetPassword(username: username)
-      //     await Amplify.Auth.confirmResetPassword(username: username, newPassword: newPassword, confirmationCode: confirmationCode)
 
       // print("user login result : ${result1}");
 
       print("password ${password}");
-      // OtpVerifyView(email: email);
-      if (result.isSignedIn) {
-        Fluttertoast.showToast(msg: "Signed in successfully!");
-        isSignedIn = true;
-        navigationService.clearStackAndShow(Routes.homeView);
-      } else {
-        switch (result.nextStep.signInStep) {
-          case AuthSignInStep.confirmSignUp:
-            Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-            showOtpDialog(context, email);
-            break;
-          case AuthSignInStep.confirmSignInWithCustomChallenge:
-            Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-            showOtpDialog(context, email);
-            break;
-          default:
-            print("Unhandled sign-in step: ${result.nextStep.signInStep}");
-        }
+
+      switch (result.nextStep.signInStep) {
+        case AuthSignInStep.confirmSignInWithSmsMfaCode:
+          final codeDeliveryDetails = result.nextStep.codeDeliveryDetails!;
+          _handleCodeDelivery(codeDeliveryDetails);
+          break;
+        case AuthSignInStep.confirmSignInWithNewPassword:
+          safePrint('Enter a new password to continue signing in');
+          break;
+        case AuthSignInStep.confirmSignInWithCustomChallenge:
+          final parameters = result.nextStep.additionalInfo;
+          final prompt = parameters['prompt']!;
+          safePrint(prompt);
+          break;
+
+        case AuthSignInStep.done:
+          safePrint('Sign in is complete');
+          fetchAuthSession();
+          fetchCognitoAuthSession();
+          challengeHint = result.nextStep.additionalInfo['hint'];
+          safePrint('User is signed in: ${challengeHint}');
+
+          break;
+        case AuthSignInStep.continueSignInWithMfaSelection:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.continueSignInWithMfaSetupSelection:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.continueSignInWithTotpSetup:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.continueSignInWithEmailMfaSetup:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.confirmSignInWithTotpMfaCode:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.confirmSignInWithOtpCode:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.resetPassword:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case AuthSignInStep.confirmSignUp:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error fdsf: ${e.message}");
     }
+  }
+
+  Future<void> fetchAuthSession() async {
+    try {
+      final result = await Amplify.Auth.fetchAuthSession();
+      safePrint('User is signed in: ${result.isSignedIn}');
+      safePrint('User is signed in: ${result}');
+    } on AuthException catch (e) {
+      safePrint('Error retrieving auth session: ${e.message}');
+    }
+  }
+
+  Future<void> fetchCognitoAuthSession() async {
+    try {
+      final cognitoPlugin =
+          Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey);
+      final result = await cognitoPlugin.fetchAuthSession();
+      final identityId = result.identityIdResult.value;
+      safePrint("Current result: $result");
+      safePrint("Current identityId: $identityId");
+      if (result.isSignedIn) {
+        safePrint("User is signed in");
+      } else {
+        safePrint("User is not signed in");
+      }
+      safePrint("Current user's identity ID: $identityId");
+    } on AuthException catch (e) {
+      safePrint('Error retrieving auth session: ${e.message}');
+    }
+  }
+
+  void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
+    safePrint(
+      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
+      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
+    );
   }
 
 // Future<void> signOutCurrentUser() async {
@@ -114,12 +176,6 @@ class PasswordViewModel extends BaseViewModel {
         //   }
         // }
         */
-  void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
-    safePrint(
-      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
-      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
-    );
-  }
 // Sign out
 
   Future<void> handleSignOut(BuildContext context) async {

@@ -49,6 +49,7 @@ class EmailViewModel extends BaseViewModel {
         return;
       }
       signOutGlobally();
+      print("user login result : ${email}");
 
       final result = await Amplify.Auth.signIn(
         username: email.trim(),
@@ -59,29 +60,9 @@ class EmailViewModel extends BaseViewModel {
         ),
       );
       print("user login result : ${result}");
-      //
-      // navigationService.clearStackAndShow(Routes.otpVerifyView);
-      print("user login result : ${email}");
+
       navigationService
           .clearStackAndShowView(OtpVerifyView(email: email.trim()));
-      if (result.isSignedIn) {
-        Fluttertoast.showToast(msg: "Signed in successfully!");
-        navigationService.clearStackAndShow(Routes.otpVerifyView);
-        isSignedIn = true;
-        // navigationService.clearStackAndShow(Routes.homeView);
-      } else {
-        switch (result.nextStep.signInStep) {
-          case AuthSignInStep.confirmSignUp:
-            Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-            break;
-          case AuthSignInStep.confirmSignInWithCustomChallenge:
-            Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-            // showOtpDialog(context, email);
-            break;
-          default:
-            print("Unhandled sign-in step: ${result.nextStep.signInStep}");
-        }
-      }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error fdsf: ${e.message}");
@@ -107,10 +88,8 @@ class EmailViewModel extends BaseViewModel {
 
   void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
     safePrint(
-      'A confirmation code has been sent to ${codeDeliveryDetails
-          .destination}. '
-          'Please check your ${codeDeliveryDetails.deliveryMedium
-          .name} for the code.',
+      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
+      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
     );
   }
 
@@ -172,7 +151,7 @@ class EmailViewModel extends BaseViewModel {
               ),
               ListTile(
                 title:
-                const Text('Use Biometrics', textAlign: TextAlign.center),
+                    const Text('Use Biometrics', textAlign: TextAlign.center),
                 onTap: () async {
                   if (kDebugMode) {
                     print("Biometrics clicked");
@@ -209,7 +188,7 @@ class EmailViewModel extends BaseViewModel {
     }
 
     List<BiometricType> availableBiometrics =
-    await auth.getAvailableBiometrics();
+        await auth.getAvailableBiometrics();
     print("Available biometrics: $availableBiometrics");
 
     try {
@@ -253,6 +232,15 @@ class EmailViewModel extends BaseViewModel {
           biometricOnly: true,
           stickyAuth: true,
           useErrorDialogs: true,
+        ),
+      );
+
+      isAuthenticated = await auth.authenticate(
+        localizedReason:
+            'Scan your fingerprint (or face or whatever) to authenticate',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
         ),
       );
     } catch (e) {
