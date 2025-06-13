@@ -5,6 +5,7 @@ import 'package:music_app/app/app.dialogs.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/email/email_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
+
   runApp(const MainApp());
 }
 
@@ -48,6 +50,7 @@ class _MainAppState extends State<MainApp> {
     return MaterialApp(
       title: ksAppName,
       debugShowCheckedModeBanner: false,
+      home: const EmailView(),
       initialRoute: Routes.startupView,
       onGenerateRoute: StackedRouter().onGenerateRoute,
       navigatorKey: StackedService.navigatorKey,

@@ -2,10 +2,9 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:music_app/app/app.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
-import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -38,6 +37,9 @@ class PasswordViewModel extends BaseViewModel {
         Fluttertoast.showToast(msg: "Email is required!");
         return;
       }
+      CommonLoader.showLoader(context);
+      await Future.delayed(const Duration(seconds: 1));
+
       signOutGlobally();
       final result =
           await Amplify.Auth.signIn(username: email, password: password);

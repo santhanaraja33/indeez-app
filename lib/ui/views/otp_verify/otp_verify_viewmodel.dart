@@ -2,8 +2,12 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/changepassword/changepassword_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OtpVerifyViewModel extends BaseViewModel {
   final navigationService = locator<NavigationService>();
   bool isPassword = true;
+  final TextEditingController otpController = TextEditingController();
+
   final String email = '';
   void navigationToChangePassword() {
     navigationService.navigateToChangepasswordView();
@@ -22,37 +28,51 @@ class OtpVerifyViewModel extends BaseViewModel {
   }
 
   void showOtpDialog(BuildContext context, String otp, String email) async {
-    print("email str : ${otp}");
     if (otp.isEmpty) {
       Fluttertoast.showToast(msg: "Please enter OTP");
       return;
     }
     try {
-      signOutGlobally();
-      print("result email : ${email}");
+      CommonLoader.showLoader(context);
+      await Future.delayed(const Duration(seconds: 1));
 
-      email = 'amuthakumari.g@gmail.com';
-//forgot password flow
-      await saveString('otp', otp.trim());
-      navigationService.clearStackAndShow(Routes.changepasswordView);
+      bool? fromPage = await SharedPreferencesHelper.getFromPage(
+              ksSharedPreferenceFromSignupPage) ??
+          await SharedPreferencesHelper.getFromPage(ksSharedPreferenceFromPage);
 
-//normal sign in
-      // final result1 =
-      //     await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
-      // print("result : ${result1}");
-      // final result2 = await Amplify.Auth.fetchAuthSession();
-      // safePrint('User is signed in: ${result2.isSignedIn}');
-      // safePrint('User is signed in: ${result2}');
+      bool fromPage1 = await SharedPreferencesHelper.getFromPage(
+              ksSharedPreferenceFromForgotPasswordPage) ==
+          ksSharedPreferenceForgotPasswordWithOTP;
 
-      // if (result1.isSignedIn) {
-      //   Fluttertoast.showToast(msg: "Sign in confirmed!");
-      //   navigationService.clearStackAndShow(Routes.bottomBarView);
-      // } else {
-      //   Fluttertoast.showToast(msg: "Confirmation incomplete");
-      // }
+      safePrint('fromPage: ${fromPage}');
+      safePrint('fromPage1: ${fromPage1}');
+
+      if (fromPage == true || fromPage == true) {
+        //normal sign in
+        final result1 =
+            await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
+        final result2 = await Amplify.Auth.fetchAuthSession();
+        safePrint('User is signed in: ${result2}');
+
+        if (result1.isSignedIn) {
+          Fluttertoast.showToast(msg: "Sign in confirmed!");
+          navigationService.clearStackAndShow(Routes.bottomBarView);
+        } else {
+          Fluttertoast.showToast(msg: "Confirmation incomplete");
+        }
+        return;
+      }
+      if (fromPage1 == false) {
+        //forgot password flow
+        await saveString('otp', otp.trim());
+        // navigationService.clearStackAndShow(Routes.changepasswordView);
+        navigationService.clearStackAndShowView(ChangepasswordView(email, otp));
+      }
+      CommonLoader.hideLoader(context);
     } on AuthException catch (e) {
       print("error : ${e.message}");
       Fluttertoast.showToast(msg: e.message);
+      CommonLoader.hideLoader(context);
     }
   }
 

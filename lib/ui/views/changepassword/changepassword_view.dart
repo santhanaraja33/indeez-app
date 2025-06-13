@@ -6,7 +6,6 @@ import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked.dart';
-
 import 'changepassword_viewmodel.dart';
 
 class ChangepasswordView extends StackedView<ChangepasswordViewModel> {
@@ -93,6 +92,7 @@ class ChangepasswordView extends StackedView<ChangepasswordViewModel> {
                             '',
                             viewModel.cnfpasswordController.text,
                             '',
+                            context,
                           );
                         },
                         child: Text(

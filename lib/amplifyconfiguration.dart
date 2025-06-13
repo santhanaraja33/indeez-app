@@ -7,7 +7,6 @@ const amplifyconfig = ''' {
         "IdentityManager": {
           "Default": {}
         },
-
         "CognitoUserPool": {
           "Default": {
             "PoolId": "us-west-2_yQAnVLeIR",
@@ -32,10 +31,3 @@ const amplifyconfig = ''' {
     }
   }
 }''';
-
-/*
-amplify init
-amplify add auth
-# Select: Email based login
-amplify push
-*/

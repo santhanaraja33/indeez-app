@@ -1,5 +1,6 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
@@ -21,15 +22,13 @@ class ChangepasswordViewModel extends BaseViewModel {
     'Record Store',
   ];
   String? selectedValue;
-  Future<void> confirmNewPassword(
-      String email, String newPassword, String otp) async {
+  Future<void> confirmNewPassword(String email, String newPassword, String otp,
+      BuildContext context) async {
     email = 'amuthakumari.g@gmail.com';
-    print('Password $email');
-    print('Password $newPassword');
-    print('Password $otp');
 
     String? otp1 = await getString('otp');
-    print(otp1); // prints: amutha@example.com
+    CommonLoader.showLoader(context);
+    await Future.delayed(const Duration(seconds: 1));
 
     try {
       final result = await Amplify.Auth.confirmResetPassword(
