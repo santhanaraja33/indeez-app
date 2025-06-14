@@ -27,11 +27,61 @@ class OtpVerifyViewModel extends BaseViewModel {
     await prefs.setString(key, value);
   }
 
+  // void showOtpDialog(BuildContext context, String otp, String email) async {
+  //   if (otp.isEmpty) {
+  //     Fluttertoast.showToast(msg: "Please enter OTP");
+  //     return;
+  //   }
+  //   try {
+  //     CommonLoader.showLoader(context);
+  //     await Future.delayed(const Duration(seconds: 1));
+
+  //     bool? fromPage = await SharedPreferencesHelper.getFromPage(
+  //             ksSharedPreferenceFromSignupPage) ??
+  //         await SharedPreferencesHelper.getFromPage(ksSharedPreferenceFromPage);
+
+  //     bool fromPage1 = await SharedPreferencesHelper.getFromPage(
+  //             ksSharedPreferenceFromForgotPasswordPage) ==
+  //         ksSharedPreferenceForgotPasswordWithOTP;
+
+  //     safePrint('fromPage: ${fromPage}');
+  //     safePrint('fromPage1: ${fromPage1}');
+
+  //     if (fromPage == true || fromPage == true) {
+  //       //normal sign in
+  //       final result1 =
+  //           await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
+  //       final result2 = await Amplify.Auth.fetchAuthSession();
+  //       safePrint('User is signed in: ${result2}');
+
+  //       if (result1.isSignedIn) {
+  //         Fluttertoast.showToast(msg: "Sign in confirmed!");
+  //         navigationService.clearStackAndShow(Routes.bottomBarView);
+  //       } else {
+  //         Fluttertoast.showToast(msg: "Confirmation incomplete");
+  //       }
+  //       return;
+  //     }
+  //     if (fromPage1 == false) {
+  //       //forgot password flow
+  //       await saveString('otp', otp.trim());
+  //       // navigationService.clearStackAndShow(Routes.changepasswordView);
+  //       navigationService.clearStackAndShowView(ChangepasswordView(email, otp));
+  //     }
+  //     CommonLoader.hideLoader(context);
+  //   } on AuthException catch (e) {
+  //     print("error : ${e.message}");
+  //     Fluttertoast.showToast(msg: e.message);
+  //     CommonLoader.hideLoader(context);
+  //   }
+  // }
+
   void showOtpDialog(BuildContext context, String otp, String email) async {
     if (otp.isEmpty) {
       Fluttertoast.showToast(msg: "Please enter OTP");
       return;
     }
+
     try {
       CommonLoader.showLoader(context);
       await Future.delayed(const Duration(seconds: 1));
@@ -40,19 +90,22 @@ class OtpVerifyViewModel extends BaseViewModel {
               ksSharedPreferenceFromSignupPage) ??
           await SharedPreferencesHelper.getFromPage(ksSharedPreferenceFromPage);
 
-      bool fromPage1 = await SharedPreferencesHelper.getFromPage(
-              ksSharedPreferenceFromForgotPasswordPage) ==
-          ksSharedPreferenceForgotPasswordWithOTP;
+      var forgotPageValue = await SharedPreferencesHelper.getFromPage(
+          ksSharedPreferenceFromForgotPasswordPage);
 
-      safePrint('fromPage: ${fromPage}');
-      safePrint('fromPage1: ${fromPage1}');
+      bool isForgotPasswordFlow =
+          forgotPageValue == ksSharedPreferenceForgotPasswordWithOTP;
 
-      if (fromPage == true || fromPage == true) {
-        //normal sign in
+      safePrint('fromPage: $fromPage');
+      safePrint('isForgotPasswordFlow: $isForgotPasswordFlow');
+
+      if (fromPage == true) {
         final result1 =
             await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
         final result2 = await Amplify.Auth.fetchAuthSession();
-        safePrint('User is signed in: ${result2}');
+        safePrint('User is signed in: $result2');
+
+        CommonLoader.hideLoader(context); // 🔧 Important to hide loader
 
         if (result1.isSignedIn) {
           Fluttertoast.showToast(msg: "Sign in confirmed!");
@@ -62,16 +115,23 @@ class OtpVerifyViewModel extends BaseViewModel {
         }
         return;
       }
-      if (fromPage1 == false) {
-        //forgot password flow
+
+      if (!isForgotPasswordFlow) {
         await saveString('otp', otp.trim());
-        // navigationService.clearStackAndShow(Routes.changepasswordView);
-        navigationService.clearStackAndShowView(ChangepasswordView(email, otp));
+        CommonLoader.hideLoader(context); // 🔧 Hide loader before navigating
+        navigationService.clearStackAndShowView(
+            ChangepasswordView(email, otp)); // check this constructor
+        return;
       }
+
       CommonLoader.hideLoader(context);
     } on AuthException catch (e) {
       print("error : ${e.message}");
       Fluttertoast.showToast(msg: e.message);
+      CommonLoader.hideLoader(context);
+    } catch (e) {
+      print("Unexpected error: $e");
+      Fluttertoast.showToast(msg: "Something went wrong!");
       CommonLoader.hideLoader(context);
     }
   }

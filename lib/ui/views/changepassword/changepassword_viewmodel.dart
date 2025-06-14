@@ -1,7 +1,10 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
+import 'package:music_app/app/app.router.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -24,7 +27,7 @@ class ChangepasswordViewModel extends BaseViewModel {
   String? selectedValue;
   Future<void> confirmNewPassword(String email, String newPassword, String otp,
       BuildContext context) async {
-    email = 'amuthakumari.g@gmail.com';
+    email = 'santhanaraja330@gmail.com';
 
     String? otp1 = await getString('otp');
     CommonLoader.showLoader(context);
@@ -38,7 +41,15 @@ class ChangepasswordViewModel extends BaseViewModel {
       );
       print('Password reset result: $result');
 
-      print('Password reset successful');
+      Fluttertoast.showToast(msg: 'Password reset successful');
+
+      navigationService.clearStackAndShow(Routes.passwordView);
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      Fluttertoast.cancel();
+
+      Fluttertoast.showToast(msg: 'Login with new password');
     } on AuthException catch (e) {
       print('Error: ${e.message}');
     } // navigationService.navigateToPasswordView();

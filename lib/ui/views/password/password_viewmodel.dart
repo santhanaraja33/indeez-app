@@ -95,7 +95,6 @@ class PasswordViewModel extends BaseViewModel {
 
       print("password ${password}");
 
-<<<<<<< HEAD
       if (result.isSignedIn) {
         Fluttertoast.showToast(msg: "Signed in successfully!");
         isSignedIn = true;
@@ -113,54 +112,6 @@ class PasswordViewModel extends BaseViewModel {
           default:
             print("Unhandled sign-in step: ${result.nextStep.signInStep}");
         }
-=======
-      switch (result.nextStep.signInStep) {
-        case AuthSignInStep.confirmSignInWithSmsMfaCode:
-          final codeDeliveryDetails = result.nextStep.codeDeliveryDetails!;
-          _handleCodeDelivery(codeDeliveryDetails);
-          break;
-        case AuthSignInStep.confirmSignInWithNewPassword:
-          safePrint('Enter a new password to continue signing in');
-          break;
-        case AuthSignInStep.confirmSignInWithCustomChallenge:
-          final parameters = result.nextStep.additionalInfo;
-          final prompt = parameters['prompt']!;
-          safePrint(prompt);
-          break;
-
-        case AuthSignInStep.done:
-          safePrint('Sign in is complete');
-          fetchAuthSession();
-          fetchCognitoAuthSession();
-          challengeHint = result.nextStep.additionalInfo['hint'];
-          safePrint('User is signed in: ${challengeHint}');
-
-          break;
-        case AuthSignInStep.continueSignInWithMfaSelection:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.continueSignInWithMfaSetupSelection:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.continueSignInWithTotpSetup:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.continueSignInWithEmailMfaSetup:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.confirmSignInWithTotpMfaCode:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.confirmSignInWithOtpCode:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.resetPassword:
-          // TODO: Handle this case.
-          throw UnimplementedError();
-        case AuthSignInStep.confirmSignUp:
-          // TODO: Handle this case.
-          throw UnimplementedError();
->>>>>>> upstream/main
       }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);

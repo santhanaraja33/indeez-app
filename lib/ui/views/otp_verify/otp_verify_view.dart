@@ -31,7 +31,7 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal:
-                    MediaQuery.of(context).size.width * 0.05, // 5% of width
+                    MediaQuery.of(context).size.width * 0.015, // 5% of width
                 vertical:
                     MediaQuery.of(context).size.height * 0.02, // 2% of height
               ),
@@ -46,37 +46,33 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  OtpTextField(
-                    textStyle: GoogleFonts.lato(
-                      fontSize: size_16,
-                      fontWeight: FontWeight.bold,
-                      color: kcWhite,
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width *
+                          0.9, // 90% of screen width
+                      child: OtpTextField(
+                        textStyle: GoogleFonts.lato(
+                          fontSize: size_16,
+                          fontWeight: FontWeight.bold,
+                          color: kcWhite,
+                        ),
+                        keyboardType: TextInputType.number,
+                        fieldWidth: 46,
+                        fieldHeight: 50,
+                        numberOfFields: 6,
+                        borderColor: const Color(0xFF512DA8),
+                        showFieldAsBox: true,
+                        onCodeChanged: (String code) {},
+                        onSubmit: (String verificationCode) async {
+                          FocusScope.of(context).unfocus();
+                          verifyCode = verificationCode;
+                          await SharedPreferencesHelper.saveOTP(
+                            ksSharedPreferenceOTP,
+                            verifyCode,
+                          );
+                        },
+                      ),
                     ),
-                    keyboardType: TextInputType.number,
-                    fieldWidth: 50,
-                    fieldHeight: 50,
-                    numberOfFields: 6,
-                    borderColor: const Color(0xFF512DA8),
-                    //set to true to show as box or false to show as dash
-                    showFieldAsBox: true,
-                    //runs when a code is typed in
-                    onCodeChanged: (String code) {
-                      //handle validation or checks here
-                    },
-
-                    //runs when every textfield is filled
-                    onSubmit: (String verificationCode) async {
-                      // verifyCode = verificationCode;
-                      FocusScope.of(context)
-                          .unfocus(); // ✅ Hide keyboard when done
-                      verifyCode = verificationCode;
-                      await SharedPreferencesHelper.saveOTP(
-                          ksSharedPreferenceOTP, verifyCode);
-                      // Handle the OTP submission
-                      // Optionally, you can navigate to another view or perform other actions
-                      // For example:
-                      // Navigator.pushNamed(context, '/nextView');
-                    }, // end onSubmit
                   ),
                   const SizedBox(
                     height: height_20,

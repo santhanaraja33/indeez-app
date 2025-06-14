@@ -258,9 +258,6 @@ class EmailViewModel extends ChangeNotifier {
         ),
       );
 
-<<<<<<< HEAD
-      Fluttertoast.showToast(msg: "Authentication Successfully");
-=======
       isAuthenticated = await auth.authenticate(
         localizedReason:
             'Scan your fingerprint (or face or whatever) to authenticate',
@@ -269,7 +266,6 @@ class EmailViewModel extends ChangeNotifier {
           biometricOnly: true,
         ),
       );
->>>>>>> upstream/main
     } catch (e) {
       // setState(() {
       _message = "Error: $e";
