@@ -1,10 +1,10 @@
-import 'dart:math';
-
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -20,27 +20,10 @@ class ForgotpasswordViewModel extends BaseViewModel {
       Fluttertoast.showToast(msg: "Email is required!");
       return;
     }
-    print("user login result : ${email}");
     final result1 = await Amplify.Auth.resetPassword(username: email.trim());
-
+    await SharedPreferencesHelper.saveFromPage(
+        ksSharedPreferenceFromForgotPasswordPage, false);
     print("user login result : ${result1}");
     navigationService.clearStackAndShow(Routes.otpVerifyView);
-
-    // switch (result1.nextStep.updateStep) {
-    //   case AuthResetPasswordStep.confirmResetPasswordWithCode:
-    //     final codeDeliveryDetails = result1.nextStep.codeDeliveryDetails!;
-    //     _handleCodeDelivery(codeDeliveryDetails);
-    //     print("ucodeDeliveryDetails : ${codeDeliveryDetails}");
-
-    //   case AuthResetPasswordStep.done:
-    //     safePrint('Successfully reset password');
-    // }
-  }
-
-  void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
-    safePrint(
-      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
-      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
-    );
   }
 }

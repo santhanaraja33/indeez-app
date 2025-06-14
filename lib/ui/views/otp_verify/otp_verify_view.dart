@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
@@ -10,7 +11,9 @@ import 'package:stacked/stacked.dart';
 import 'otp_verify_viewmodel.dart';
 
 class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
-  const OtpVerifyView({Key? key, required String email}) : super(key: key);
+  final String email;
+
+  const OtpVerifyView({Key? key, required this.email}) : super(key: key);
 
   @override
   Widget builder(
@@ -26,8 +29,12 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
           children: [
             const AppCommonBGImage(),
             Padding(
-              padding:
-                  const EdgeInsets.only(left: padding_10, right: padding_10),
+              padding: EdgeInsets.symmetric(
+                horizontal:
+                    MediaQuery.of(context).size.width * 0.05, // 5% of width
+                vertical:
+                    MediaQuery.of(context).size.height * 0.02, // 2% of height
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -45,7 +52,9 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                       fontWeight: FontWeight.bold,
                       color: kcWhite,
                     ),
-                    fieldWidth: width_60,
+                    keyboardType: TextInputType.number,
+                    fieldWidth: 50,
+                    fieldHeight: 50,
                     numberOfFields: 6,
                     borderColor: const Color(0xFF512DA8),
                     //set to true to show as box or false to show as dash
@@ -53,13 +62,16 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                     //runs when a code is typed in
                     onCodeChanged: (String code) {
                       //handle validation or checks here
-                      print("Entered code: $code");
-                      verifyCode = code;
                     },
-                    //runs when every textfield is filled
-                    onSubmit: (String verificationCode) {
-                      verifyCode = verificationCode;
 
+                    //runs when every textfield is filled
+                    onSubmit: (String verificationCode) async {
+                      // verifyCode = verificationCode;
+                      FocusScope.of(context)
+                          .unfocus(); // ✅ Hide keyboard when done
+                      verifyCode = verificationCode;
+                      await SharedPreferencesHelper.saveOTP(
+                          ksSharedPreferenceOTP, verifyCode);
                       // Handle the OTP submission
                       // Optionally, you can navigate to another view or perform other actions
                       // For example:
@@ -86,9 +98,12 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                     children: [
                       const Spacer(),
                       TextButton(
-                        onPressed: () {
-                          viewModel.showOtpDialog(
-                              context, verifyCode, viewModel.email);
+                        onPressed: () async {
+                          print("Entered verifyCode: $verifyCode");
+                          verifyCode = await SharedPreferencesHelper.getOTP(
+                                  ksSharedPreferenceOTP) ??
+                              '';
+                          viewModel.showOtpDialog(context, verifyCode, email);
                         },
                         child: Text(
                           ksNEXT,

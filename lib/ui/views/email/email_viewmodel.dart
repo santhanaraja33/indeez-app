@@ -3,18 +3,31 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:music_app/app/app.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
-import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:local_auth/local_auth.dart';
 
-class EmailViewModel extends BaseViewModel {
+class EmailViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  void fetchData() async {
+    isLoading = true;
+    notifyListeners();
+
+    await Future.delayed(Duration(seconds: 2)); // simulate API call
+
+    isLoading = false;
+    notifyListeners();
+  }
 
   final navigationService = locator<NavigationService>();
   bool isPassword = true;
@@ -30,7 +43,6 @@ class EmailViewModel extends BaseViewModel {
 
   void isPasswordShow() {
     isPassword = !isPassword;
-    rebuildUi();
   }
 
   void navigationToForgotPassword() {
@@ -48,7 +60,16 @@ class EmailViewModel extends BaseViewModel {
         Fluttertoast.showToast(msg: "Please enter a valid email address.");
         return;
       }
+      if (isLoading) {
+        Fluttertoast.showToast(msg: "Please wait, loading...");
+        return;
+      }
+      CommonLoader.showLoader(context);
+      await Future.delayed(const Duration(seconds: 1));
+
       signOutGlobally();
+
+      print("user login result : ${email}");
 
       final result = await Amplify.Auth.signIn(
         username: email.trim(),
@@ -59,29 +80,11 @@ class EmailViewModel extends BaseViewModel {
         ),
       );
       print("user login result : ${result}");
-      //
-      // navigationService.clearStackAndShow(Routes.otpVerifyView);
-      print("user login result : ${email}");
+      await SharedPreferencesHelper.saveFromPage(
+          ksSharedPreferenceFromPage, true);
+
       navigationService
           .clearStackAndShowView(OtpVerifyView(email: email.trim()));
-      if (result.isSignedIn) {
-        Fluttertoast.showToast(msg: "Signed in successfully!");
-        navigationService.clearStackAndShow(Routes.otpVerifyView);
-        isSignedIn = true;
-        // navigationService.clearStackAndShow(Routes.homeView);
-      } else {
-        switch (result.nextStep.signInStep) {
-          case AuthSignInStep.confirmSignUp:
-            Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-            break;
-          case AuthSignInStep.confirmSignInWithCustomChallenge:
-            Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-            // showOtpDialog(context, email);
-            break;
-          default:
-            print("Unhandled sign-in step: ${result.nextStep.signInStep}");
-        }
-      }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error fdsf: ${e.message}");
@@ -255,7 +258,18 @@ class EmailViewModel extends BaseViewModel {
         ),
       );
 
+<<<<<<< HEAD
       Fluttertoast.showToast(msg: "Authentication Successfully");
+=======
+      isAuthenticated = await auth.authenticate(
+        localizedReason:
+            'Scan your fingerprint (or face or whatever) to authenticate',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+>>>>>>> upstream/main
     } catch (e) {
       // setState(() {
       _message = "Error: $e";

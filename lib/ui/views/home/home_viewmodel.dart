@@ -19,7 +19,6 @@ class HomeViewModel extends BaseViewModel {
   popupPhotoUploadNavigation(BuildContext context) async {
     showCupertinoModalPopup(
         context: context, builder: (context) => const BottomPopupView());
-
     rebuildUi();
   }
 

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -84,10 +88,12 @@ class SignupViewModel extends BaseViewModel {
 
       // Phone number basic validation
       final phoneRegex = RegExp(r'^\+\d{10,15}$');
-      if (!phoneRegex.hasMatch(phone)) {
-        Fluttertoast.showToast(msg: "Phone must be in 10 digits");
-        return;
-      }
+      // if (!phoneRegex.hasMatch(phone)) {
+      //   Fluttertoast.showToast(msg: "Phone must be in 10 digits");
+      //   return;
+      // }
+      CommonLoader.showLoader(context);
+      await Future.delayed(const Duration(seconds: 1));
 
       final result = await Amplify.Auth.signUp(
         username: email,
@@ -105,17 +111,49 @@ class SignupViewModel extends BaseViewModel {
       if (result.isSignUpComplete) {
         Fluttertoast.showToast(msg: "Sign up complete!");
       } else {
-        Fluttertoast.showToast(msg: "OTP sent to your email or phone");
-        showOtpDialog(context, email);
+        Fluttertoast.showToast(msg: "OTP sent to your email");
+        // showOtpDialog(context, email);
+        await SharedPreferencesHelper.saveFromPage(
+            ksSharedPreferenceFromSignupPage, true);
+
+        navigationService
+            .clearStackAndShowView(OtpVerifyView(email: email.trim()));
       }
+      CommonLoader.hideLoader(context);
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-up error: ${e.message}");
+      CommonLoader.hideLoader(context);
     }
   }
 
 //Validate
   bool validatePasswordAndProceed() {
+    final fName = firstNameController.text.trim();
+    final lName = lastNameController.text.trim();
+
+    if (fName.isEmpty || lName.isEmpty) {
+      Fluttertoast.showToast(msg: "First and Last name are required!");
+      return false;
+    }
+
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
+      Fluttertoast.showToast(msg: "Email is required!");
+      return false;
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      Fluttertoast.showToast(msg: "Invalid email format!");
+      return false;
+    }
+
+    final phone = phoneController.text.trim();
+    if (phone.isEmpty) {
+      Fluttertoast.showToast(msg: "Phone number is required!");
+      return false;
+    } else if (!RegExp(r'^\+\d{10,15}$').hasMatch(phone)) {
+      Fluttertoast.showToast(msg: "Phone must be in 10 digits");
+      return false;
+    }
     final password = passwordController.text.trim();
     final confirmPassword = cnfpasswordController.text.trim();
 
@@ -174,6 +212,15 @@ class SignupViewModel extends BaseViewModel {
                     username: email,
                     confirmationCode: otp,
                   );
+                  safePrint('User is signup : ${result}');
+
+                  try {
+                    final result = await Amplify.Auth.fetchAuthSession();
+                    safePrint('User is signed in: ${result.isSignedIn}');
+                    safePrint('User is signed in: ${result}');
+                  } on AuthException catch (e) {
+                    safePrint('Error retrieving auth session: ${e.message}');
+                  }
 
                   if (result.isSignUpComplete) {
                     Fluttertoast.showToast(msg: "Sign-up confirmed!");

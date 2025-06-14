@@ -6,11 +6,12 @@ import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked.dart';
-
 import 'changepassword_viewmodel.dart';
 
 class ChangepasswordView extends StackedView<ChangepasswordViewModel> {
-  const ChangepasswordView({Key? key}) : super(key: key);
+  final String? email;
+  final String? otp;
+  const ChangepasswordView(this.email, this.otp, {Key? key}) : super(key: key);
 
   @override
   Widget builder(
@@ -38,6 +39,7 @@ class ChangepasswordView extends StackedView<ChangepasswordViewModel> {
                     ),
                   ),
                   AppCommonTextfield(
+                    controller: viewModel.passwordController,
                     obscureText: viewModel.isPassword,
                     keyboardType: TextInputType.streetAddress,
                     label: Text(
@@ -61,6 +63,7 @@ class ChangepasswordView extends StackedView<ChangepasswordViewModel> {
                     height: height_10,
                   ),
                   AppCommonTextfield(
+                    controller: viewModel.cnfpasswordController,
                     obscureText: viewModel.isConfirmPassword,
                     keyboardType: TextInputType.streetAddress,
                     label: Text(
@@ -85,7 +88,12 @@ class ChangepasswordView extends StackedView<ChangepasswordViewModel> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          viewModel.navigationToPasswordView();
+                          viewModel.confirmNewPassword(
+                            '',
+                            viewModel.cnfpasswordController.text,
+                            '',
+                            context,
+                          );
                         },
                         child: Text(
                           ksSubmit,

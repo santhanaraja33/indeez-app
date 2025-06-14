@@ -83,6 +83,17 @@ const String unBlockAccount = 'Un Block Account';
 const String ksChangeProfile = 'Change Profile';
 //User Profile
 
+const String ksSharedPreferenceOTP = 'otp';
+const String ksSharedPreferenceEmail = 'email';
+const String ksSharedPreferenceFromPage = 'email';
+const String ksSharedPreferenceEmailWithOTP = 'EmailWithOTP';
+
+const String ksSharedPreferenceFromForgotPasswordPage = 'ForgotPasswordPage';
+const String ksSharedPreferenceForgotPasswordWithOTP = 'ForgotPasswordOTP';
+
+const String ksSharedPreferenceFromSignupPage = 'SignupPage';
+const String ksSharedPreferenceSignupWithOTP = 'true';
+
 const String ksUserProfile =
     'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg';
 
