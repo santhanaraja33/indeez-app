@@ -2,14 +2,18 @@ import 'dart:convert';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as ApiService;
 import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/core/api/api_constants.dart';
+import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/password/model/password_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -100,7 +104,7 @@ class PasswordViewModel extends BaseViewModel {
 
       print("password ${password}");
 
-      loginAPICall(context, email, password);
+      loginUser(email, password);
 
       if (result.isSignedIn) {
         Fluttertoast.showToast(msg: "Signed in successfully!");
@@ -286,31 +290,57 @@ class PasswordViewModel extends BaseViewModel {
     );
   }
 
-  Future<Map<String, String>> loginAPICall(
-      BuildContext context, String email, String password) async {
-    try {
-      final url = Uri.parse(ApiConstants.baseUrl); // Replace with your API
+  Future<void> loginUser(String email, String password) async {
+    final dio = Dio();
 
-      safePrint("Login API URL: $url");
-      Map<String, dynamic> loginPayload = {
-        "AuthParameters": {"USERNAME": email, "PASSWORD": password},
-        "AuthFlow": "USER_PASSWORD_AUTH",
-        "ClientId": ksAWSClientId,
-      };
-      safePrint(loginPayload);
-      final response = await http.post(
+    const String url =
+        'https://cognito-idp.us-west-2.amazonaws.com'; // full URL
+
+    final Map<String, dynamic> loginPayload = {
+      "AuthParameters": {
+        "USERNAME": "amuthakumari.g@gmail.com",
+        "PASSWORD": "32132Test@"
+      },
+      "AuthFlow": "USER_PASSWORD_AUTH",
+      "ClientId": "gcdvf03t4358m5kvu1ckrkd9g"
+    };
+//application/x-amz-json-1.1
+    final headers = {
+      'Content-Type': 'application/x-amz-json-1.1',
+      'X-Amz-Target':
+          'AWSCognitoIdentityProviderService.InitiateAuth', // ✅ Correct value
+    };
+
+    try {
+      dio.interceptors
+          .add(LogInterceptor(requestBody: true, responseBody: true));
+
+      final response = await dio.post(
         url,
-        headers: {
-          "Content-Type": "application/x-amz-json-1.1",
-          "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
-        },
-        body: jsonEncode(loginPayload),
+        data: loginPayload,
+        options: Options(
+          headers: headers,
+          sendTimeout: const Duration(seconds: 3000),
+          receiveTimeout: const Duration(seconds: 3000),
+        ),
       );
-      print("Success: ${response.body}");
-      safePrint("Response status: ${response.statusCode}");
+
+      print('Login Success: ${response.statusCode}');
+      print('✅ Login Success: ${response.data}');
+      final model = PasswordModel.fromJson(response.data);
+      print('Access Token: ${model.authenticationResult.accessToken}');
+
+      final loginModel = PasswordModel.fromJson(response.data);
+      print(loginModel.authenticationResult.accessToken);
+
       if (response.statusCode == 200) {
-        print("Success: ${response.body}");
-        final responseData = jsonDecode(response.body);
+        final responseData = response.data;
+
+        if (responseData is List) {
+          print(responseData[0]); // ✅ Access by index if it’s a list
+        } else if (responseData is Map) {
+          print(responseData['message']); // ✅ Access by key if it's a map
+        }
         if (responseData['AuthenticationResult'] != null) {
           final authResult = responseData['AuthenticationResult'];
           final accessToken = authResult['AccessToken'];
@@ -330,10 +360,63 @@ class PasswordViewModel extends BaseViewModel {
       } else {
         print("Failed: ${response.statusCode}");
       }
-    } on AuthException catch (e) {
-      Fluttertoast.showToast(msg: e.message);
+    } catch (e) {
+      if (e is DioException) {
+        print('Login Failed: ${e.response?.data}');
+      } else {
+        print('Unexpected error: $e');
+      }
     }
-    // Return an empty map or throw as appropriate
-    return <String, String>{};
   }
+
+  // Future<Map<String, String>> loginAPICall(
+  //     BuildContext context, String email, String password) async {
+  //   try {
+  //     final url = Uri.parse(ApiConstants.loginAWSUrl); // Replace with your API
+
+  //     safePrint("Login API URL: $url");
+  //     Map<String, dynamic> loginPayload = {
+  //       "AuthParameters": {"USERNAME": email, "PASSWORD": password},
+  //       "AuthFlow": "USER_PASSWORD_AUTH",
+  //       "ClientId": ksAWSClientId,
+  //     };
+  //     safePrint(loginPayload);
+  //     final response = await http.post(
+  //       url,
+  //       headers: {
+  //         "Content-Type": "application/x-amz-json-1.1",
+  //         "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
+  //       },
+  //       body: jsonEncode(loginPayload),
+  //     );
+  //     print("Success: ${response.body}");
+  //     safePrint("Response status: ${response.statusCode}");
+  //     if (response.statusCode == 200) {
+  //       print("Success: ${response.body}");
+  //       final responseData = jsonDecode(response.body);
+  //       if (responseData['AuthenticationResult'] != null) {
+  //         final authResult = responseData['AuthenticationResult'];
+  //         final accessToken = authResult['AccessToken'];
+  //         final idToken = authResult['IdToken'];
+  //         final refreshToken = authResult['RefreshToken'];
+
+  //         // Store tokens securely or use them as needed
+  //         safePrint("Access Token: $accessToken");
+  //         safePrint("ID Token: $idToken");
+  //         safePrint("Refresh Token: $refreshToken");
+
+  //         // Optionally, navigate to the home view or perform other actions
+  //         // navigationService.clearStackAndShow(Routes.homeView);
+  //       } else {
+  //         Fluttertoast.showToast(msg: "Login failed. Please try again.");
+  //       }
+  //     } else {
+  //       print("Failed: ${response.statusCode}");
+  //     }
+  //   } on AuthException catch (e) {
+  //     Fluttertoast.showToast(msg: e.message);
+  //   }
+  //   // Return an empty map or throw as appropriate
+  //   return <String, String>{};
+  // }
 }

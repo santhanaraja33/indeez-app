@@ -22,4 +22,14 @@ class SharedPreferencesHelper {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(key);
   }
+
+  static Future<bool> saveAccessToken(String key, String accessToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.setString(key, accessToken);
+  }
+
+  static Future<String?> getAccessToken(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
 }
