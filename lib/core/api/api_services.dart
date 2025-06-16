@@ -3,39 +3,56 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/core/api/api_constants.dart';
+import 'package:music_app/core/model/auth_response.dart';
 
 class ApiService {
   // ignore: non_constant_identifier_names
   static final Dio _dio = Dio(BaseOptions(
-    baseUrl: ApiConstants.loginAWSUrl, // Update to your region
-    connectTimeout: const Duration(seconds: 3000),
-    receiveTimeout: const Duration(seconds: 3000),
+    baseUrl: ApiConstants.loginAWSUrl,
+    connectTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
     headers: {
       'Content-Type': 'application/x-amz-json-1.1',
       'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
     },
   ));
 
-  Future<void> loginWithDio(
-      {required String endpoint, required Map<String, dynamic> data}) async {
+  Future<AuthResponse?> loginWithDio({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
     try {
       final response = await _dio.post(
         endpoint,
-        data: data,
+        data: jsonEncode(data),
         options: Options(
-          contentType: Headers.jsonContentType, // "application/json"
+          contentType: 'application/x-amz-json-1.1',
         ),
       );
 
-      print('Login Success: ${response.data}');
+      print('Raw Response: ${response.data}');
+
+      // If Dio gives a string, decode it
+      final decodedData =
+          response.data is String ? jsonDecode(response.data) : response.data;
+
+      if (decodedData is Map<String, dynamic> &&
+          decodedData.containsKey("AuthenticationResult")) {
+        return AuthResponse.fromJson(decodedData);
+      }
+
+      print("Unexpected response structure: $decodedData");
+      return null;
     } catch (e) {
       if (e is DioException) {
         print('Login Failed: ${e.response?.data}');
       } else {
         print('Unexpected error: $e');
       }
+      return null;
     }
   }
+
   // static Future<Response> post(String endpoint, dynamic data) async {
   //   try {
   //     final response = await _dio.post(endpoint, data: data);
