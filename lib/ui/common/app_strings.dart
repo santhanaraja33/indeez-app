@@ -94,6 +94,9 @@ const String ksSharedPreferenceForgotPasswordWithOTP = 'ForgotPasswordOTP';
 const String ksSharedPreferenceFromSignupPage = 'SignupPage';
 const String ksSharedPreferenceSignupWithOTP = 'true';
 
+const String ksAWSClientId = 'gcdvf03t4358m5kvu1ckrkd9g';
+const String AWSUserPoolId = 'us-east-1_2b3c4d5e6f';
+
 const String ksUserProfile =
     'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg';
 

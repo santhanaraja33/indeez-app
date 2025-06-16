@@ -23,7 +23,8 @@ import 'package:music_app/ui/views/home/home_view.dart' as _i2;
 import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart' as _i8;
 import 'package:music_app/ui/views/notification/notification_view.dart' as _i21;
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart' as _i13;
-import 'package:music_app/ui/views/password/password_view.dart' as _i4;
+import 'package:music_app/ui/views/password/presentation/password_view.dart'
+    as _i4;
 import 'package:music_app/ui/views/paylist_popup/paylist_popup_view.dart'
     as _i18;
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart' as _i15;

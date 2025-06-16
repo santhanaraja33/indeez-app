@@ -7,7 +7,7 @@ import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
-import 'password_viewmodel.dart';
+import '../view_model/password_viewmodel.dart';
 
 class PasswordView extends StackedView<PasswordViewModel> {
   const PasswordView({Key? key}) : super(key: key);
@@ -72,7 +72,9 @@ class PasswordView extends StackedView<PasswordViewModel> {
                       backgroundColor: kcButtonColr,
                       onPressed: () {
                         final email = viewModel.emailController.text.trim();
-                        viewModel.handleSignInWithOTP(context, email);
+                        // viewModel.handleSignInWithOTP(context, email);
+                        viewModel.handleSignIn(context, email,
+                            viewModel.passwordController.text.trim());
                       },
                       buttonName: ksSignIn,
                     ),

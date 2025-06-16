@@ -23,7 +23,7 @@ class EmailViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await Future.delayed(Duration(seconds: 2)); // simulate API call
+    await Future.delayed(const Duration(seconds: 2)); // simulate API call
 
     isLoading = false;
     notifyListeners();
