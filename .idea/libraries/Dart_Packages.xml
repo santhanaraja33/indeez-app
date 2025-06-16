@@ -306,7 +306,7 @@
         <entry key="drift">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/drift-2.26.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/drift-2.27.0/lib" />
             </list>
           </value>
         </entry>
@@ -1342,7 +1342,7 @@
         <entry key="watcher">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/watcher-1.1.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/watcher-1.1.2/lib" />
             </list>
           </value>
         </entry>
@@ -1370,7 +1370,7 @@
         <entry key="win32">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.13.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.14.0/lib" />
             </list>
           </value>
         </entry>
@@ -1454,7 +1454,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dart_style-2.3.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus-11.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/drift-2.26.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/drift-2.27.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dropdown_button2-2.3.9/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/email_validator-2.1.17/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/emoji_selector-0.0.6/lib" />
@@ -1597,11 +1597,11 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/uuid-4.5.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-15.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/watcher-1.1.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/watcher-1.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-1.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-3.0.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.13.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.14.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32_registry-2.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/worker_bee-0.3.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0/lib" />

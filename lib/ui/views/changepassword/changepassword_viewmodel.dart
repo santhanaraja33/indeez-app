@@ -27,9 +27,10 @@ class ChangepasswordViewModel extends BaseViewModel {
   String? selectedValue;
   Future<void> confirmNewPassword(String email, String newPassword, String otp,
       BuildContext context) async {
-    email = 'santhanaraja330@gmail.com';
+    email = 'amuthakumari.g@gmail.com';
 
     String? otp1 = await getString('otp');
+    
     CommonLoader.showLoader(context);
     await Future.delayed(const Duration(seconds: 1));
 
@@ -40,6 +41,7 @@ class ChangepasswordViewModel extends BaseViewModel {
         confirmationCode: otp1 ?? '',
       );
       print('Password reset result: $result');
+      print('Password reset result: $otp');
 
       Fluttertoast.showToast(msg: 'Password reset successful');
 
