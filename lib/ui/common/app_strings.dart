@@ -8,6 +8,8 @@ const String ksZipcode = 'Zip code';
 const String ksNEXT = 'NEXT';
 const String ksOTP = 'GET OTP';
 
+const String ksAccessToekn = 'AccessToken';
+
 const String ksIAgreeToThe = 'I agree to the';
 const String ksTermsConditions = 'Terms & Conditions';
 const String ksREACTIONS = 'REACTIONS';

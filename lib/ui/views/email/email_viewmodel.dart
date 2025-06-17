@@ -8,6 +8,7 @@ import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/home/home_view.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:email_validator/email_validator.dart';
@@ -82,9 +83,11 @@ class EmailViewModel extends ChangeNotifier {
       print("user login result : ${result}");
       await SharedPreferencesHelper.saveFromPage(
           ksSharedPreferenceFromPage, true);
-
-      navigationService
-          .clearStackAndShowView(OtpVerifyView(email: email.trim()));
+      navigationService.clearStackAndShowView(OtpVerifyView(
+        email: email.trim(),
+      ));
+      // navigationService
+      //     .clearStackAndShowView(OtpVerifyView(email: email.trim()));
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error fdsf: ${e.message}");

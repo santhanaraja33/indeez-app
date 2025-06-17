@@ -32,7 +32,7 @@ import 'package:music_app/ui/views/search/search_view.dart' as _i19;
 import 'package:music_app/ui/views/search_details/search_details_view.dart'
     as _i20;
 import 'package:music_app/ui/views/shop/shop_view.dart' as _i11;
-import 'package:music_app/ui/views/signup/signup_view.dart' as _i5;
+import 'package:music_app/ui/views/signup/presentation/signup_view.dart' as _i5;
 import 'package:music_app/ui/views/startup/startup_view.dart' as _i3;
 import 'package:music_app/ui/views/swipe/swipe_view.dart' as _i9;
 import 'package:music_app/ui/views/userprofile/userprofile_view.dart' as _i16;

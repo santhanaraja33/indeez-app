@@ -16,6 +16,7 @@ import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/password/model/password_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 
 class PasswordViewModel extends BaseViewModel {
   final TextEditingController emailController = TextEditingController();
@@ -100,33 +101,32 @@ class PasswordViewModel extends BaseViewModel {
           await Amplify.Auth.signIn(username: email, password: password);
       print("user login result : ${result}");
 
-      // print("user login result : ${result1}");
-
-      print("password ${password}");
-
-      loginUser(email, password);
-
       if (result.isSignedIn) {
         Fluttertoast.showToast(msg: "Signed in successfully!");
         isSignedIn = true;
-        // navigationService.clearStackAndShow(Routes.homeView);
+        loginAPI(email, password);
+        CommonLoader.hideLoader(context);
       } else {
         switch (result.nextStep.signInStep) {
           case AuthSignInStep.confirmSignUp:
             Fluttertoast.showToast(msg: "Please confirm your account with OTP");
             showOtpDialog(context, email);
+            CommonLoader.hideLoader(context);
             break;
           case AuthSignInStep.confirmSignInWithCustomChallenge:
             Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
             showOtpDialog(context, email);
+            CommonLoader.hideLoader(context);
             break;
           default:
             print("Unhandled sign-in step: ${result.nextStep.signInStep}");
+            CommonLoader.hideLoader(context);
         }
       }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error fdsf: ${e.message}");
+      CommonLoader.hideLoader(context);
     }
   }
 
@@ -290,7 +290,7 @@ class PasswordViewModel extends BaseViewModel {
     );
   }
 
-  Future<void> loginUser(String email, String password) async {
+  Future<void> loginAPI(String email, String password) async {
     final apiService = ApiService();
 
     const endpoint = '';
@@ -309,14 +309,10 @@ class PasswordViewModel extends BaseViewModel {
     );
 
     if (authResponse != null) {
-      // final accessToken = authResponse.authenticationResult.accessToken;
-      // final idToken = authResponse.authenticationResult.idToken;
-      // final refreshToken = authResponse.authenticationResult.refreshToken;
-
-      // print("Access Token: $accessToken");
-      // print("ID Token: $idToken");
-      // print("Refresh Token: $refreshToken");
-
+      final accessToken = authResponse.authenticationResult.accessToken;
+      final idToken = authResponse.authenticationResult.idToken;
+      final refreshToken = authResponse.authenticationResult.refreshToken;
+      await SharedPreferencesHelper.saveAccessToken(ksAccessToekn, accessToken);
       navigationService.clearStackAndShow(Routes.bottomBarView);
     } else {
       print("Login failed.");

@@ -53,19 +53,41 @@ class ApiService {
     }
   }
 
-  // static Future<Response> post(String endpoint, dynamic data) async {
-  //   try {
-  //     final response = await _dio.post(endpoint, data: data);
-  //     return response;
-  //   } on DioException catch (e) {
-  //     print('⚠️ DioException caught!');
-  //     print('➡️ Error Type: ${e.type}');
-  //     print('➡️ Message: ${e.message}');
-  //     print('➡️ Response: ${e.response?.data}');
-  //     print('➡️ Status Code: ${e.response?.statusCode}');
-  //     throw Exception('API Error: ${e.response?.data ?? e.message}');
-  //   }
-  // }
+  Future<AuthResponse?> signupWithDio({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final response = await _dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          contentType: 'application/x-amz-json-1.1',
+        ),
+      );
+
+      print('Raw Response: ${response.data}');
+
+      // If Dio gives a string, decode it
+      final decodedData =
+          response.data is String ? jsonDecode(response.data) : response.data;
+
+      if (decodedData is Map<String, dynamic> &&
+          decodedData.containsKey("message")) {
+        return AuthResponse.fromJson(decodedData);
+      }
+
+      print("Unexpected response structure: $decodedData");
+      return null;
+    } catch (e) {
+      if (e is DioException) {
+        print('Login Failed: ${e.response?.data}');
+      } else {
+        print('Unexpected error: $e');
+      }
+      return null;
+    }
+  }
 }
 
 class DioInterceptor extends Interceptor {
