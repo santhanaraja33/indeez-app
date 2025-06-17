@@ -100,14 +100,16 @@ class OtpVerifyViewModel extends BaseViewModel {
       safePrint('isForgotPasswordFlow: $isForgotPasswordFlow');
 
       if (fromPage == true) {
-        final result1 =
-            await Amplify.Auth.confirmSignIn(confirmationValue: otp.trim());
+        final result1 = await Amplify.Auth.confirmSignUp(
+          username: email,
+          confirmationCode: otp.trim(),
+        );
         final result2 = await Amplify.Auth.fetchAuthSession();
         safePrint('User is signed in: $result2');
 
         CommonLoader.hideLoader(context); // 🔧 Important to hide loader
 
-        if (result1.isSignedIn) {
+        if (result1.isSignUpComplete) {
           Fluttertoast.showToast(msg: "Sign in confirmed!");
           navigationService.clearStackAndShow(Routes.bottomBarView);
         } else {

@@ -5,7 +5,7 @@ import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:music_app/ui/views/password/presentation/password_view.dart';
-// import 'package:music_app/ui/views/signup/signup_view.dart';
+import 'package:music_app/ui/views/signup/signup_view.dart';
 import 'package:music_app/ui/views/create_account/create_account_view.dart';
 import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart';
 import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart';

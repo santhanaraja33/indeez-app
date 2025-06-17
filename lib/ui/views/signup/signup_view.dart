@@ -6,10 +6,11 @@ import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_dropdown.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/signup/view_model/signup_viewmodel.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked.dart';
 
-import 'signup_viewmodel.dart';
+// import 'signup_viewmodel.dart';
 
 class SignupView extends StackedView<SignupViewModel> {
   const SignupView({Key? key}) : super(key: key);

@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
@@ -71,6 +72,7 @@ class SignupViewModel extends BaseViewModel {
     String userType,
   ) async {
     try {
+      signOutGlobally();
       // Email format validation
       if (email.isNotEmpty || email.trim().isEmpty) {
         final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
@@ -110,25 +112,48 @@ class SignupViewModel extends BaseViewModel {
         }),
       );
       print("Sign-up result: ${result}");
-      print("Sign-up result: ${result.userId}");
+      // print("Sign-up result: ${result.userId}");
 
       if (result.isSignUpComplete) {
         Fluttertoast.showToast(msg: "Sign up complete!");
       } else {
         Fluttertoast.showToast(msg: "OTP sent to your email");
         // showOtpDialog(context, email);
+
+        CommonLoader.hideLoader(context);
         await SharedPreferencesHelper.saveFromPage(
             ksSharedPreferenceFromSignupPage, true);
         signupAPI(context, email, password, phone, firstName, lastName, zipCode,
             userType, result.userId ?? "");
 
-        navigationService.clearStackAndShow(Routes.otpVerifyView);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigationService.clearStackAndShowView(
+            OtpVerifyView(email: email.trim()),
+          );
+        });
       }
-      CommonLoader.hideLoader(context);
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-up error: ${e.message}");
       CommonLoader.hideLoader(context);
+    }
+  }
+
+  //Global signout
+  Future<void> signOutGlobally() async {
+    final result = await Amplify.Auth.signOut(
+      options: const SignOutOptions(globalSignOut: true),
+    );
+    if (result is CognitoCompleteSignOut) {
+      safePrint('Sign out completed successfully');
+    } else if (result is CognitoPartialSignOut) {
+      final globalSignOutException = result.globalSignOutException!;
+      final accessToken = globalSignOutException.accessToken;
+      // Retry the global sign out using the access token, if desired
+      // ...
+      safePrint('Error signing user out: ${globalSignOutException.message}');
+    } else if (result is CognitoFailedSignOut) {
+      safePrint('Error signing user out: ${result.exception.message}');
     }
   }
 
