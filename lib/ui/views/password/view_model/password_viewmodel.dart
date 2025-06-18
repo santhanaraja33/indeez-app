@@ -5,8 +5,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:http/http.dart' as ApiService;
 import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
@@ -95,12 +93,11 @@ class PasswordViewModel extends BaseViewModel {
       }
       CommonLoader.showLoader(context);
       await Future.delayed(const Duration(seconds: 1));
-
       signOutGlobally();
       final result =
           await Amplify.Auth.signIn(username: email, password: password);
       print("user login result : ${result}");
-
+      fetchCognitoAuthSession();
       if (result.isSignedIn) {
         Fluttertoast.showToast(msg: "Signed in successfully!");
         isSignedIn = true;
@@ -134,7 +131,26 @@ class PasswordViewModel extends BaseViewModel {
     try {
       final result = await Amplify.Auth.fetchAuthSession();
       safePrint('User is signed in: ${result.isSignedIn}');
-      safePrint('User is signed in: ${result}');
+      final result1 = result.toJson();
+      if (result is CognitoAuthSession) {
+        final isSignedIn = result.isSignedIn;
+        final userSub = result.userSubResult.value;
+        final accessToken = result.userPoolTokensResult.value.accessToken;
+        final idToken = result.userPoolTokensResult.value.idToken;
+        final refreshToken = result.userPoolTokensResult.value.refreshToken;
+        final identityId = result.identityIdResult.value;
+
+        print('✅ Signed In: $isSignedIn');
+        print('🔐 Access Token: $accessToken');
+        print('🪪 User Sub: $userSub');
+        print('🧾 ID Token: $idToken');
+        print('🔄 Refresh Token: $refreshToken');
+        print('🆔 Identity ID: $identityId');
+      } else {
+        print('⚠️ Not a Cognito session');
+      }
+
+      safePrint('User is signed in  Cognito: ${result1.keys.first}');
     } on AuthException catch (e) {
       safePrint('Error retrieving auth session: ${e.message}');
     }
@@ -145,9 +161,11 @@ class PasswordViewModel extends BaseViewModel {
       final cognitoPlugin =
           Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey);
       final result = await cognitoPlugin.fetchAuthSession();
+      safePrint("Current user's result: $result");
+
       final identityId = result.identityIdResult.value;
-      safePrint("Current result: $result");
-      safePrint("Current identityId: $identityId");
+      safePrint("Current user's identity ID: $identityId");
+
       if (result.isSignedIn) {
         safePrint("User is signed in");
       } else {
@@ -309,6 +327,8 @@ class PasswordViewModel extends BaseViewModel {
     );
 
     if (authResponse != null) {
+      print("Login success.");
+
       final accessToken = authResponse.authenticationResult.accessToken;
       // final idToken = authResponse.authenticationResult.idToken;
       // final refreshToken = authResponse.authenticationResult.refreshToken;
@@ -319,7 +339,8 @@ class PasswordViewModel extends BaseViewModel {
       Fluttertoast.showToast(msg: "Login failed. Please try again.");
     }
   }
-
+}
+    
   // Future<void> loginUser(String email, String password) async {
   //   final dio = Dio();
 
@@ -448,4 +469,4 @@ class PasswordViewModel extends BaseViewModel {
   //   // Return an empty map or throw as appropriate
   //   return <String, String>{};
   // }
-}
+

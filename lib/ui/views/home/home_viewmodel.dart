@@ -6,12 +6,14 @@ import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
 import 'package:music_app/core/api/api_services.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
 import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
+import 'package:music_app/ui/views/userprofile/model/userprofile_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -221,5 +223,23 @@ class HomeViewModel extends BaseViewModel {
             ),
           );
         });
+  }
+
+  Future<List<Users>?> getUserDetailAPI() async {
+    final getUserId =
+        await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+    debugPrint('User ID: $getUserId');
+    final authResponse = await ApiService().getUserInfo(
+      endpoint: ApiConstants.baseURL +
+          ApiEndpoints.getProfileAPI +
+          (getUserId ?? ''), // Replace with actual user ID
+    );
+    if (authResponse != null) {
+      final info = authResponse.users?[0];
+      print(info);
+      print("User profile image: ${info}");
+      if (info != null) {}
+    }
+    return null;
   }
 }

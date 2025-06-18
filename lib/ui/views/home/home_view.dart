@@ -49,6 +49,7 @@ class HomeView extends StackedView<HomeViewModel> {
                                         await SharedPreferencesHelper
                                             .getLoginUserId(ksLoggedinUserId);
                                     debugPrint('User ID: $getUserId');
+                                    viewModel.getUserDetailAPI();
                                     viewModel.isImageSelected =
                                         !viewModel.isImageSelected;
                                     viewModel.rebuildUi();

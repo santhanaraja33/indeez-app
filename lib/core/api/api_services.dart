@@ -68,8 +68,6 @@ class ApiService {
         data: jsonEncode(data),
         options: Options(headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJraWQiOiJhZ1JPTFN2ZWVqTEkwbDQzN0lKVGxVSVlVSThUUGFyRFZUYld4K2ZocStFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1OGQxNjM1MC1iMDMxLTcwMWEtN2Y3Ni1iMjM2MGMyZTU5MDYiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtd2VzdC0yLmFtYXpvbmF3cy5jb21cL3VzLXdlc3QtMl95UUFuVkxlSVIiLCJjbGllbnRfaWQiOiJnY2R2ZjAzdDQzNThtNWt2dTFja3JrZDlnIiwib3JpZ2luX2p0aSI6ImJjM2UyNmM0LThmN2MtNDIzNi1hMzNjLTc4MjgzYTIwZmMyOCIsImV2ZW50X2lkIjoiYmZmNWFjYzAtYzRlZi00YjBhLThjMzMtZWViMjZmMjgwNzU5IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTc1MDIzMTM3OSwiZXhwIjoxNzUwMjM0OTc5LCJpYXQiOjE3NTAyMzEzNzksImp0aSI6ImUwNzM1YmFiLWY2NTUtNDA0YS1iZWJlLTdmNTZiM2E4MjE3YyIsInVzZXJuYW1lIjoiNThkMTYzNTAtYjAzMS03MDFhLTdmNzYtYjIzNjBjMmU1OTA2In0.DkgedoEf8qVUC0iMvR2LBdaJ6F-URpDkJoZeeNKAs6tWGhYw_XHynktBDHCi_aNigUIx8beyJpb1y9BvgUvz48UJzR-R24s3BbeDCVCSG2ZmfIc83-JxAgegfRyTT4yq-gJCkn4uef49nSg9ZKw2ZvwKL-Zpwn1jZGtAqb-Ra8pRp1PQ0hYXowa3K0L-RZYF4F452wSr9i3MJpZqElkFep6vZNo1hyNMW_5AkBfECtJA_NUq9fmOE_AFK5_d8TAzomyBMeSi-Sgmfcy3Cys7ziCDAPZpOTlfzVnDKlDdijI9d_Pff4Wa7qqaR82ZupmnKn5VRZgGhSRtSEtiFL_-Ow',
         }),
       );
       safePrint('Raw Response: ${response.data}');
@@ -97,15 +95,14 @@ class ApiService {
     final token = SharedPreferencesHelper.getAccessToken(ksAccessToekn);
     safePrint(endpoint);
     try {
-      final response = await _dio.post(
+      final response = await _dio.get(
         endpoint,
         options: Options(headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJraWQiOiJhZ1JPTFN2ZWVqTEkwbDQzN0lKVGxVSVlVSThUUGFyRFZUYld4K2ZocStFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1OGQxNjM1MC1iMDMxLTcwMWEtN2Y3Ni1iMjM2MGMyZTU5MDYiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtd2VzdC0yLmFtYXpvbmF3cy5jb21cL3VzLXdlc3QtMl95UUFuVkxlSVIiLCJjbGllbnRfaWQiOiJnY2R2ZjAzdDQzNThtNWt2dTFja3JrZDlnIiwib3JpZ2luX2p0aSI6ImJjM2UyNmM0LThmN2MtNDIzNi1hMzNjLTc4MjgzYTIwZmMyOCIsImV2ZW50X2lkIjoiYmZmNWFjYzAtYzRlZi00YjBhLThjMzMtZWViMjZmMjgwNzU5IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTc1MDIzMTM3OSwiZXhwIjoxNzUwMjM0OTc5LCJpYXQiOjE3NTAyMzEzNzksImp0aSI6ImUwNzM1YmFiLWY2NTUtNDA0YS1iZWJlLTdmNTZiM2E4MjE3YyIsInVzZXJuYW1lIjoiNThkMTYzNTAtYjAzMS03MDFhLTdmNzYtYjIzNjBjMmU1OTA2In0.DkgedoEf8qVUC0iMvR2LBdaJ6F-URpDkJoZeeNKAs6tWGhYw_XHynktBDHCi_aNigUIx8beyJpb1y9BvgUvz48UJzR-R24s3BbeDCVCSG2ZmfIc83-JxAgegfRyTT4yq-gJCkn4uef49nSg9ZKw2ZvwKL-Zpwn1jZGtAqb-Ra8pRp1PQ0hYXowa3K0L-RZYF4F452wSr9i3MJpZqElkFep6vZNo1hyNMW_5AkBfECtJA_NUq9fmOE_AFK5_d8TAzomyBMeSi-Sgmfcy3Cys7ziCDAPZpOTlfzVnDKlDdijI9d_Pff4Wa7qqaR82ZupmnKn5VRZgGhSRtSEtiFL_-Ow',
+          'Authorization': 'Bearer $token',
         }),
       );
-      safePrint('Raw Response: ${response.data}');
+      safePrint('Raw Response: ${response}');
       // If Dio gives a string, decode it
       final decodedData =
           response.data is String ? jsonDecode(response.data) : response.data;
