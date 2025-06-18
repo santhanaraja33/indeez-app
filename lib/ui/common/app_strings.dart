@@ -9,6 +9,7 @@ const String ksNEXT = 'NEXT';
 const String ksOTP = 'GET OTP';
 
 const String ksAccessToekn = 'AccessToken';
+const String ksLoggedinUserId = 'userId';
 
 const String ksIAgreeToThe = 'I agree to the';
 const String ksTermsConditions = 'Terms & Conditions';

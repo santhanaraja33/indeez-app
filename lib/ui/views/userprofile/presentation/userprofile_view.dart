@@ -12,10 +12,22 @@ import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart';
 import 'package:stacked/stacked.dart';
 
-import 'userprofile_viewmodel.dart';
+import '../view_model/userprofile_viewmodel.dart';
 
 class UserprofileView extends StackedView<UserprofileViewModel> {
   const UserprofileView({Key? key}) : super(key: key);
+
+  @override
+  UserprofileViewModel viewModelBuilder(BuildContext context) =>
+      UserprofileViewModel();
+
+  @override
+  void onViewModelReady(UserprofileViewModel viewModel) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.init(); // your initial fetch call
+      super.onViewModelReady(viewModel);
+    });
+  }
 
   @override
   Widget builder(
@@ -221,10 +233,4 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
       ),
     );
   }
-
-  @override
-  UserprofileViewModel viewModelBuilder(
-    BuildContext context,
-  ) =>
-      UserprofileViewModel();
 }

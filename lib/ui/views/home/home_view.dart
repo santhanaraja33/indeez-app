@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_bg_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
@@ -43,7 +44,11 @@ class HomeView extends StackedView<HomeViewModel> {
                               alignment: const Alignment(2, 0),
                               children: [
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    final getUserId =
+                                        await SharedPreferencesHelper
+                                            .getLoginUserId(ksLoggedinUserId);
+                                    debugPrint('User ID: $getUserId');
                                     viewModel.isImageSelected =
                                         !viewModel.isImageSelected;
                                     viewModel.rebuildUi();

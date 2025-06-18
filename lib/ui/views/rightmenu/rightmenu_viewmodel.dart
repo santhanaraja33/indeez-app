@@ -7,6 +7,7 @@ import 'package:music_app/app/app.router.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/rightmenu/model/rightmenu_model.dart';
+import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

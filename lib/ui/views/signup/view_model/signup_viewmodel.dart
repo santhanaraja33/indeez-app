@@ -12,6 +12,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:music_app/ui/views/signup/model/signup_model.dart';
 
 class SignupViewModel extends BaseViewModel {
   final navigationService = locator<NavigationService>();
@@ -123,9 +124,19 @@ class SignupViewModel extends BaseViewModel {
         CommonLoader.hideLoader(context);
         await SharedPreferencesHelper.saveFromPage(
             ksSharedPreferenceFromSignupPage, true);
-        signupAPI(context, email, password, phone, firstName, lastName, zipCode,
-            userType, result.userId ?? "");
 
+await SharedPreferencesHelper.saveUser(SignupUserInfo(
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              phoneNumber: phone,
+              zipCode: zipCode,
+              password: password,
+              userType: userType,
+              userId: result.userId ?? "",
+              acceptPrivacyPolicy: isChecked,
+            ));
+     
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigationService.clearStackAndShowView(
             OtpVerifyView(email: email.trim()),
@@ -295,43 +306,5 @@ class SignupViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  Future<void> signupAPI(
-      BuildContext context,
-      String email,
-      String password,
-      String phone,
-      String firstName,
-      String lastName,
-      String zipCode,
-      String userType,
-      String userId) async {
-    final apiService = ApiService();
-
-    const endpoint = ApiEndpoints.loginApi;
-    final requestData = {
-      "firstName": firstName,
-      "lastName": lastName,
-      "email": email,
-      "phone": phone,
-      "zipCode": zipCode,
-      "userType": userType,
-      "acceptPrivacyPolicy": true,
-      "acceptTerms": true,
-      "avatarUrl": "https://cdn.example.com/avatars/default.png",
-      "bio": "Singer/songwriter",
-      "userId": userId
-    };
-    debugPrint("Request Data: $requestData");
-    // final authResponse = await apiService.loginWithDio(
-    //   endpoint: endpoint,
-    //   data: requestData,
-    // );
-
-    // if (authResponse != null) {
-    //   // navigationService.clearStackAndShow(Routes.bottomBarView);
-    // } else {
-    //   print("Login failed.");
-    //   Fluttertoast.showToast(msg: "Login failed. Please try again.");
-    // }
-  }
+  
 }

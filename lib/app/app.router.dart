@@ -35,7 +35,8 @@ import 'package:music_app/ui/views/shop/shop_view.dart' as _i11;
 import 'package:music_app/ui/views/signup/presentation/signup_view.dart' as _i5;
 import 'package:music_app/ui/views/startup/startup_view.dart' as _i3;
 import 'package:music_app/ui/views/swipe/swipe_view.dart' as _i9;
-import 'package:music_app/ui/views/userprofile/userprofile_view.dart' as _i16;
+import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart'
+    as _i16;
 import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i24;
 import 'package:music_app/ui/views/email/email_view.dart' as _i23;

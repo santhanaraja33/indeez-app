@@ -310,8 +310,8 @@ class PasswordViewModel extends BaseViewModel {
 
     if (authResponse != null) {
       final accessToken = authResponse.authenticationResult.accessToken;
-      final idToken = authResponse.authenticationResult.idToken;
-      final refreshToken = authResponse.authenticationResult.refreshToken;
+      // final idToken = authResponse.authenticationResult.idToken;
+      // final refreshToken = authResponse.authenticationResult.refreshToken;
       await SharedPreferencesHelper.saveAccessToken(ksAccessToekn, accessToken);
       navigationService.clearStackAndShow(Routes.bottomBarView);
     } else {

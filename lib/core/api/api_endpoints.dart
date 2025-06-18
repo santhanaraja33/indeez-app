@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String loginType = '1';
-  static const String loginApi = 'media/files';
-  static const String tokenUpdateApi = 'v1/customer/auth/refresh-token';
+  static const String signupAPI = 'user/create';
+  static const String userUpdateAPI = 'user/update';
+  static const String getProfileAPI = 'user/';
 }
