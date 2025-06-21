@@ -64,21 +64,3 @@ class _MainAppState extends State<MainApp> {
     );
   }
 }
-
-// class MainApp extends StatelessWidget {
-//   const MainApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: ksAppName,
-//       debugShowCheckedModeBanner: false,
-//       initialRoute: Routes.startupView,
-//       onGenerateRoute: StackedRouter().onGenerateRoute,
-//       navigatorKey: StackedService.navigatorKey,
-//       navigatorObservers: [
-//         StackedService.routeObserver,
-//       ],
-//     );
-//   }
-// }

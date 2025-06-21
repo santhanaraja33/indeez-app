@@ -1,0 +1,57 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ineedz",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "ineedz (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "ineedz (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+    {
+      "name": "views",
+      "cwd": "lib\\ui\\views",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "views (profile mode)",
+      "cwd": "lib\\ui\\views",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "views (release mode)",
+      "cwd": "lib\\ui\\views",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+
+    {
+      "version": "0.2.0",
+      "configurations": [
+        {
+          "name": "Flutter",
+          "request": "launch",
+          "type": "dart",
+          "program": "lib/main.dart"
+        }
+      ]
+    }
+  ]
+}

@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
-import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/password/model/password_model.dart';
@@ -22,8 +18,7 @@ class PasswordViewModel extends BaseViewModel {
 
   final navigationService = locator<NavigationService>();
   bool isPassword = true;
-
-  var isSignedIn = false;
+  bool isSignedIn = false;
   String? challengeHint;
 
   void navigationToSignUP() {
@@ -97,11 +92,18 @@ class PasswordViewModel extends BaseViewModel {
       final result =
           await Amplify.Auth.signIn(username: email, password: password);
       print("user login result : ${result}");
-      fetchCognitoAuthSession();
+
+      final session = await Amplify.Auth.fetchAuthSession();
+
       if (result.isSignedIn) {
-        Fluttertoast.showToast(msg: "Signed in successfully!");
+        Fluttertoast.showToast(msg: "Logged in successfully!");
         isSignedIn = true;
+        if (session.isSignedIn && session is CognitoAuthSession) {
+          await SharedPreferencesHelper()
+              .saveLoginUserId(ksLoggedinUserId, session.userSubResult.value);
+        }
         loginAPI(email, password);
+
         CommonLoader.hideLoader(context);
       } else {
         switch (result.nextStep.signInStep) {
@@ -308,34 +310,29 @@ class PasswordViewModel extends BaseViewModel {
     );
   }
 
+//MARK: LOGIN API
   Future<void> loginAPI(String email, String password) async {
-    final apiService = ApiService();
-
-    const endpoint = '';
-    final requestData = {
-      "AuthParameters": {
-        "USERNAME": email,
-        "PASSWORD": password,
+    final authResponse = await ApiService().loginWithDio(
+      endpoint: '',
+      data: {
+        "AuthParameters": {
+          "USERNAME": email,
+          "PASSWORD": password,
+        },
+        "AuthFlow": "USER_PASSWORD_AUTH",
+        "ClientId": "gcdvf03t4358m5kvu1ckrkd9g",
       },
-      "AuthFlow": "USER_PASSWORD_AUTH",
-      "ClientId": "gcdvf03t4358m5kvu1ckrkd9g",
-    };
-
-    final authResponse = await apiService.loginWithDio(
-      endpoint: endpoint,
-      data: requestData,
     );
 
     if (authResponse != null) {
-      print("Login success.");
-
+      safePrint("Login success.");
+      Fluttertoast.showToast(msg: "Login success.");
       final accessToken = authResponse.authenticationResult.accessToken;
-      // final idToken = authResponse.authenticationResult.idToken;
-      // final refreshToken = authResponse.authenticationResult.refreshToken;
       await SharedPreferencesHelper.saveAccessToken(ksAccessToekn, accessToken);
+
       navigationService.clearStackAndShow(Routes.bottomBarView);
     } else {
-      print("Login failed.");
+      safePrint("Login failed.");
       Fluttertoast.showToast(msg: "Login failed. Please try again.");
     }
   }

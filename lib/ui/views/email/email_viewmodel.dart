@@ -8,7 +8,6 @@ import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/home/home_view.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:email_validator/email_validator.dart';
@@ -19,23 +18,13 @@ class EmailViewModel extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
 
   bool isLoading = false;
-
-  void fetchData() async {
-    isLoading = true;
-    notifyListeners();
-
-    await Future.delayed(const Duration(seconds: 2)); // simulate API call
-
-    isLoading = false;
-    notifyListeners();
-  }
+  bool isPassword = true;
+  bool isSignedIn = false;
 
   final navigationService = locator<NavigationService>();
-  bool isPassword = true;
   final LocalAuthentication auth = LocalAuthentication();
   String _message = "Not Authenticated";
 
-  var isSignedIn = false;
   String? challengeHint;
 
   void navigationToSignUP() {
@@ -61,16 +50,13 @@ class EmailViewModel extends ChangeNotifier {
         Fluttertoast.showToast(msg: "Please enter a valid email address.");
         return;
       }
-      if (isLoading) {
-        Fluttertoast.showToast(msg: "Please wait, loading...");
-        return;
-      }
+
       CommonLoader.showLoader(context);
       await Future.delayed(const Duration(seconds: 1));
 
       signOutGlobally();
 
-      print("user login result : ${email}");
+      safePrint("user email : $email");
 
       final result = await Amplify.Auth.signIn(
         username: email.trim(),
@@ -80,17 +66,15 @@ class EmailViewModel extends ChangeNotifier {
           ),
         ),
       );
-      print("user login result : ${result}");
+      safePrint("user login result : $result");
+
       await SharedPreferencesHelper.saveFromPage(
           ksSharedPreferenceFromPage, true);
-      navigationService.clearStackAndShowView(OtpVerifyView(
-        email: email.trim(),
-      ));
-      // navigationService
-      //     .clearStackAndShowView(OtpVerifyView(email: email.trim()));
+      navigationService
+          .clearStackAndShowView(OtpVerifyView(email: email.trim()));
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
-      print("Sign-in error fdsf: ${e.message}");
+      safePrint("Sign-in error fdsf: ${e.message}");
     }
   }
 
@@ -121,15 +105,6 @@ class EmailViewModel extends ChangeNotifier {
 // Sign out
 
   Future<void> handleSignOut(BuildContext context) async {
-    try {
-      await Amplify.Auth.signOut();
-      Fluttertoast.showToast(msg: "Signed out");
-    } on AuthException catch (e) {
-      Fluttertoast.showToast(msg: e.message);
-    }
-  }
-
-  Future<void> handleMoreOption(BuildContext context) async {
     try {
       await Amplify.Auth.signOut();
       Fluttertoast.showToast(msg: "Signed out");

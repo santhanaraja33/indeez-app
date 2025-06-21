@@ -99,6 +99,7 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                           verifyCode = await SharedPreferencesHelper.getOTP(
                                   ksSharedPreferenceOTP) ??
                               '';
+                          print("Entered verifyCode: $verifyCode");
                           viewModel.showOtpDialog(context, verifyCode, email);
                         },
                         child: Text(

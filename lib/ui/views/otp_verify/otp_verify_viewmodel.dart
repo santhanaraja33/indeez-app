@@ -1,4 +1,3 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,6 +27,9 @@ class OtpVerifyViewModel extends BaseViewModel {
   }
 
   void showOtpDialog(BuildContext context, String otp, String email) async {
+    print(otp);
+    debugPrint(otp);
+
     if (otp.isEmpty) {
       Fluttertoast.showToast(msg: "Please enter OTP");
       return;
@@ -63,20 +65,19 @@ class OtpVerifyViewModel extends BaseViewModel {
           Fluttertoast.showToast(msg: "User details not found.");
         }
         CommonLoader.hideLoader(context); // 🔧 Important to hide loader
-
         if (result1.isSignUpComplete) {
           if (user != null) {
             signupAPI(
                 context,
                 email,
-                user?.password ?? '',
-                user?.phoneNumber ?? '',
-                user?.firstName ?? '',
-                user?.lastName ?? '',
-                user?.zipCode ?? '',
-                user?.userType ?? '',
-                user?.userId ?? '',
-                user?.acceptPrivacyPolicy ?? false);
+                user.password,
+                user.phoneNumber,
+                user.firstName,
+                user.lastName,
+                user.zipCode,
+                user.userType,
+                user.userId,
+                user.acceptPrivacyPolicy);
           }
         } else {
           Fluttertoast.showToast(msg: "Confirmation incomplete");
@@ -84,21 +85,21 @@ class OtpVerifyViewModel extends BaseViewModel {
         return;
       }
 
-      // if (!isForgotPasswordFlow) {
-      //   await saveString('otp', otp.trim());
-      //   CommonLoader.hideLoader(context); // 🔧 Hide loader before navigating
-      //   navigationService.clearStackAndShowView(
-      //       ChangepasswordView(email, otp)); // check this constructor
-      //   return;
-      // }
+      if (isForgotPasswordFlow) {
+        await saveString('otp', otp.trim());
+        CommonLoader.hideLoader(context); // 🔧 Hide loader before navigating
+        navigationService.clearStackAndShowView(
+            ChangepasswordView(email, otp)); // check this constructor
+        return;
+      }
 
       CommonLoader.hideLoader(context);
     } on AuthException catch (e) {
-      print("error : ${e.message}");
+      safePrint("error : ${e.message}");
       Fluttertoast.showToast(msg: e.message);
       CommonLoader.hideLoader(context);
     } catch (e) {
-      print("Unexpected error: $e");
+      safePrint("Unexpected error: $e");
       Fluttertoast.showToast(msg: "Something went wrong!");
       CommonLoader.hideLoader(context);
     }
@@ -150,6 +151,7 @@ class OtpVerifyViewModel extends BaseViewModel {
       },
     );
     signUpResponse = authResponse ?? SignUpModel();
+    print(signUpResponse.message);
     if (signUpResponse.message == "User created") {
       Fluttertoast.showToast(msg: "Sign up confirmed!");
       final sharedPreferencesHelper = SharedPreferencesHelper();
