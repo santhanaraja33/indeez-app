@@ -117,6 +117,7 @@ class SignupViewModel extends BaseViewModel {
 
       if (result.isSignUpComplete) {
         Fluttertoast.showToast(msg: "Sign up complete!");
+        CommonLoader.hideLoader(context);
       } else {
         Fluttertoast.showToast(msg: "OTP sent to your email");
         // showOtpDialog(context, email);
@@ -125,18 +126,18 @@ class SignupViewModel extends BaseViewModel {
         await SharedPreferencesHelper.saveFromPage(
             ksSharedPreferenceFromSignupPage, true);
 
-await SharedPreferencesHelper.saveUser(SignupUserInfo(
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              phoneNumber: phone,
-              zipCode: zipCode,
-              password: password,
-              userType: userType,
-              userId: result.userId ?? "",
-              acceptPrivacyPolicy: isChecked,
-            ));
-     
+        await SharedPreferencesHelper.saveUser(SignupUserInfo(
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phoneNumber: phone,
+          zipCode: zipCode,
+          password: password,
+          userType: userType,
+          userId: result.userId ?? "",
+          acceptPrivacyPolicy: isChecked,
+        ));
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigationService.clearStackAndShowView(
             OtpVerifyView(email: email.trim()),
@@ -305,6 +306,4 @@ await SharedPreferencesHelper.saveUser(SignupUserInfo(
     userTypeController.dispose();
     super.dispose();
   }
-
-  
 }

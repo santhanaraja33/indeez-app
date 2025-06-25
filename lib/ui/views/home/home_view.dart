@@ -12,6 +12,13 @@ class HomeView extends StackedView<HomeViewModel> {
   const HomeView({Key? key}) : super(key: key);
 
   @override
+  void onViewModelReady(HomeViewModel viewModel) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.getUserPostsAPI();
+    });
+  }
+
+  @override
   Widget builder(
     BuildContext context,
     HomeViewModel viewModel,
@@ -33,7 +40,7 @@ class HomeView extends StackedView<HomeViewModel> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: viewModel.homeModel.length,
+                    itemCount: viewModel.post?.data?.length ?? 0,
                     physics: const ScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Padding(
@@ -49,7 +56,6 @@ class HomeView extends StackedView<HomeViewModel> {
                                         await SharedPreferencesHelper
                                             .getLoginUserId(ksLoggedinUserId);
                                     debugPrint('User ID: $getUserId');
-                                    viewModel.getUserDetailAPI();
                                     viewModel.isImageSelected =
                                         !viewModel.isImageSelected;
                                     viewModel.rebuildUi();
@@ -125,7 +131,8 @@ class HomeView extends StackedView<HomeViewModel> {
                               children: [
                                 const Spacer(),
                                 Text(
-                                  viewModel.homeModel[index].title ?? '',
+                                  viewModel.postList[index].posttitle ??
+                                      'No title',
                                   style: GoogleFonts.bokor(
                                     color: kcWhite,
                                     fontSize: size_22,
@@ -136,7 +143,8 @@ class HomeView extends StackedView<HomeViewModel> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                viewModel.popupPhotoUploadNavigation(context);
+                                viewModel.popupPhotoUploadNavigation(
+                                    context, index);
                               },
                               child: Row(
                                 children: [
@@ -153,13 +161,14 @@ class HomeView extends StackedView<HomeViewModel> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                viewModel.popupPhotoUploadNavigation(context);
+                                viewModel.popupPhotoUploadNavigation(
+                                    context, index);
                               },
                               child: Row(
                                 children: [
                                   const Spacer(),
                                   Text(
-                                    '${viewModel.homeModel[index].commends ?? ''} $ksCOMMENTS',
+                                    '${viewModel.postList[index].commentsCount ?? 0} $ksCOMMENTS',
                                     style: GoogleFonts.lato(
                                       color: kcWhite,
                                       fontSize: size_14,
@@ -170,7 +179,7 @@ class HomeView extends StackedView<HomeViewModel> {
                                     width: width_10,
                                   ),
                                   Text(
-                                    '${viewModel.homeModel[index].reactions ?? ''} $ksREACTIONS',
+                                    '${viewModel.postList[index].likesCount ?? 0} $ksREACTIONS',
                                     style: GoogleFonts.lato(
                                       color: kcWhite,
                                       fontSize: size_14,

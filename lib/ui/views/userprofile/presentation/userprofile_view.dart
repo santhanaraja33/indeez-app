@@ -11,7 +11,6 @@ import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart';
 import 'package:stacked/stacked.dart';
-
 import '../view_model/userprofile_viewmodel.dart';
 
 class UserprofileView extends StackedView<UserprofileViewModel> {
@@ -24,8 +23,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
   @override
   void onViewModelReady(UserprofileViewModel viewModel) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.init(); // your initial fetch call
-      super.onViewModelReady(viewModel);
+      viewModel.getUserDetailAPI();
     });
   }
 
@@ -82,27 +80,55 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                           )
                         ],
                       ),
-                      (viewModel.userProfileImage ?? '').isEmpty
+                      viewModel.userProfileImage != null &&
+                              viewModel.userProfileImage!.isNotEmpty &&
+                              viewModel.userProfileImage!.startsWith('http')
                           ? Center(
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  borderRadius_100,
-                                ),
+                                borderRadius:
+                                    BorderRadius.circular(borderRadius_100),
                                 child: Image.network(
-                                  ksUserProfile,
+                                  viewModel.userProfileImage!,
                                   height: height_100,
                                   width: width_100,
                                   fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    // ⛔️ Broken or unreachable URL fallback
+                                    return Image.asset(
+                                      'assets/images/user.png',
+                                      height: height_100,
+                                      width: width_100,
+                                      fit: BoxFit.cover,
+                                      color: Colors.white,
+                                    );
+                                  },
                                 ),
                               ),
                             )
                           : ClipOval(
-                              child: Image.file(
-                                File(viewModel.userProfileImage ?? ''),
-                                fit: BoxFit.cover,
-                                height: height_100,
-                                width: width_100,
-                              ),
+                              child: viewModel.userProfileImage != null &&
+                                      viewModel.userProfileImage!.isNotEmpty
+                                  ? Image.file(
+                                      File(viewModel.userProfileImage!),
+                                      fit: BoxFit.cover,
+                                      height: height_100,
+                                      width: width_100,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'assets/images/user.png',
+                                          height: height_100,
+                                          width: width_100,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      'assets/images/user.png',
+                                      fit: BoxFit.cover,
+                                      height: height_100,
+                                      width: width_100,
+                                    ),
                             ),
                       viewModel.isChecked == false
                           ? Container()
@@ -127,8 +153,10 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                         height: height_20,
                       ),
                       AppCommonTextfield(
-                        controller: TextEditingController(text: 'Jerry'),
+                        controller: viewModel.firstNameController,
                         keyboardType: TextInputType.name,
+                        readOnly: !viewModel.isChecked,
+// 👈 disables input unless in edit mode
                         label: Text(
                           ksFirstName,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -139,8 +167,9 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                         height: height_10,
                       ),
                       AppCommonTextfield(
-                        controller: TextEditingController(text: 'G'),
+                        controller: viewModel.lastNameController,
                         keyboardType: TextInputType.name,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksLastName,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -151,9 +180,9 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                         height: height_10,
                       ),
                       AppCommonTextfield(
-                        controller:
-                            TextEditingController(text: 'jerry@yopmail.com'),
+                        controller: viewModel.emailController,
                         keyboardType: TextInputType.emailAddress,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksEmail,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -165,8 +194,9 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       ),
                       AppCommonTextfield(
                         maxLength: maxLength_10,
-                        controller: TextEditingController(text: '9090009090'),
+                        controller: viewModel.phoneController,
                         keyboardType: TextInputType.phone,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksPhone,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -177,8 +207,9 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                         height: height_10,
                       ),
                       AppCommonTextfield(
-                        controller: TextEditingController(text: '641010'),
+                        controller: viewModel.zipCodeController,
                         keyboardType: TextInputType.streetAddress,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksZipcode,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -190,13 +221,16 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       ),
                       AppDropDown(
                         titleTextColor: kcTextGrey,
-                        dropDownHint: viewModel.paymentModeModel.first,
-                        value: viewModel.selectedValue,
+                        dropDownHint: viewModel.listModeModel.first,
+                        value: viewModel.listModeModel
+                                .contains(viewModel.selectedValue)
+                            ? viewModel.selectedValue
+                            : null,
                         onChanged: (val) {
                           viewModel.selectedValue = val;
                           viewModel.rebuildUi();
                         },
-                        items: viewModel.paymentModeModel
+                        items: viewModel.listModeModel
                             .map((String item) => DropdownMenuItem<String>(
                                   value: item,
                                   child: Text(
@@ -217,7 +251,9 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                           ? Container()
                           : AppCommonButton(
                               width: double.infinity,
-                              onPressed: () {},
+                              onPressed: () {
+                                viewModel.userUpdateDetailAPI();
+                              },
                               buttonName: ksUPDATE,
                             ),
                       const SizedBox(
