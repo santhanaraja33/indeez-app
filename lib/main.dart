@@ -4,6 +4,7 @@ import 'package:music_app/app/app.bottomsheets.dart';
 import 'package:music_app/app/app.dialogs.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/email/email_view.dart';
 import 'package:music_app/ui/views/password/provider/login_provider.dart';
@@ -14,6 +15,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesHelper.clearAll();
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();

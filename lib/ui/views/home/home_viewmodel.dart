@@ -16,6 +16,10 @@ import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
 import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
 import 'package:music_app/ui/views/home/model/post_model.dart';
+<<<<<<< HEAD
+=======
+import 'package:music_app/ui/views/userprofile/model/user_updateprofile_model.dart';
+>>>>>>> upsteam/main
 import 'package:music_app/ui/views/userprofile/model/userprofile_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -68,6 +72,186 @@ class HomeViewModel extends BaseViewModel {
       title: 'Lost Cat',
       emoji: '2🤍 4🎲 5🖤 7🔮',
     ),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
+    HomePageModel(
+        bgImage:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        musicImage1:
+            'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
+        commends: '9',
+        reactions: '26',
+        title: 'Lost Cat',
+        emoji: '1💙 3📺4 ☁️ 4✨'),
     HomePageModel(
         bgImage:
             'https://indeez.1skw54tc71lt.us-south.codeengine.appdomain.cloud/shop',
@@ -245,22 +429,28 @@ class HomeViewModel extends BaseViewModel {
         });
   }
 
-  Future<List<Users>?> getUserDetailAPI() async {
-    final getUserId =
-        await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
-    debugPrint('User ID: $getUserId');
-    final authResponse = await ApiService().getUserInfo(
-      endpoint: ApiConstants.baseURL +
-          ApiEndpoints.getProfileAPI +
-          (getUserId ?? ''), // Replace with actual user ID
-    );
-    if (authResponse != null) {
-      final info = authResponse.users?[0];
-      print(info);
-      print("User profile image: ${info}");
-      if (info != null) {}
+  //Get Home Post
+  Future<void> getUserPostsAPI() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      const String endpoint = ApiConstants.baseURL + ApiEndpoints.getPostsAPI;
+
+      final Post? post = await ApiService().homePost(endpoint: endpoint);
+
+      if (post != null && post.data != null) {
+        _post = post;
+        debugPrint("First post image key: ${_post!.data!.first.s3Key}");
+      } else {
+        _error = 'No posts found';
+      }
+    } catch (e) {
+      _error = 'Error: $e';
     }
-    return null;
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   //Get Home Post

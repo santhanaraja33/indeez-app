@@ -27,7 +27,10 @@ class OtpVerifyViewModel extends BaseViewModel {
   }
 
   void showOtpDialog(BuildContext context, String otp, String email) async {
+<<<<<<< HEAD
     print(otp);
+=======
+>>>>>>> upsteam/main
     debugPrint(otp);
 
     if (otp.isEmpty) {
@@ -40,17 +43,16 @@ class OtpVerifyViewModel extends BaseViewModel {
       await Future.delayed(const Duration(seconds: 1));
 
       bool? fromPage = await SharedPreferencesHelper.getFromPage(
-              ksSharedPreferenceFromSignupPage) ??
+          ksSharedPreferenceFromSignupPage);
+      bool? fromPage1 =
           await SharedPreferencesHelper.getFromPage(ksSharedPreferenceFromPage);
 
-      var forgotPageValue = await SharedPreferencesHelper.getFromPage(
+      bool? forgotPageValue = await SharedPreferencesHelper.getFromPage(
           ksSharedPreferenceFromForgotPasswordPage);
 
-      bool isForgotPasswordFlow =
-          forgotPageValue == ksSharedPreferenceForgotPasswordWithOTP;
-
       safePrint('fromPage: $fromPage');
-      safePrint('isForgotPasswordFlow: $isForgotPasswordFlow');
+      safePrint('isForgotPasswordFlow: $forgotPageValue');
+      safePrint('fromPage: $fromPage1');
 
       if (fromPage == true) {
         final result1 = await Amplify.Auth.confirmSignUp(
@@ -85,11 +87,39 @@ class OtpVerifyViewModel extends BaseViewModel {
         return;
       }
 
+<<<<<<< HEAD
       if (isForgotPasswordFlow) {
         await saveString('otp', otp.trim());
         CommonLoader.hideLoader(context); // 🔧 Hide loader before navigating
         navigationService.clearStackAndShowView(
             ChangepasswordView(email, otp)); // check this constructor
+=======
+      if (fromPage1 == true) {
+        final result1 = await Amplify.Auth.confirmSignIn(
+          confirmationValue: otp.trim(),
+        );
+        print("result : ${result1}");
+        final result2 = await Amplify.Auth.fetchAuthSession();
+        safePrint('User is signed in: ${result2.isSignedIn}');
+        safePrint('User is signed in: ${result2}');
+
+        if (result1.isSignedIn) {
+          Fluttertoast.showToast(msg: "Sign in confirmed!");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            navigationService.clearStackAndShow(Routes.bottomBarView);
+          });
+        } else {
+          Fluttertoast.showToast(msg: "Confirmation incomplete");
+        }
+      }
+      if (forgotPageValue != null && forgotPageValue) {
+        await saveString('otp', otp.trim());
+        CommonLoader.hideLoader(context);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigationService
+              .clearStackAndShowView(ChangepasswordView(email, otp));
+        }); // 🔧 Hide loader before navigating
+>>>>>>> upsteam/main
         return;
       }
 
@@ -105,8 +135,8 @@ class OtpVerifyViewModel extends BaseViewModel {
     }
   }
 
-  void handleResendOTP(BuildContext context, String email) async {
-    if (email.isEmpty) {
+  void handleResendOTP(BuildContext context, String? email) async {
+    if (email!.isEmpty) {
       Fluttertoast.showToast(msg: "Email is required!");
       return;
     }

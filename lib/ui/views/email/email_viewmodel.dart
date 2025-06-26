@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -39,13 +41,18 @@ class EmailViewModel extends ChangeNotifier {
     navigationService.navigateToForgotpasswordView();
   }
 
+  bool isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
+  }
+
   void handleSignIn(BuildContext context, String email, String password) async {
     try {
       if (email.isEmpty) {
         Fluttertoast.showToast(msg: "Email is required!");
         return;
       }
-      bool isValid = EmailValidator.validate(email);
+      bool isValid = isValidEmail(email);
       if (!isValid) {
         Fluttertoast.showToast(msg: "Please enter a valid email address.");
         return;
@@ -57,7 +64,10 @@ class EmailViewModel extends ChangeNotifier {
       signOutGlobally();
 
       safePrint("user email : $email");
+<<<<<<< HEAD
 
+=======
+>>>>>>> upsteam/main
       final result = await Amplify.Auth.signIn(
         username: email.trim(),
         options: const SignInOptions(
@@ -67,14 +77,23 @@ class EmailViewModel extends ChangeNotifier {
         ),
       );
       safePrint("user login result : $result");
+<<<<<<< HEAD
 
+=======
+      await SharedPreferencesHelper.setEmailId(email.trim());
+>>>>>>> upsteam/main
       await SharedPreferencesHelper.saveFromPage(
           ksSharedPreferenceFromPage, true);
       navigationService
           .clearStackAndShowView(OtpVerifyView(email: email.trim()));
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
+<<<<<<< HEAD
       safePrint("Sign-in error fdsf: ${e.message}");
+=======
+      safePrint("Sign-in error: ${e}");
+      CommonLoader.hideLoader(context);
+>>>>>>> upsteam/main
     }
   }
 

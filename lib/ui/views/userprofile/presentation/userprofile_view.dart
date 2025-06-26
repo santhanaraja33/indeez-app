@@ -24,7 +24,10 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
   void onViewModelReady(UserprofileViewModel viewModel) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.getUserDetailAPI();
+<<<<<<< HEAD
       // your initial fetch call
+=======
+>>>>>>> upsteam/main
     });
   }
 
@@ -81,22 +84,38 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                           )
                         ],
                       ),
+<<<<<<< HEAD
                       (viewModel.userProfileImage != null &&
                               viewModel.userProfileImage!.startsWith('http'))
+=======
+                      viewModel.userProfileImage != null &&
+                              viewModel.userProfileImage!.isNotEmpty &&
+                              viewModel.userProfileImage!.startsWith('http')
+>>>>>>> upsteam/main
                           ? Center(
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  borderRadius_100,
-                                ),
+                                borderRadius:
+                                    BorderRadius.circular(borderRadius_100),
                                 child: Image.network(
                                   viewModel.userProfileImage!,
                                   height: height_100,
                                   width: width_100,
                                   fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    // ⛔️ Broken or unreachable URL fallback
+                                    return Image.asset(
+                                      'assets/images/user.png',
+                                      height: height_100,
+                                      width: width_100,
+                                      fit: BoxFit.cover,
+                                      color: Colors.white,
+                                    );
+                                  },
                                 ),
                               ),
                             )
                           : ClipOval(
+<<<<<<< HEAD
                               child: Image.file(
                                 File(viewModel.userProfileImage ??
                                     'assets/images/user.png'),
@@ -104,6 +123,31 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                                 height: height_100,
                                 width: width_100,
                               ),
+=======
+                              child: viewModel.userProfileImage != null &&
+                                      viewModel.userProfileImage!.isNotEmpty
+                                  ? Image.file(
+                                      File(viewModel.userProfileImage!),
+                                      fit: BoxFit.cover,
+                                      height: height_100,
+                                      width: width_100,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'assets/images/user.png',
+                                          height: height_100,
+                                          width: width_100,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      'assets/images/user.png',
+                                      fit: BoxFit.cover,
+                                      height: height_100,
+                                      width: width_100,
+                                    ),
+>>>>>>> upsteam/main
                             ),
                       viewModel.isChecked == false
                           ? Container()
@@ -130,6 +174,8 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       AppCommonTextfield(
                         controller: viewModel.firstNameController,
                         keyboardType: TextInputType.name,
+                        readOnly: !viewModel.isChecked,
+// 👈 disables input unless in edit mode
                         label: Text(
                           ksFirstName,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -142,6 +188,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       AppCommonTextfield(
                         controller: viewModel.lastNameController,
                         keyboardType: TextInputType.name,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksLastName,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -154,6 +201,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       AppCommonTextfield(
                         controller: viewModel.emailController,
                         keyboardType: TextInputType.emailAddress,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksEmail,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -167,6 +215,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                         maxLength: maxLength_10,
                         controller: viewModel.phoneController,
                         keyboardType: TextInputType.phone,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksPhone,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -179,6 +228,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       AppCommonTextfield(
                         controller: viewModel.zipCodeController,
                         keyboardType: TextInputType.streetAddress,
+                        readOnly: !viewModel.isChecked,
                         label: Text(
                           ksZipcode,
                           style: GoogleFonts.lato(color: kcTextGrey),
@@ -191,7 +241,14 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       AppDropDown(
                         titleTextColor: kcTextGrey,
                         dropDownHint: viewModel.listModeModel.first,
+<<<<<<< HEAD
                         value: viewModel.selectedValue,
+=======
+                        value: viewModel.listModeModel
+                                .contains(viewModel.selectedValue)
+                            ? viewModel.selectedValue
+                            : null,
+>>>>>>> upsteam/main
                         onChanged: (val) {
                           viewModel.selectedValue = val;
                           viewModel.rebuildUi();

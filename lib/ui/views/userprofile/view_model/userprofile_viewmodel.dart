@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/core/api/api_constants.dart';
@@ -13,7 +14,10 @@ import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/userprofile/model/user_updateprofile_model.dart';
+<<<<<<< HEAD
 import 'package:music_app/ui/views/userprofile/model/userprofile_model.dart';
+=======
+>>>>>>> upsteam/main
 import 'package:music_app/ui/views/userprofile/provider/userprofile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
@@ -27,14 +31,30 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
   final TextEditingController zipCodeController = TextEditingController();
 
   final navigationService = locator<NavigationService>();
+  UpdatedAttributes actualInfo = UpdatedAttributes();
   bool isChecked = false;
   bool isPassword = true;
   bool isConfirmPassword = true;
+<<<<<<< HEAD
 
+=======
+>>>>>>> upsteam/main
   bool acceptPrivacyPolicy = false;
   bool acceptTerms = false;
 
   String? usertype;
+<<<<<<< HEAD
+=======
+  String? selectedValue;
+  String? userProfileImage;
+  String? images;
+
+  File? file;
+  File? imageFile;
+
+  BuildContext? get context => null;
+
+>>>>>>> upsteam/main
   final listModeModel = [
     'Fan',
     'Musician',
@@ -42,7 +62,6 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
     'Venue',
     'Record Store',
   ];
-  String? selectedValue;
 
   void init() {
     WidgetsBinding.instance.addPostFrameCallback((timestamp) {
@@ -65,8 +84,6 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
     rebuildUi();
   }
 
-  String? userProfileImage;
-  File? file;
   choosePhoto(BuildContext context) async {
     userProfileImage = '';
     final result = await FilePicker.platform.pickFiles(
@@ -74,16 +91,14 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
       type: FileType.image,
     );
     if (result == null) return;
+<<<<<<< HEAD
 
+=======
+>>>>>>> upsteam/main
     userProfileImage = result.paths.first.toString();
     file = File(result.paths.first.toString());
     rebuildUi();
   }
-
-  File? imageFile;
-  String? images;
-
-  BuildContext? get context => null;
 
   Future pickImage(BuildContext context) async {
     try {
@@ -102,15 +117,28 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
   }
 
 //MARK: Get user info API
+<<<<<<< HEAD
   Future<List<Users>?> getUserDetailAPI() async {
     final getUserId =
         await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
     final authResponse = await ApiService().getUserInfo(
+=======
+  Future<UpdatedAttributes?> getUserDetailAPI() async {
+    final getUserId =
+        await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+
+    final UpdatedAttributes? authResponse = await ApiService().getUserInfo(
+>>>>>>> upsteam/main
       endpoint: ApiConstants.baseURL +
           ApiEndpoints.getProfileAPI +
           (getUserId ?? ''), // Replace with actual user ID
     );
+    // CommonLoader.showLoader(context);
+    // await Future.delayed(const Duration(seconds: 1));
+    actualInfo = authResponse!; // model with existing values
+
     if (authResponse != null) {
+<<<<<<< HEAD
       final info = authResponse.users?[0];
       firstNameController.text = info!.firstName!;
       lastNameController.text = info.lastName!;
@@ -163,6 +191,130 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
     } else {
       safePrint("Profile update failed.");
       Fluttertoast.showToast(msg: "Login failed. Please try again.");
+=======
+      firstNameController.text = authResponse.firstName!;
+      lastNameController.text = authResponse.lastName!;
+      emailController.text = authResponse.email!;
+      phoneController.text = authResponse.phone!;
+      zipCodeController.text = authResponse.zipCode!;
+      userProfileImage = authResponse.avatarUrl!;
+      selectedValue = authResponse.userType!;
+      acceptPrivacyPolicy = authResponse.acceptPrivacyPolicy!;
+      acceptTerms = authResponse.acceptTerms!;
+      rebuildUi();
+    }
+    // CommonLoader.hideLoader(context!);
+    return null;
+  }
+
+  bool isValidEmail(String email) {
+    return RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email);
+  }
+
+  //MARK:  User profile update API
+  Future<UpdatedAttributes?> userUpdateDetailAPI() async {
+    try {
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+
+      Map<String, dynamic> updatedFields = {};
+
+      if (firstNameController.text.isNotEmpty) {
+        if (firstNameController.text.trim() != actualInfo.firstName) {
+          updatedFields["firstName"] = firstNameController.text.trim();
+        }
+      }
+
+      if (lastNameController.text.isNotEmpty) {
+        if (lastNameController.text.trim() != actualInfo.lastName) {
+          updatedFields["lastName"] = lastNameController.text.trim();
+        }
+      }
+
+      if (emailController.text.isNotEmpty) {
+        if (emailController.text.trim() != actualInfo.email) {
+          updatedFields["email"] = emailController.text.trim();
+        }
+      }
+
+      if (phoneController.text.isNotEmpty) {
+        if (phoneController.text.trim() != actualInfo.phone) {
+          updatedFields["phone"] = phoneController.text.trim();
+        }
+      }
+
+      if (zipCodeController.text.isNotEmpty) {
+        if (zipCodeController.text.trim() != actualInfo.zipCode) {
+          updatedFields["zipCode"] = zipCodeController.text.trim();
+        }
+      }
+
+      if (selectedValue != null && selectedValue!.isNotEmpty) {
+        if (selectedValue != actualInfo.userType) {
+          updatedFields["userType"] = selectedValue;
+        }
+      }
+      if (acceptPrivacyPolicy != null &&
+          acceptPrivacyPolicy != actualInfo.acceptPrivacyPolicy) {
+        updatedFields["acceptPrivacyPolicy"] = acceptPrivacyPolicy;
+      }
+
+      if (acceptTerms != null && acceptTerms != actualInfo.acceptTerms) {
+        updatedFields["acceptTerms"] = acceptTerms;
+      }
+
+      if (actualInfo.avatarUrl !=
+          "https://cdn.example.com/avatars/default.png") {
+        updatedFields["avatarUrl"] =
+            "https://cdn.example.com/avatars/default.png";
+      }
+
+      if (actualInfo.bio != "Singer/songwriter") {
+        updatedFields["bio"] = "Singer/songwriter";
+      }
+
+      final authResponse = await ApiService().updateUserInfo(
+        endpoint:
+            ApiConstants.baseURL + ApiEndpoints.profileUpdateAPI + getUserId!,
+        data: updatedFields,
+      );
+
+      safePrint("Profile $authResponse");
+
+      // final authResponse = await ApiService().updateUserInfo(
+      //   endpoint:
+      //       ApiConstants.baseURL + ApiEndpoints.profileUpdateAPI + getUserId!,
+      //   data: {
+      //     "firstName": firstNameController.text.trim(),
+      //     "lastName": lastNameController.text.trim(),
+      //     "email": emailController.text.trim().isNotEmpty
+      //         ? emailController.text.trim()
+      //         : null,
+      //     "phone": phoneController.text.trim(),
+      //     "zipCode": zipCodeController.text.trim(),
+      //     "userType": selectedValue,
+      //     "acceptPrivacyPolicy": acceptPrivacyPolicy,
+      //     "acceptTerms": acceptTerms,
+      //     "avatarUrl": "https://cdn.example.com/avatars/default.png",
+      //     "bio": "Singer/songwriter"
+      //   },
+      // );
+      if (authResponse != null) {
+        safePrint("Profile updated successfully.");
+        safePrint("Profile ${authResponse}");
+
+        isChecked = false;
+        rebuildUi();
+        Fluttertoast.showToast(msg: "Profile updated successfully");
+      } else {
+        safePrint("Profile update failed.");
+        Fluttertoast.showToast(msg: "Profile update failed. Please try again.");
+      }
+      return null;
+    } catch (e) {
+      debugPrint("Update failed: $e");
+      // show snackbar or toast
+>>>>>>> upsteam/main
     }
     return null;
   }

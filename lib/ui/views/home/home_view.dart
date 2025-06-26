@@ -14,9 +14,13 @@ class HomeView extends StackedView<HomeViewModel> {
 
   @override
   void onViewModelReady(HomeViewModel viewModel) {
+<<<<<<< HEAD
     debugPrint("onViewModelReady called");
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.getUserDetailAPI();
+=======
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+>>>>>>> upsteam/main
       viewModel.getUserPostsAPI();
     });
   }
@@ -59,7 +63,6 @@ class HomeView extends StackedView<HomeViewModel> {
                                         await SharedPreferencesHelper
                                             .getLoginUserId(ksLoggedinUserId);
                                     debugPrint('User ID: $getUserId');
-                                    viewModel.getUserDetailAPI();
                                     viewModel.isImageSelected =
                                         !viewModel.isImageSelected;
                                     viewModel.rebuildUi();
@@ -135,7 +138,11 @@ class HomeView extends StackedView<HomeViewModel> {
                               children: [
                                 const Spacer(),
                                 Text(
+<<<<<<< HEAD
                                   viewModel.homeModel[index].title ??
+=======
+                                  viewModel.postList[index].posttitle ??
+>>>>>>> upsteam/main
                                       'No title',
                                   style: GoogleFonts.bokor(
                                     color: kcWhite,

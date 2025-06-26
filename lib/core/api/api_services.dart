@@ -11,13 +11,11 @@ import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/home/model/post_model.dart';
 import 'package:music_app/ui/views/signup/model/signup_model.dart';
 import 'package:music_app/ui/views/userprofile/model/user_updateprofile_model.dart';
-import 'package:music_app/ui/views/userprofile/model/userprofile_model.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/block/modes/cbc.dart';
 
 class ApiService {
-  // ignore: non_constant_identifier_names
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: ApiConstants.loginAWSUrl,
     connectTimeout: const Duration(seconds: 30),
@@ -33,6 +31,8 @@ class ApiService {
     required String endpoint,
     required Map<String, dynamic> data,
   }) async {
+    safePrint('Log in user endpoint : \n $endpoint');
+    safePrint('Log in user data: \n $data');
     try {
       final response = await _dio.post(
         endpoint,
@@ -41,7 +41,7 @@ class ApiService {
           contentType: 'application/x-amz-json-1.1',
         ),
       );
-      safePrint('Raw Response: ${response.data}');
+      safePrint('Logged in user response: ${response.data}');
       // If Dio gives a string, decode it
       final decodedData =
           response.data is String ? jsonDecode(response.data) : response.data;
@@ -49,13 +49,13 @@ class ApiService {
           decodedData.containsKey("AuthenticationResult")) {
         return AuthResponse.fromJson(decodedData);
       }
-      safePrint("Unexpected response structure: $decodedData");
+      safePrint("Logged in user response structure: $decodedData");
       return null;
     } catch (e) {
       if (e is DioException) {
         safePrint('Login Failed: ${e.response?.data}');
       } else {
-        safePrint('Unexpected error: $e');
+        safePrint('Login Failed Unexpected error: $e');
       }
       return null;
     }
@@ -66,6 +66,8 @@ class ApiService {
     required String endpoint,
     required Map<String, dynamic> data,
   }) async {
+    safePrint('Signup user endpoint : \n $endpoint');
+    safePrint('Signup user data: \n $data');
     try {
       final response = await _dio.post(
         endpoint,
@@ -74,7 +76,7 @@ class ApiService {
           'Content-Type': 'application/json',
         }),
       );
-      safePrint('Raw Response: ${response.data}');
+      safePrint('Signup user response: ${response.data}');
       // If Dio gives a string, decode it
       final decodedData =
           response.data is String ? jsonDecode(response.data) : response.data;
@@ -82,24 +84,22 @@ class ApiService {
           decodedData.containsKey("message")) {
         return SignUpModel.fromJson(decodedData);
       }
-      safePrint("Unexpected response structure: $decodedData");
+      safePrint("Signup user response structure: $decodedData");
       return null;
     } catch (e) {
       if (e is DioException) {
         safePrint('Signup Failed: ${e.response?.data}');
       } else {
-        safePrint('Unexpected error: $e');
+        safePrint('Signup Unexpected error: $e');
       }
       return null;
     }
   }
 
   //MARK: Get User Info API
-  Future<UserprofileModel?> getUserInfo({required String endpoint}) async {
+  Future<UpdatedAttributes?> getUserInfo({required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
-    safePrint(endpoint);
-    safePrint(token);
-
+    safePrint('Logged in user profile api endpoint : \n $endpoint');
     try {
       final response = await _dio.get(
         endpoint,
@@ -108,75 +108,77 @@ class ApiService {
           'Content-Type': 'application/json',
         }),
       );
-      safePrint('Raw Response: ${response.data['users']}');
-
-      decryptData(response.data['users']);
-
-      // ✅ passing only the base64-encoded string
-
+      safePrint(
+          'Logged in user profile api response: ${response.data['users']}');
+      String decrypted = await decryptData(response.data['users']);
+      final Map<String, dynamic> decodedJson = json.decode(decrypted);
       // If Dio gives a string, decode it
-      // final decodedData =
-      //     response.data is String ? jsonDecode(response.data) : response.data;
-      // if (decodedData is Map<String, dynamic> &&
-      //     decodedData.containsKey("users")) {
-      //   return UserprofileModel.fromJson(decodedData);
-      // }
-      // safePrint("Unexpected response structure: $decodedData");
-      return null;
+      if (decodedJson['users'] != null && decodedJson['users'] is List) {
+        final List<dynamic> usersList = decodedJson['users'];
+        if (usersList.isNotEmpty) {
+          // Parse the first user from the list
+          final userJson = usersList[0];
+          safePrint("Get Profile API response structure: $userJson");
+          return UpdatedAttributes.fromJson(userJson);
+        } else {
+          throw Exception("User list is empty");
+        }
+      } else {
+        throw Exception(
+            "Invalid JSON structure: 'users' key missing or not a list");
+      }
     } catch (e) {
       if (e is DioException) {
-        safePrint('Login Failed: ${e.response?.data}');
+        safePrint('Get Profile API Error: ${e.response?.data}');
       } else {
-        safePrint('Unexpected error: $e');
+        safePrint('Get Profile API Unexpected error: $e');
       }
       return null;
     }
   }
 
   //MARK: User update Info API
-  Future<UserUpdateprofileModel?> updateUserInfo({
+  Future<UpdatedAttributes?> updateUserInfo({
     required String endpoint,
     required Map<String, dynamic> data,
   }) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
-    safePrint(endpoint);
-    safePrint(data);
-
+    safePrint('Profile update api endpoint : \n $endpoint');
+    safePrint('Profile update api data : \n $data');
     try {
       final response = await _dio.patch(
         endpoint,
         data: jsonEncode(data),
         options: Options(headers: {
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
         }),
       );
-
-      // If Dio gives a string, decode it
+      safePrint('Profile Update api response: ${response.data['users']}');
       final decodedData =
           response.data is String ? jsonDecode(response.data) : response.data;
+      safePrint("Profile update $decodedData");
       if (decodedData is Map<String, dynamic> &&
-          decodedData.containsKey("updatedAttributes")) {
-        return UserUpdateprofileModel.fromJson(decodedData);
+          decodedData.containsKey("message")) {
+        return UpdatedAttributes.fromJson(decodedData);
       }
-      safePrint("profile update structure: $decodedData['users']");
+      safePrint("Profile Update api response structure: $decodedData");
       return null;
     } catch (e) {
       if (e is DioException) {
-        safePrint('profile update failed: ${e.response?.data}');
+        safePrint('Profile Update api failed: ${e.response?.data}');
       } else {
-        safePrint('Unexpected error: $e');
+        safePrint('Profile Update api Unexpected error: $e');
       }
       return null;
     }
   }
 
-// Home Post API
-  Future<Post?> homePost({
-    required String endpoint,
-  }) async {
+  // Home Post API
+  Future<Post?> homePost({required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
     final dio = Dio();
-
+    safePrint("Home Post API $endpoint");
     try {
       final response = await dio.get(
         endpoint,
@@ -192,39 +194,33 @@ class ApiService {
         return Post.fromJson(response.data);
       } else {
         debugPrint(
-            'Failed: ${response.statusCode} - ${response.statusMessage}');
+            'Home Post API Failed: ${response.statusCode} - ${response.statusMessage}');
         return null;
       }
     } catch (e) {
-      debugPrint('Error fetching post: $e');
+      debugPrint('Home Post API Error fetching post: $e');
       return null;
     }
   }
 
+  //MARK: Logged in user profile decrytion method
   Future<String> decryptData(String encryptedBase64) async {
     //  hex key is the key used for decryption, store it in env variable
     const hexKey =
         "c738562fe9cd5e307c264543f3e518ead8c115c28dcad62c3f7f07f259d737d1";
-
     try {
       // Convert hex key string to bytes
       final key = Uint8List.fromList(_hexToBytes(hexKey));
       final iv = Uint8List.fromList(
           _hexToBytes(hexKey.substring(0, 32))); // 16 bytes IV
-
       // Decode base64 ciphertext
       final encryptedBytes = base64.decode(encryptedBase64);
-
       // Setup AES CBC decryption
       final cipher = CBCBlockCipher(AESFastEngine())
         ..init(
             false, ParametersWithIV(KeyParameter(key), iv)); // false = decrypt
-
       // Decrypt
       final decryptedPadded = _processBlocks(cipher, encryptedBytes);
-      safePrint(decryptedPadded);
-      safePrint(_removePkcs7Padding(decryptedPadded));
-
       // Remove PKCS7 padding
       return _removePkcs7Padding(decryptedPadded);
     } catch (e) {

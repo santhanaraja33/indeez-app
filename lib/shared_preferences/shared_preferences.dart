@@ -1,3 +1,4 @@
+import 'package:music_app/ui/common/app_strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/views/signup/model/signup_model.dart';
 
@@ -59,10 +60,16 @@ class SharedPreferencesHelper {
     return SignupUserInfo.fromJson(userMap);
   }
 
-  // Optional: clear user
-  static Future<void> clearUser() async {
+  //save email
+  /// Save email to shared preferences
+  static Future<void> setEmailId(String email) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('user');
+    await prefs.setString(ksEmail, email);
+  }
+
+  static Future<String?> getEmailId(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
   }
 
   //save user id
@@ -79,6 +86,17 @@ class SharedPreferencesHelper {
   //clear all preferences
   static Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(ksSharedPreferenceOTP);
+    await prefs.remove(ksSharedPreferenceEmail);
+    await prefs.remove(ksSharedPreferenceFromPage);
+    await prefs.remove(ksSharedPreferenceEmailWithOTP);
+    await prefs.remove(ksSharedPreferenceFromForgotPasswordPage);
+    await prefs.remove(ksSharedPreferenceForgotPasswordWithOTP);
+    await prefs.remove(ksSharedPreferenceFromSignupPage);
+    await prefs.remove(ksSharedPreferenceSignupWithOTP);
+    await prefs.remove(ksEmail);
+    await prefs.remove('user');
+
     await prefs.clear();
   }
 }

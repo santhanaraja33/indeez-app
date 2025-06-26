@@ -78,8 +78,11 @@ class OtpVerifyView extends StackedView<OtpVerifyViewModel> {
                     height: height_20,
                   ),
                   TextButton(
-                    onPressed: () {
-                      viewModel.handleResendOTP(context, "");
+                    onPressed: () async {
+                      final eMail =
+                          await SharedPreferencesHelper.getEmailId(ksEmail);
+                      print('emia $eMail');
+                      viewModel.handleResendOTP(context, eMail!);
                     },
                     child: Text(
                       ksResendOTP,

@@ -15,15 +15,13 @@ class ForgotpasswordViewModel extends BaseViewModel {
   var email = '';
 
   void navigationToOTPView(BuildContext context, String email) async {
-    // navigationService.navigateToOtpVerifyView();
     if (email.isEmpty) {
       Fluttertoast.showToast(msg: "Email is required!");
       return;
     }
     final result1 = await Amplify.Auth.resetPassword(username: email.trim());
     await SharedPreferencesHelper.saveFromPage(
-        ksSharedPreferenceFromForgotPasswordPage, false);
-    print("user login result : ${result1}");
+        ksSharedPreferenceFromForgotPasswordPage, true);
     navigationService.clearStackAndShow(Routes.otpVerifyView);
   }
 }
