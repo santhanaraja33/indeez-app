@@ -64,10 +64,6 @@ class EmailViewModel extends ChangeNotifier {
       signOutGlobally();
 
       safePrint("user email : $email");
-<<<<<<< HEAD
-
-=======
->>>>>>> upsteam/main
       final result = await Amplify.Auth.signIn(
         username: email.trim(),
         options: const SignInOptions(
@@ -77,23 +73,15 @@ class EmailViewModel extends ChangeNotifier {
         ),
       );
       safePrint("user login result : $result");
-<<<<<<< HEAD
-
-=======
       await SharedPreferencesHelper.setEmailId(email.trim());
->>>>>>> upsteam/main
       await SharedPreferencesHelper.saveFromPage(
           ksSharedPreferenceFromPage, true);
       navigationService
           .clearStackAndShowView(OtpVerifyView(email: email.trim()));
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
-<<<<<<< HEAD
-      safePrint("Sign-in error fdsf: ${e.message}");
-=======
       safePrint("Sign-in error: ${e}");
       CommonLoader.hideLoader(context);
->>>>>>> upsteam/main
     }
   }
 
@@ -162,26 +150,16 @@ class EmailViewModel extends ChangeNotifier {
               ListTile(
                 title: const Text('Use Password', textAlign: TextAlign.center),
                 onTap: () {
-                  if (kDebugMode) {
-                    print("Use password clicked");
-                    navigationService.replaceWithPasswordView();
-                  }
+                  print("Use password clicked"); // Optional for debugging
+                  navigationService.replaceWithPasswordView();
                 },
               ),
               ListTile(
                 title:
                     const Text('Use Biometrics', textAlign: TextAlign.center),
                 onTap: () async {
-                  if (kDebugMode) {
-                    print("Biometrics clicked");
-                    authenticateWithBiometrics(ctx);
-                    // _authenticate();
-                    // List<BiometricType> types =
-                    //     await auth.getAvailableBiometrics();
-                    // for (var type in types) {
-                    //   print(type); // face, fingerprint, etc.
-                    // }
-                  }
+                  print("Biometrics clicked"); // Optional for debugging
+                  await authenticateWithBiometrics(ctx);
                 },
               ),
               ListTile(

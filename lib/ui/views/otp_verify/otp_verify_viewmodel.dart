@@ -27,10 +27,6 @@ class OtpVerifyViewModel extends BaseViewModel {
   }
 
   void showOtpDialog(BuildContext context, String otp, String email) async {
-<<<<<<< HEAD
-    print(otp);
-=======
->>>>>>> upsteam/main
     debugPrint(otp);
 
     if (otp.isEmpty) {
@@ -87,13 +83,6 @@ class OtpVerifyViewModel extends BaseViewModel {
         return;
       }
 
-<<<<<<< HEAD
-      if (isForgotPasswordFlow) {
-        await saveString('otp', otp.trim());
-        CommonLoader.hideLoader(context); // 🔧 Hide loader before navigating
-        navigationService.clearStackAndShowView(
-            ChangepasswordView(email, otp)); // check this constructor
-=======
       if (fromPage1 == true) {
         final result1 = await Amplify.Auth.confirmSignIn(
           confirmationValue: otp.trim(),
@@ -119,7 +108,6 @@ class OtpVerifyViewModel extends BaseViewModel {
           navigationService
               .clearStackAndShowView(ChangepasswordView(email, otp));
         }); // 🔧 Hide loader before navigating
->>>>>>> upsteam/main
         return;
       }
 

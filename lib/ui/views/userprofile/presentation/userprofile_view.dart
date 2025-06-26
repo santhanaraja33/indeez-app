@@ -24,10 +24,6 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
   void onViewModelReady(UserprofileViewModel viewModel) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.getUserDetailAPI();
-<<<<<<< HEAD
-      // your initial fetch call
-=======
->>>>>>> upsteam/main
     });
   }
 
@@ -45,6 +41,12 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: kcBgColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Image.asset(
           AppImage.appLogoGif,
           height: height_50,
@@ -84,14 +86,9 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                           )
                         ],
                       ),
-<<<<<<< HEAD
-                      (viewModel.userProfileImage != null &&
-                              viewModel.userProfileImage!.startsWith('http'))
-=======
                       viewModel.userProfileImage != null &&
                               viewModel.userProfileImage!.isNotEmpty &&
                               viewModel.userProfileImage!.startsWith('http')
->>>>>>> upsteam/main
                           ? Center(
                               child: ClipRRect(
                                 borderRadius:
@@ -115,15 +112,6 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                               ),
                             )
                           : ClipOval(
-<<<<<<< HEAD
-                              child: Image.file(
-                                File(viewModel.userProfileImage ??
-                                    'assets/images/user.png'),
-                                fit: BoxFit.cover,
-                                height: height_100,
-                                width: width_100,
-                              ),
-=======
                               child: viewModel.userProfileImage != null &&
                                       viewModel.userProfileImage!.isNotEmpty
                                   ? Image.file(
@@ -147,7 +135,6 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                                       height: height_100,
                                       width: width_100,
                                     ),
->>>>>>> upsteam/main
                             ),
                       viewModel.isChecked == false
                           ? Container()
@@ -241,14 +228,10 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                       AppDropDown(
                         titleTextColor: kcTextGrey,
                         dropDownHint: viewModel.listModeModel.first,
-<<<<<<< HEAD
-                        value: viewModel.selectedValue,
-=======
                         value: viewModel.listModeModel
                                 .contains(viewModel.selectedValue)
                             ? viewModel.selectedValue
                             : null,
->>>>>>> upsteam/main
                         onChanged: (val) {
                           viewModel.selectedValue = val;
                           viewModel.rebuildUi();

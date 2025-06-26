@@ -16,10 +16,7 @@ import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
 import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
 import 'package:music_app/ui/views/home/model/post_model.dart';
-<<<<<<< HEAD
-=======
 import 'package:music_app/ui/views/userprofile/model/user_updateprofile_model.dart';
->>>>>>> upsteam/main
 import 'package:music_app/ui/views/userprofile/model/userprofile_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -430,31 +427,6 @@ class HomeViewModel extends BaseViewModel {
   }
 
   //Get Home Post
-  Future<void> getUserPostsAPI() async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      const String endpoint = ApiConstants.baseURL + ApiEndpoints.getPostsAPI;
-
-      final Post? post = await ApiService().homePost(endpoint: endpoint);
-
-      if (post != null && post.data != null) {
-        _post = post;
-        debugPrint("First post image key: ${_post!.data!.first.s3Key}");
-      } else {
-        _error = 'No posts found';
-      }
-    } catch (e) {
-      _error = 'Error: $e';
-    }
-
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  //Get Home Post
-
   Future<void> getUserPostsAPI() async {
     _isLoading = true;
     notifyListeners();

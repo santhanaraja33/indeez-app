@@ -5,7 +5,6 @@ import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_bg_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 import 'home_viewmodel.dart';
 
@@ -14,13 +13,7 @@ class HomeView extends StackedView<HomeViewModel> {
 
   @override
   void onViewModelReady(HomeViewModel viewModel) {
-<<<<<<< HEAD
-    debugPrint("onViewModelReady called");
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.getUserDetailAPI();
-=======
-    WidgetsBinding.instance.addPostFrameCallback((_) {
->>>>>>> upsteam/main
       viewModel.getUserPostsAPI();
     });
   }
@@ -138,11 +131,7 @@ class HomeView extends StackedView<HomeViewModel> {
                               children: [
                                 const Spacer(),
                                 Text(
-<<<<<<< HEAD
-                                  viewModel.homeModel[index].title ??
-=======
                                   viewModel.postList[index].posttitle ??
->>>>>>> upsteam/main
                                       'No title',
                                   style: GoogleFonts.bokor(
                                     color: kcWhite,
