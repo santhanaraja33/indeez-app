@@ -44,7 +44,6 @@ class EmailView extends StackedView<EmailViewModel> {
                     ),
                     AppCommonTextfield(
                       controller: viewModel.emailController,
-                      // obscureText: viewModel.isPassword,
                       label: Text(
                         ksEmail,
                         style: GoogleFonts.lato(color: kcTextGrey),

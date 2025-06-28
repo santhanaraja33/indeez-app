@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_app/app/app.loader.dart';
@@ -12,7 +9,6 @@ import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:local_auth/local_auth.dart';
 
 class EmailViewModel extends ChangeNotifier {
@@ -79,8 +75,12 @@ class EmailViewModel extends ChangeNotifier {
       navigationService
           .clearStackAndShowView(OtpVerifyView(email: email.trim()));
     } on AuthException catch (e) {
-      Fluttertoast.showToast(msg: e.message);
-      safePrint("Sign-in error: ${e}");
+      safePrint("Sign-in error: ${e.message}");
+      if (e.message == "Missing final '@domain'") {
+        Fluttertoast.showToast(msg: 'User Email is not registered');
+      } else {
+        Fluttertoast.showToast(msg: e.message);
+      }
       CommonLoader.hideLoader(context);
     }
   }
@@ -150,16 +150,24 @@ class EmailViewModel extends ChangeNotifier {
               ListTile(
                 title: const Text('Use Password', textAlign: TextAlign.center),
                 onTap: () {
-                  print("Use password clicked"); // Optional for debugging
-                  navigationService.replaceWithPasswordView();
+                  print("Use password clicked");
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    navigationService.clearStackAndShow(Routes.passwordView);
+                  });
                 },
               ),
               ListTile(
                 title:
                     const Text('Use Biometrics', textAlign: TextAlign.center),
                 onTap: () async {
-                  print("Biometrics clicked"); // Optional for debugging
-                  await authenticateWithBiometrics(ctx);
+                  print("Biometrics clicked");
+                  authenticateWithBiometrics(ctx);
+                  // _authenticate();
+                  // List<BiometricType> types =
+                  //     await auth.getAvailableBiometrics();
+                  // for (var type in types) {
+                  //   print(type); // face, fingerprint, etc.
+                  // }
                 },
               ),
               ListTile(
@@ -200,13 +208,17 @@ class EmailViewModel extends ChangeNotifier {
 
       if (didAuthenticate) {
         Fluttertoast.showToast(msg: "Authenticated successfully!");
-        Navigator.pop(context);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigationService.clearStackAndShow(Routes.bottomBarView);
+        });
       } else {
         print("Authentication failed.");
+        Fluttertoast.showToast(msg: "Authentication failed.");
       }
       // Close the bottom sheet after authentication
     } catch (e) {
       print("Error using biometrics: $e");
+      Fluttertoast.showToast(msg: "Error using biometrics: $e");
     }
   }
 
@@ -221,6 +233,7 @@ class EmailViewModel extends ChangeNotifier {
         // setState(() {
         _message = "Biometric authentication not available.";
         // });
+        Fluttertoast.showToast(msg: _message);
         return;
       }
 
@@ -244,6 +257,8 @@ class EmailViewModel extends ChangeNotifier {
     } catch (e) {
       // setState(() {
       _message = "Error: $e";
+      Fluttertoast.showToast(msg: _message);
+
       // });
     }
   }

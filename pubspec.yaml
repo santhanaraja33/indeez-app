@@ -26,15 +26,14 @@ dependencies:
   amplify_auth_cognito: ^2.6.2
   amplify_authenticator: ^2.3.4
   fluttertoast: ^8.2.12
-  email_validator: ^2.0.1
-  local_auth: ^2.1.6  # check for latest version
   shared_preferences: ^2.2.2  # check for latest version
-  shimmer: ^3.0.0
-  dio: ^5.8.0+1
+  local_auth: ^2.1.6  # check for latest version
+  email_validator: ^2.0.1
   provider: ^6.1.5
   encrypt: ^5.0.3
   crypto: ^3.0.6
   pointycastle: ^3.9.1
+  dio: ^5.8.0+1
 
 dev_dependencies:
   build_runner: ^2.4.5
@@ -47,14 +46,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/user.png
-    - assets/images/app_logo.gif
-    - assets/images/bg_image.jpg
-    - assets/images/sign_up_swoop_bottom.png
-    - assets/images/signup_indee.png
-    - assets/images/green_hand.png
-    - assets/images/signup_z.png
-    - assets/images/signup_swooptop.png
-    - assets/images/sign_up_clouds.png
-    
-
+    - assets/images/

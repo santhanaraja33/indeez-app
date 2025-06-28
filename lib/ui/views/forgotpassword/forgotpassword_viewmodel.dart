@@ -19,9 +19,21 @@ class ForgotpasswordViewModel extends BaseViewModel {
       Fluttertoast.showToast(msg: "Email is required!");
       return;
     }
+    bool isValid = isValidEmail(email);
+    if (!isValid) {
+      Fluttertoast.showToast(msg: "Please enter a valid email address.");
+      return;
+    }
+    await SharedPreferencesHelper.setEmailId(email.trim());
+
     final result1 = await Amplify.Auth.resetPassword(username: email.trim());
     await SharedPreferencesHelper.saveFromPage(
         ksSharedPreferenceFromForgotPasswordPage, true);
     navigationService.clearStackAndShow(Routes.otpVerifyView);
+  }
+
+  bool isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
   }
 }

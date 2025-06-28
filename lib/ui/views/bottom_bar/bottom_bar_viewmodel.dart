@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/ui/data/bean/model/bottom_bar_model.dart';
 import 'package:music_app/ui/views/event/event_view.dart';
-import 'package:music_app/ui/views/home/home_view.dart';
+import 'package:music_app/ui/views/home/presentation/home_view.dart';
 import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart';
 import 'package:music_app/ui/views/shop/shop_view.dart';
 import 'package:music_app/ui/views/swipe/swipe_view.dart';

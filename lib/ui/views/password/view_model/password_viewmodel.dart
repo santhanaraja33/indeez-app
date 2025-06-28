@@ -7,7 +7,6 @@ import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/password/model/password_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
@@ -56,23 +55,6 @@ class PasswordViewModel extends BaseViewModel {
           print("Next step: ${confirmRes.nextStep.signInStep}");
         }
       }
-
-      // if (result.isSignedIn) {
-      //   Fluttertoast.showToast(msg: "Signed in successfully!");
-      // } else {
-      //   switch (result.nextStep.signInStep) {
-      //     case AuthSignInStep.confirmSignUp:
-      //       Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-      //       showOtpDialog(context, email);
-      //       break;
-      //     case AuthSignInStep.confirmSignInWithCustomChallenge:
-      //       Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-      //       showOtpDialog(context, email);
-      //       break;
-      //     default:
-      //       print("Unhandled sign-in step: ${result.nextStep.signInStep}");
-      //   }
-      // }
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
       print("Sign-in error: ${e.message}");
@@ -103,7 +85,6 @@ class PasswordViewModel extends BaseViewModel {
               .saveLoginUserId(ksLoggedinUserId, session.userSubResult.value);
         }
         loginAPI(email, password);
-
         CommonLoader.hideLoader(context);
       } else {
         switch (result.nextStep.signInStep) {
@@ -135,19 +116,19 @@ class PasswordViewModel extends BaseViewModel {
       safePrint('User is signed in: ${result.isSignedIn}');
       final result1 = result.toJson();
       if (result is CognitoAuthSession) {
-        final isSignedIn = result.isSignedIn;
-        final userSub = result.userSubResult.value;
-        final accessToken = result.userPoolTokensResult.value.accessToken;
-        final idToken = result.userPoolTokensResult.value.idToken;
-        final refreshToken = result.userPoolTokensResult.value.refreshToken;
-        final identityId = result.identityIdResult.value;
+        // final isSignedIn = result.isSignedIn;
+        // final userSub = result.userSubResult.value;
+        // final accessToken = result.userPoolTokensResult.value.accessToken;
+        // final idToken = result.userPoolTokensResult.value.idToken;
+        // final refreshToken = result.userPoolTokensResult.value.refreshToken;
+        // final identityId = result.identityIdResult.value;
 
-        print('✅ Signed In: $isSignedIn');
-        print('🔐 Access Token: $accessToken');
-        print('🪪 User Sub: $userSub');
-        print('🧾 ID Token: $idToken');
-        print('🔄 Refresh Token: $refreshToken');
-        print('🆔 Identity ID: $identityId');
+        // print('✅ Signed In: $isSignedIn');
+        // print('🔐 Access Token: $accessToken');
+        // print('🪪 User Sub: $userSub');
+        // print('🧾 ID Token: $idToken');
+        // print('🔄 Refresh Token: $refreshToken');
+        // print('🆔 Identity ID: $identityId');
       } else {
         print('⚠️ Not a Cognito session');
       }
@@ -179,21 +160,6 @@ class PasswordViewModel extends BaseViewModel {
     }
   }
 
-  void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
-    safePrint(
-      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
-      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
-    );
-  }
-
-// Future<void> signOutCurrentUser() async {
-//     final result = await Amplify.Auth.signOut();
-//     if (result is CognitoCompleteSignOut) {
-//       safePrint('Sign out completed successfully');
-//     } else if (result is CognitoFailedSignOut) {
-//       safePrint('Error signing user out: ${result.exception.message}');
-//     }
-//   }
   Future<void> signOutGlobally() async {
     final result = await Amplify.Auth.signOut(
       options: const SignOutOptions(globalSignOut: true),
@@ -202,7 +168,7 @@ class PasswordViewModel extends BaseViewModel {
       safePrint('Sign out completed successfully');
     } else if (result is CognitoPartialSignOut) {
       final globalSignOutException = result.globalSignOutException!;
-      final accessToken = globalSignOutException.accessToken;
+      final _ = globalSignOutException.accessToken;
       // Retry the global sign out using the access token, if desired
       // ...
       safePrint('Error signing user out: ${globalSignOutException.message}');
@@ -211,23 +177,7 @@ class PasswordViewModel extends BaseViewModel {
     }
   }
 
-/*
- //   switch (result.nextStep.signInStep) {
-        //     case AuthSignInStep.confirmSignUp:
-        //       Fluttertoast.showToast(msg: "Please confirm your account with OTP");
-        //       showOtpDialog(context, email);
-        //       break;
-        //     case AuthSignInStep.confirmSignInWithCustomChallenge:
-        //       Fluttertoast.showToast(msg: "Custom challenge. Enter OTP.");
-        //       showOtpDialog(context, email);
-        //       break;
-        //     default:
-        //       print("Unhandled sign-in step: ${result.nextStep.signInStep}");
-        //   }
-        // }
-        */
 // Sign out
-
   Future<void> handleSignOut(BuildContext context) async {
     try {
       await Amplify.Auth.signOut();
@@ -238,7 +188,6 @@ class PasswordViewModel extends BaseViewModel {
   }
 
   //Show Toast
-
   void showToast(String message) {
     Fluttertoast.showToast(
       msg: message,
@@ -329,7 +278,7 @@ class PasswordViewModel extends BaseViewModel {
       Fluttertoast.showToast(msg: "Login success.");
       final accessToken = authResponse.authenticationResult.accessToken;
       await SharedPreferencesHelper.saveAccessToken(ksAccessToekn, accessToken);
-
+      await SharedPreferencesHelper.saveLoginStatus(true);
       navigationService.clearStackAndShow(Routes.bottomBarView);
     } else {
       safePrint("Login failed.");

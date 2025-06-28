@@ -8,7 +8,11 @@ import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/model/auth_response.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/home/model/post_model.dart';
+import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart';
+import 'package:music_app/ui/views/home/model/comments/get_comments_model.dart';
+import 'package:music_app/ui/views/home/model/post/post_model.dart';
+import 'package:music_app/ui/views/home/model/reactions/create_reactions_model.dart';
+import 'package:music_app/ui/views/home/model/reactions/get_reactions_model.dart';
 import 'package:music_app/ui/views/signup/model/signup_model.dart';
 import 'package:music_app/ui/views/userprofile/model/user_updateprofile_model.dart';
 import 'package:pointycastle/api.dart';
@@ -175,7 +179,7 @@ class ApiService {
   }
 
   // Home Post API
-  Future<Post?> homePost({required String endpoint}) async {
+  Future<PostModel?> homePost({required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
     final dio = Dio();
     safePrint("Home Post API $endpoint");
@@ -191,7 +195,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        return Post.fromJson(response.data);
+        return PostModel.fromJson(response.data);
       } else {
         debugPrint(
             'Home Post API Failed: ${response.statusCode} - ${response.statusMessage}');
@@ -199,6 +203,140 @@ class ApiService {
       }
     } catch (e) {
       debugPrint('Home Post API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//Get Comments list api
+  Future<GetCommentsModel?> commentsListAPI({required String endpoint}) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Comment List API $endpoint");
+    try {
+      final response = await dio.get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Comment List response ${response.data}");
+
+      if (response.data != null) {
+        return GetCommentsModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Comment List  API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Comment List API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//Create Comments api
+  Future<CreateCommentsModel?> createCommentsAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Comment List API $endpoint");
+    safePrint("Comment List API $data");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Create Comments response ${response.data}");
+
+      if (response.data != null) {
+        return CreateCommentsModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Create Comments API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Create Comments API Error fetching post: $e');
+      return null;
+    }
+  }
+
+  //Create Reactions api
+  Future<CreateReactionsModel?> createReactionsAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Reactions API $endpoint");
+    safePrint("Reactions API $data");
+    safePrint("Reactions API $token");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Create Reactions response ${response.data}");
+
+      if (response.statusCode == 200) {
+        return CreateReactionsModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Create Reactions API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Create Reactions API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//Get Reactions list api
+  Future<GetReactionsModel?> reactionsListAPI(
+      {required String endpoint}) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Reactions List API $endpoint");
+    try {
+      final response = await dio.get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Reactions List response ${response.data}");
+
+      if (response.data != null) {
+        return GetReactionsModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Reactions List  API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Reactions List API Error fetching post: $e');
       return null;
     }
   }

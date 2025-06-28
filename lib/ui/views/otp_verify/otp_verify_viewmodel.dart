@@ -94,6 +94,7 @@ class OtpVerifyViewModel extends BaseViewModel {
 
         if (result1.isSignedIn) {
           Fluttertoast.showToast(msg: "Sign in confirmed!");
+          await SharedPreferencesHelper.saveLoginStatus(true);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             navigationService.clearStackAndShow(Routes.bottomBarView);
           });
@@ -175,6 +176,8 @@ class OtpVerifyViewModel extends BaseViewModel {
       final sharedPreferencesHelper = SharedPreferencesHelper();
       await sharedPreferencesHelper.saveLoginUserId(
           ksLoggedinUserId, signUpResponse.userId ?? '');
+      await SharedPreferencesHelper.saveLoginStatus(true);
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         navigationService.clearStackAndShow(Routes.bottomBarView);
       });

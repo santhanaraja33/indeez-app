@@ -83,6 +83,17 @@ class SharedPreferencesHelper {
     return prefs.getString(key);
   }
 
+//save login status
+  static Future<void> saveLoginStatus(bool isLoggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(ksLoginStatus, isLoggedIn);
+  }
+
+  static Future<bool> getLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(ksLoginStatus) ?? false; // default to false if null
+  }
+
   //clear all preferences
   static Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();

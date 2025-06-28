@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/rightmenu/model/rightmenu_model.dart';
@@ -188,7 +189,11 @@ class RightmenuViewModel extends BaseViewModel {
   }
 
   doLogout() async {
-    navigationService.navigateToPasswordView();
+    await SharedPreferencesHelper.saveLoginStatus(false);
+    await SharedPreferencesHelper.clearAll();
+    navigationService.navigateToStartupView();
+    // SharedPreferencesHelper.clearAll();
+
     rebuildUi();
   }
 }

@@ -5,11 +5,21 @@ import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
-
 import 'bottom_popup_viewmodel.dart';
 
 class BottomPopupView extends StackedView<BottomPopupViewModel> {
-  const BottomPopupView({Key? key}) : super(key: key);
+  final String postId;
+
+  const BottomPopupView(this.postId, {Key? key}) : super(key: key);
+
+  @override
+  void onViewModelReady(BottomPopupViewModel viewModel) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      viewModel.postId = postId;
+      await viewModel.getCommentsListAPI(postId);
+      await viewModel.getReactionsListAPI(postId);
+    });
+  }
 
   @override
   Widget builder(
@@ -38,7 +48,7 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                   Row(
                     children: [
                       Text(
-                        '${viewModel.homeModel[2].commends ?? ''} $ksCOMMENTS',
+                        '${viewModel.comments?.data?.length ?? 0} $ksCOMMENTS',
                         style: GoogleFonts.lato(
                           color: kcTextGrey,
                           fontSize: 10,
@@ -49,7 +59,7 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                         width: width_10,
                       ),
                       Text(
-                        '${viewModel.homeModel[2].reactions ?? ''} $ksREACTIONS',
+                        '${viewModel.reactions?.data?.length ?? 0} $ksREACTIONS',
                         style: GoogleFonts.lato(
                           color: kcTextGrey,
                           fontSize: 10,
@@ -88,12 +98,19 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                         width: 5,
                       ),
                       Expanded(
-                        child: Text(
-                          viewModel.homeModel[2].emoji ?? '',
-                          style: GoogleFonts.lato(
-                            fontSize: 14,
-                            color: kcTextGrey,
-                          ),
+                        child: Wrap(
+                          // 👈 Use Wrap to handle overflow gracefully
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: viewModel.emojis
+                              .map((emoji) => Text(
+                                    emoji.toString(),
+                                    style: GoogleFonts.lato(
+                                      fontSize: 14,
+                                      color: kcTextGrey,
+                                    ),
+                                  ))
+                              .toList(),
                         ),
                       ),
                     ],
@@ -102,60 +119,108 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                     height: 20,
                   ),
                   AppCommonTextfield(
+                    controller: viewModel.commentController,
+                    keyboardType: TextInputType.text,
+                    // 👈 Done button on keyboard
+                    onSubmitted: (value) {
+                      FocusManager.instance.primaryFocus
+                          ?.unfocus(); // hides keyboard
+                    },
                     label: Text('Add a comment',
                         style: GoogleFonts.lato(color: kcTextGrey)),
+                  ),
+                  const SizedBox(height: 5),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                      ),
+                      onPressed: () {
+                        final comment = viewModel.commentController.text.trim();
+                        if (comment.isNotEmpty) {
+                          viewModel.submitComment(comment);
+                          viewModel.commentController.clear();
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        }
+                      },
+                      child: Text("Done",
+                          style: GoogleFonts.lato(color: Colors.white)),
+                    ),
                   ),
                   viewModel.isemoji == false
                       ? Container()
                       : EmojiSelector(
                           withTitle: false,
                           padding: const EdgeInsets.all(20),
+                          // 👈 This hides the search bar (if available)
                           onSelected: (emoji) {
                             viewModel.emojiData = emoji;
+                            viewModel.commentController.text = emoji.char;
+                            viewModel.emojiStr = emoji.name;
+                            if (viewModel.emojiData != null) {
+                              viewModel.emojis.add(viewModel.emojiData as Type);
+                            }
                             viewModel.rebuildUi();
                           },
                         ),
-                  ListView.builder(
-                    itemCount: viewModel.commentModel.length,
-                    shrinkWrap: true,
-                    physics: const ScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              viewModel.commentModel[index].title ?? '',
-                              style: GoogleFonts.lato(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: kcWhite),
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 2,
-                                  child: Text(
-                                    viewModel.commentModel[index].subTitle ??
+                  viewModel.comments?.data == null ||
+                          viewModel.comments!.data!.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No comments yet.',
+                            style: GoogleFonts.lato(
+                                color: kcTextGrey, fontSize: 14),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: viewModel.comments?.data!.length,
+                          shrinkWrap: true,
+                          physics: const ScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    viewModel.comments?.data![index]
+                                            .commentText ??
                                         '',
                                     style: GoogleFonts.lato(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                         color: kcWhite),
                                   ),
-                                ),
-                                const Icon(
-                                  Icons.favorite,
-                                  color: kcTextGrey,
-                                )
-                              ],
-                            ),
-                          ],
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2,
+                                        child: Text(
+                                          viewModel.commentModel[index]
+                                                  .subTitle ??
+                                              '',
+                                          style: GoogleFonts.lato(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: kcWhite),
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.favorite,
+                                        color: kcTextGrey,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),

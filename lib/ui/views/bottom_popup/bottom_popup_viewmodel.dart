@@ -1,14 +1,38 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:emoji_selector/emoji_selector.dart';
+import 'package:flutter/material.dart';
 import 'package:music_app/app/app.locator.dart';
+import 'package:music_app/core/api/api_constants.dart';
+import 'package:music_app/core/api/api_endpoints.dart';
+import 'package:music_app/core/api/api_services.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
+import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart';
+import 'package:music_app/ui/views/home/model/comments/get_comments_model.dart';
+import 'package:music_app/ui/views/home/model/reactions/create_reactions_model.dart';
+import 'package:music_app/ui/views/home/model/reactions/get_reactions_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class BottomPopupViewModel extends BaseViewModel {
+  final TextEditingController commentController = TextEditingController();
+
   final navigationService = locator<NavigationService>();
+
   bool isImageSelected = false;
   bool isemoji = false;
+  String? postId;
+  String? emojiStr;
+
+  GetCommentsModel? comments;
+  GetReactionsModel? reactions;
+  CreateCommentsModel? createComments;
+  CreateReactionsModel? createReactions;
+
+  EmojiData? emojiData;
+  final emojis = [EmojiData];
 
   final homeModel = [
     HomePageModel(
@@ -41,7 +65,7 @@ class BottomPopupViewModel extends BaseViewModel {
         title: 'Lost Cat',
         emoji: '1💙 3📺4 ☁️ 4✨'),
   ];
-  EmojiData? emojiData;
+
   void navi() {}
   final commentModel = [
     CommentModel(
@@ -58,4 +82,102 @@ class BottomPopupViewModel extends BaseViewModel {
           "I loved this album! It was so good! I can't wait for the next one!",
     ),
   ];
+
+  //Get Comments List API
+  Future<void> getCommentsListAPI(String postId) async {
+    notifyListeners();
+    safePrint('post id $postId');
+    try {
+      String endpoint =
+          ApiConstants.baseURL + ApiEndpoints.getCommentsAPI + postId;
+      safePrint('ENdpint $endpoint');
+      final GetCommentsModel? _comments =
+          await ApiService().commentsListAPI(endpoint: endpoint);
+
+      if (_comments != null && _comments.data != null) {
+        comments = _comments;
+        debugPrint("First comments : ${comments!.data!.length}");
+      } else {}
+    } catch (e) {}
+    notifyListeners();
+  }
+
+  Future<void> submitComment(String comments) async {
+    safePrint("post id $postId");
+    safePrint("Commetns $comments");
+
+    if (containsOnlyText(comments)) {
+      createCommentsAPI(postId!, comments);
+    } else {
+      createReactionsAPI(postId!, emojiStr!.snakeCase);
+      safePrint(emojiStr?.snakeCase);
+    }
+    safePrint(comments);
+  }
+
+  //Get Reactions List API
+  Future<void> getReactionsListAPI(String postId) async {
+    notifyListeners();
+    try {
+      String endpoint =
+          ApiConstants.baseURL + ApiEndpoints.getReactionsAPI + postId;
+      safePrint(endpoint);
+      final GetReactionsModel? reaction =
+          await ApiService().reactionsListAPI(endpoint: endpoint);
+      if (reaction != null && reaction.data != null) {
+        reactions = reaction;
+        debugPrint("First reaction : ${reactions!.data!.length}");
+      } else {}
+    } catch (e) {}
+    notifyListeners();
+  }
+
+  //Create Comments API
+  Future<void> createCommentsAPI(String postId, String comments) async {
+    notifyListeners();
+    try {
+      String endpoint =
+          ApiConstants.baseURL + ApiEndpoints.getCommentsAPI + postId;
+      safePrint(endpoint);
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreateCommentsModel? createdComments = await ApiService()
+          .createCommentsAPI(
+              endpoint: endpoint,
+              data: {"userId": getUserId, "commentText": comments});
+      if (createdComments != null && createdComments.data != null) {
+        createComments = createdComments;
+        debugPrint("Create comments : ${createComments!.data!}");
+        rebuildUi();
+      } else {}
+    } catch (e) {}
+    notifyListeners();
+  }
+
+  //Create Reactions API
+  Future<void> createReactionsAPI(String postId, String comments) async {
+    notifyListeners();
+    try {
+      String endpoint = ApiConstants.baseURL + ApiEndpoints.createReactionsAPI;
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreateReactionsModel? createdReactions = await ApiService()
+          .createReactionsAPI(endpoint: endpoint, data: {
+        "userId": getUserId,
+        "postId": postId,
+        "reactionType": comments
+      });
+      if (createdReactions != null && createdReactions.data != null) {
+        createReactions = createdReactions;
+        debugPrint("Create reactions : ${createReactions!.data!}");
+        rebuildUi();
+      } else {}
+    } catch (e) {}
+    notifyListeners();
+  }
+
+  bool containsOnlyText(String text) {
+    final textRegex = RegExp(r'^[a-zA-Z0-9\s]+$');
+    return textRegex.hasMatch(text);
+  }
 }

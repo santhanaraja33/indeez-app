@@ -85,7 +85,7 @@ const String ksUnblockHint =
 const String unBlockAccount = 'Un Block Account';
 const String ksChangeProfile = 'Change Profile';
 //User Profile
-
+const String ksLoginStatus = 'isLoggedIn';
 const String ksSharedPreferenceOTP = 'otp';
 const String ksSharedPreferenceEmail = 'email';
 const String ksSharedPreferenceFromPage = 'email';

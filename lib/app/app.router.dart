@@ -19,7 +19,7 @@ import 'package:music_app/ui/views/create_account/create_account_view.dart'
 import 'package:music_app/ui/views/event/event_view.dart' as _i10;
 import 'package:music_app/ui/views/forgotpassword/forgotpassword_view.dart'
     as _i12;
-import 'package:music_app/ui/views/home/home_view.dart' as _i2;
+import 'package:music_app/ui/views/home/presentation/home_view.dart' as _i2;
 import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart' as _i8;
 import 'package:music_app/ui/views/notification/notification_view.dart' as _i21;
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart' as _i13;
@@ -300,7 +300,7 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i17.BottomPopupView: (data) {
       return _i23.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i17.BottomPopupView(),
+        builder: (context) => const _i17.BottomPopupView(''),
         settings: data,
       );
     },

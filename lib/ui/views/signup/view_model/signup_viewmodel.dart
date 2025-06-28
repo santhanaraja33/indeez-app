@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
-import 'package:music_app/core/api/api_endpoints.dart';
-import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
