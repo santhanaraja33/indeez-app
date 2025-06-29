@@ -1,13 +1,22 @@
+import 'dart:io';
+
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:emoji_selector/emoji_selector.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
 import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/ui/common/app_colors.dart';
+import 'package:music_app/ui/common/app_common_button.dart';
 import 'package:music_app/ui/common/app_common_textfield.dart';
+import 'package:music_app/ui/common/app_dropdown.dart';
+import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
@@ -28,6 +37,13 @@ class HomeViewModel extends BaseViewModel {
   String? get post_error => _error;
 
   List<Data> get postList => _post?.data ?? [];
+
+  String? userProfileImage;
+  String? images;
+
+  File? file;
+  File? imageFile;
+  List<File> selectedFiles = [];
 
   final navigationService = locator<NavigationService>();
   bool isImageSelected = false;
@@ -437,5 +453,241 @@ class HomeViewModel extends BaseViewModel {
     }
     _isLoading = false;
     notifyListeners();
+  }
+
+  void showCreatePostDialog(BuildContext context) {
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descController = TextEditingController();
+    bool isPrivate = false;
+    String? selectedResourceType;
+
+    final List<String> resourceTypes = ['Image', 'Video', 'Audio'];
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              insetPadding: EdgeInsets.zero,
+              backgroundColor: Colors.transparent,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(AppImage.appBGImage),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Scaffold(
+                  backgroundColor: Colors.black.withOpacity(0.6),
+                  appBar: AppBar(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    title: const Text('Create Post',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  body: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Image Picker Placeholder
+                        if (selectedFiles.isEmpty)
+                          GestureDetector(
+                            onTap: () {
+                              pickMultipleImages(setState);
+                            },
+                            child: Container(
+                              height: 150,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.white30),
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.add_a_photo,
+                                  size: 40,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        const SizedBox(height: 20),
+
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: selectedFiles.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    selectedFiles[index],
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                ),
+                                // Positioned close button in top-right
+                                Positioned(
+                                  top: 6,
+                                  right: 6,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedFiles.removeAt(index);
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.black54,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Post Title
+                        AppCommonTextfield(
+                          controller: titleController,
+                          keyboardType: TextInputType.text,
+                          label: Text(
+                            ksTitle,
+                            style: GoogleFonts.lato(color: kcTextGrey),
+                          ),
+                          onSubmitted: (p0) {},
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        // Description
+                        AppCommonTextfield(
+                          controller: descController,
+                          height: height_100,
+                          keyboardType: TextInputType.text,
+                          minLines: 3,
+                          maxLines: null,
+                          label: Text(
+                            ksDesc,
+                            style: GoogleFonts.lato(color: kcTextGrey),
+                          ),
+                          onSubmitted: (p0) {},
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        // Privacy Toggle
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Private Post ?',
+                              style: GoogleFonts.lato(
+                                  color: Colors.white, fontSize: 15),
+                            ),
+                            Switch(
+                              value: isPrivate,
+                              onChanged: (val) {
+                                setState(() {
+                                  isPrivate = val;
+                                });
+                              },
+                              activeColor: Colors.white,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        // Resource Type Dropdown
+
+                        AppDropDown(
+                          title: 'Resource Type',
+                          dropDownHint: 'Select a resource',
+                          value: selectedResourceType,
+                          onChanged: (val) {
+                            setState(() {
+                              selectedResourceType = val;
+                            });
+                          },
+                          items: resourceTypes.map((type) {
+                            return DropdownMenuItem<String>(
+                              value: type,
+                              child: Text(
+                                type,
+                                style: GoogleFonts.lato(color: Colors.white),
+                              ),
+                            );
+                          }).toList(),
+                          titleTextColor: Colors.white,
+                          bgColor: Colors.black87,
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        // Submit Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: AppCommonButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            buttonName: 'Create Post',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> pickMultipleImages(Function setState) async {
+    try {
+      final List<XFile>? files =
+          await ImagePicker().pickMultipleMedia(imageQuality: 100);
+
+      if (files == null || files.isEmpty) return;
+
+      selectedFiles = files.map((xfile) => File(xfile.path)).toList();
+      setState(() {});
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error picking images: $e');
+    }
   }
 }

@@ -25,183 +25,201 @@ class HomeView extends StackedView<HomeViewModel> {
     Widget? child,
   ) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          viewModel.showCreatePostDialog(context);
+        },
+        backgroundColor: kcBlue,
+        shape: const CircleBorder(),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
       body: Stack(
         children: [
           const AppCommonBGImage(),
           SafeArea(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: padding_20, right: padding_20),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: height_30,
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: viewModel.post?.data?.length ?? 0,
-                    physics: const ScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: padding_20),
-                        child: Column(
-                          children: [
-                            Stack(
-                              alignment: const Alignment(2, 0),
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    final getUserId =
-                                        await SharedPreferencesHelper
-                                            .getLoginUserId(ksLoggedinUserId);
-                                    debugPrint('User ID: $getUserId');
-                                    viewModel.isImageSelected =
-                                        !viewModel.isImageSelected;
-                                    viewModel.rebuildUi();
-                                  },
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    imageUrl: viewModel.homeModel[index]
-                                                .isImageSelected ==
-                                            true
-                                        ? viewModel
-                                                .homeModel[index].musicImage1 ??
-                                            ''
-                                        : viewModel.homeModel[index].bgImage ??
-                                            '',
-                                    placeholder: (context, url) => const Column(
-                                      children: [
-                                        // Transform.scale(
-                                        //     scale: 0.6,
-                                        //     child:
-                                        //         const CircularProgressIndicator(
-                                        //       color: kcTransparent,
-                                        //     )),
-                                      ],
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    viewModel.homeModel[index].isImageSelected =
-                                        !viewModel
-                                            .homeModel[index].isImageSelected;
-                                    viewModel.rebuildUi();
-                                  },
-                                  child: Transform(
-                                    alignment: Alignment.center,
-                                    transform: Matrix4.rotationZ(
-                                      2 / 15,
-                                    ),
+              child: RefreshIndicator(
+            onRefresh: () async => {viewModel.getUserPostsAPI()},
+            child: SingleChildScrollView(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: padding_20, right: padding_20),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: height_30,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: viewModel.post?.data?.length ?? 0,
+                      physics: const ScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: padding_20),
+                          child: Column(
+                            children: [
+                              Stack(
+                                alignment: const Alignment(2, 0),
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final getUserId =
+                                          await SharedPreferencesHelper
+                                              .getLoginUserId(ksLoggedinUserId);
+                                      debugPrint('User ID: $getUserId');
+                                      viewModel.isImageSelected =
+                                          !viewModel.isImageSelected;
+                                      viewModel.rebuildUi();
+                                    },
                                     child: CachedNetworkImage(
                                       fit: BoxFit.cover,
                                       imageUrl: viewModel.homeModel[index]
                                                   .isImageSelected ==
                                               true
-                                          ? viewModel
-                                                  .homeModel[index].bgImage ??
-                                              ''
-                                          : viewModel.homeModel[index]
+                                          ? viewModel.homeModel[index]
                                                   .musicImage1 ??
+                                              ''
+                                          : viewModel
+                                                  .homeModel[index].bgImage ??
                                               '',
-                                      placeholder: (context, url) => Column(
+                                      placeholder: (context, url) =>
+                                          const Column(
                                         children: [
-                                          Transform.scale(
-                                              scale: 0.6,
-                                              child:
-                                                  const CircularProgressIndicator(
-                                                color: kcWhite,
-                                              )),
+                                          // Transform.scale(
+                                          //     scale: 0.6,
+                                          //     child:
+                                          //         const CircularProgressIndicator(
+                                          //       color: kcTransparent,
+                                          //     )),
                                         ],
                                       ),
                                       errorWidget: (context, url, error) =>
                                           const Icon(Icons.error),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: height_20,
-                            ),
-                            Row(
-                              children: [
-                                const Spacer(),
-                                Text(
-                                  viewModel.postList[index].posttitle ??
-                                      'No title',
-                                  style: GoogleFonts.bokor(
-                                    color: kcWhite,
-                                    fontSize: size_22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                viewModel.popupPhotoUploadNavigation(
-                                    context,
-                                    index,
-                                    viewModel.postList[index].postId ?? '0');
-                              },
-                              child: Row(
-                                children: [
-                                  const Spacer(),
-                                  Text(
-                                    viewModel.homeModel[index].emoji ?? '',
-                                    style: GoogleFonts.lato(fontSize: size_20),
+                                  GestureDetector(
+                                    onTap: () {
+                                      viewModel.homeModel[index]
+                                              .isImageSelected =
+                                          !viewModel
+                                              .homeModel[index].isImageSelected;
+                                      viewModel.rebuildUi();
+                                    },
+                                    child: Transform(
+                                      alignment: Alignment.center,
+                                      transform: Matrix4.rotationZ(
+                                        2 / 15,
+                                      ),
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        imageUrl: viewModel.homeModel[index]
+                                                    .isImageSelected ==
+                                                true
+                                            ? viewModel
+                                                    .homeModel[index].bgImage ??
+                                                ''
+                                            : viewModel.homeModel[index]
+                                                    .musicImage1 ??
+                                                '',
+                                        placeholder: (context, url) => Column(
+                                          children: [
+                                            Transform.scale(
+                                                scale: 0.6,
+                                                child:
+                                                    const CircularProgressIndicator(
+                                                  color: kcWhite,
+                                                )),
+                                          ],
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(
-                              height: height_5,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                viewModel.popupPhotoUploadNavigation(
-                                    context,
-                                    index,
-                                    viewModel.postList[index].postId ?? '0');
-                              },
-                              child: Row(
+                              const SizedBox(
+                                height: height_20,
+                              ),
+                              Row(
                                 children: [
                                   const Spacer(),
                                   Text(
-                                    '${viewModel.postList[index].commentsCount ?? 0} $ksCOMMENTS',
-                                    style: GoogleFonts.lato(
+                                    viewModel.postList[index].posttitle ??
+                                        'No title',
+                                    style: GoogleFonts.bokor(
                                       color: kcWhite,
-                                      fontSize: size_14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: width_10,
-                                  ),
-                                  Text(
-                                    '${viewModel.postList[index].totalReactions ?? 0} $ksREACTIONS',
-                                    style: GoogleFonts.lato(
-                                      color: kcWhite,
-                                      fontSize: size_14,
+                                      fontSize: size_22,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: height_30,
-                  ),
-                ],
+                              GestureDetector(
+                                onTap: () {
+                                  viewModel.popupPhotoUploadNavigation(
+                                      context,
+                                      index,
+                                      viewModel.postList[index].postId ?? '0');
+                                },
+                                child: Row(
+                                  children: [
+                                    const Spacer(),
+                                    Text(
+                                      viewModel.homeModel[index].emoji ?? '',
+                                      style:
+                                          GoogleFonts.lato(fontSize: size_20),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: height_5,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  viewModel.popupPhotoUploadNavigation(
+                                      context,
+                                      index,
+                                      viewModel.postList[index].postId ?? '0');
+                                },
+                                child: Row(
+                                  children: [
+                                    const Spacer(),
+                                    Text(
+                                      '${viewModel.postList[index].commentsCount ?? 0} $ksCOMMENTS',
+                                      style: GoogleFonts.lato(
+                                        color: kcWhite,
+                                        fontSize: size_14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: width_10,
+                                    ),
+                                    Text(
+                                      '${viewModel.postList[index].totalReactions ?? 0} $ksREACTIONS',
+                                      style: GoogleFonts.lato(
+                                        color: kcWhite,
+                                        fontSize: size_14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: height_30,
+                    ),
+                  ],
+                ),
               ),
             ),
           )),

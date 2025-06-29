@@ -42,6 +42,15 @@ class AppDropDown extends StatelessWidget {
               color: titleTextColor ?? Theme.of(context).hintColor,
             ),
           ),
+          style: GoogleFonts.lato(
+            fontSize: 16,
+            color: Colors.white,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            decoration: BoxDecoration(
+              color: bgColor ?? Colors.black87,
+            ),
+          ),
           items: items,
           value: value,
           onChanged: onChanged,

@@ -11,6 +11,7 @@ class AppCommonTextfield extends StatelessWidget {
       this.contentPadding,
       this.keyboardType,
       this.label,
+      this.height,
       this.obscureText,
       this.onChanged,
       this.onTap,
@@ -20,11 +21,14 @@ class AppCommonTextfield extends StatelessWidget {
       this.onSubmitted,
       this.controller,
       this.maxLength,
+      this.maxLines,
+      this.minLines,
       this.hintText});
 
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final Widget? label;
+  final double? height;
   final EdgeInsetsGeometry? contentPadding;
   final void Function(String)? onChanged;
   final void Function()? onTap;
@@ -37,19 +41,23 @@ class AppCommonTextfield extends StatelessWidget {
   final TextEditingController? controller;
   final int? maxLength;
   final String? hintText;
+  final int? maxLines;
+  final int? minLines;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: bgColor ?? kcBlack,
+      height: height,
       child: TextField(
-        maxLength: maxLength,
         buildCounter: (context,
             {required currentLength, required isFocused, required maxLength}) {
           return null;
         },
         controller: controller,
-        keyboardType: keyboardType,
+        keyboardType: keyboardType ?? TextInputType.multiline,
+        maxLines: (obscureText ?? false) ? 1 : maxLines,
+        minLines: (obscureText ?? false) ? 1 : minLines ?? 1,
         obscureText: obscureText ?? false,
         readOnly: readOnly ?? false,
         style: GoogleFonts.lato(color: kcWhite),

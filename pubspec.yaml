@@ -26,8 +26,8 @@ dependencies:
   amplify_auth_cognito: ^2.6.2
   amplify_authenticator: ^2.3.4
   fluttertoast: ^8.2.12
-  shared_preferences: ^2.2.2  # check for latest version
-  local_auth: ^2.1.6  # check for latest version
+  shared_preferences: ^2.2.2 # check for latest version
+  local_auth: ^2.1.6 # check for latest version
   email_validator: ^2.0.1
   provider: ^6.1.5
   encrypt: ^5.0.3

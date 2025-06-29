@@ -21,6 +21,9 @@ const String ksFirstName = 'First name';
 const String ksLastName = 'Last name';
 const String ksEmail = 'Email';
 const String ksPhone = 'Phone';
+const String ksTitle = 'Title';
+const String ksDesc = 'Description';
+
 const String ksTypeofUser = 'Type of User';
 const String ksConfirmPassword = 'Confirm Password';
 const String ksPrivacypolicy = 'Privacy policy';

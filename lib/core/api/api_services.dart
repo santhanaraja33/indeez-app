@@ -181,6 +181,7 @@ class ApiService {
   // Home Post API
   Future<PostModel?> homePost({required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    print("Access Token :  ${token.toString()}");
     final dio = Dio();
     safePrint("Home Post API $endpoint");
     try {
