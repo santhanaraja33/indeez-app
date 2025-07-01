@@ -1,6 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:emoji_selector/emoji_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
@@ -30,6 +31,15 @@ class BottomPopupViewModel extends BaseViewModel {
   GetReactionsModel? reactions;
   CreateCommentsModel? createComments;
   CreateReactionsModel? createReactions;
+
+  int? replyingToCommentIndex;
+  TextEditingController replyController = TextEditingController();
+
+  Set<String> likedCommentIds = {};
+
+  bool isCommentLiked(String commentId) {
+    return likedCommentIds.contains(commentId);
+  }
 
   EmojiData? emojiData;
   final emojis = [EmojiData];
@@ -84,22 +94,26 @@ class BottomPopupViewModel extends BaseViewModel {
   ];
 
   //Get Comments List API
-  Future<void> getCommentsListAPI(String postId) async {
-    notifyListeners();
-    safePrint('post id $postId');
+  Future<void> getCommentsListAPI(String postId,
+      {bool showLoader = true}) async {
+    if (showLoader) setBusy(true);
+
     try {
       String endpoint =
           ApiConstants.baseURL + ApiEndpoints.getCommentsAPI + postId;
-      safePrint('ENdpint $endpoint');
       final GetCommentsModel? _comments =
           await ApiService().commentsListAPI(endpoint: endpoint);
 
       if (_comments != null && _comments.data != null) {
         comments = _comments;
-        debugPrint("First comments : ${comments!.data!.length}");
-      } else {}
-    } catch (e) {}
-    notifyListeners();
+        debugPrint("Loaded comments: ${comments!.data!.length}");
+        rebuildUi();
+      }
+    } catch (e) {
+      // Handle error
+    }
+
+    if (showLoader) setBusy(false);
   }
 
   Future<void> submitComment(String comments) async {
@@ -149,6 +163,33 @@ class BottomPopupViewModel extends BaseViewModel {
         createComments = createdComments;
         debugPrint("Create comments : ${createComments!.data!}");
         rebuildUi();
+        getCommentsListAPI(postId, showLoader: false);
+      } else {}
+    } catch (e) {}
+    notifyListeners();
+  }
+
+// Create Reply Comment
+  Future<void> createReplyCommentsAPI(
+      String postId, String comments, String parentCommentId) async {
+    notifyListeners();
+    try {
+      String endpoint =
+          ApiConstants.baseURL + ApiEndpoints.getCommentsAPI + postId;
+      safePrint(endpoint);
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreateCommentsModel? createdComments = await ApiService()
+          .createCommentsAPI(endpoint: endpoint, data: {
+        "userId": getUserId,
+        "commentText": comments,
+        "parentCommentId": parentCommentId
+      });
+      if (createdComments != null && createdComments.data != null) {
+        createComments = createdComments;
+        debugPrint("Create comments : ${createComments!.data!}");
+        getCommentsListAPI(postId, showLoader: false);
+        rebuildUi();
       } else {}
     } catch (e) {}
     notifyListeners();
@@ -176,8 +217,28 @@ class BottomPopupViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  // bool containsOnlyText(String text) {
+  //   final textRegex = RegExp(r'^[a-zA-Z0-9\s]+$');
+  //   return textRegex.hasMatch(text);
+  // }
+
   bool containsOnlyText(String text) {
-    final textRegex = RegExp(r'^[a-zA-Z0-9\s]+$');
-    return textRegex.hasMatch(text);
+    final emojiRegex = RegExp(
+      r'[\u203C-\u3299\uD83C-\uDBFF\uDC00-\uDFFF]+',
+      unicode: true,
+    );
+    final cleaned = text.replaceAll(emojiRegex, '').trim();
+    return cleaned.isNotEmpty;
+  }
+
+  //Comment like
+  void toggleLike(String commentId) {
+    if (isCommentLiked(commentId)) {
+      likedCommentIds.remove(commentId);
+    } else {
+      likedCommentIds.add(commentId);
+    }
+
+    rebuildUi();
   }
 }

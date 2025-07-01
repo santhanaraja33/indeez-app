@@ -18,6 +18,7 @@ class AppCommonTextfield extends StatelessWidget {
       this.prefixIcon,
       this.readOnly,
       this.suffixIcon,
+      this.onSuffixIconTap,
       this.onSubmitted,
       this.controller,
       this.maxLength,
@@ -43,6 +44,7 @@ class AppCommonTextfield extends StatelessWidget {
   final String? hintText;
   final int? maxLines;
   final int? minLines;
+  final VoidCallback? onSuffixIconTap;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,12 @@ class AppCommonTextfield extends StatelessWidget {
             color: kcWhite,
           ),
           prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
+          suffixIcon: onSuffixIconTap != null && suffixIcon != null
+              ? GestureDetector(
+                  onTap: onSuffixIconTap,
+                  child: suffixIcon,
+                )
+              : suffixIcon,
           border: border ?? InputBorder.none,
           label: label,
           contentPadding: contentPadding ??
