@@ -1,7 +1,7 @@
 class PostModel {
   bool? success;
   List<Data>? data;
-  Null? lastEvaluatedKey;
+  LastEvaluatedKey? lastEvaluatedKey;
 
   PostModel({this.success, this.data, this.lastEvaluatedKey});
 
@@ -13,7 +13,9 @@ class PostModel {
         data!.add(new Data.fromJson(v));
       });
     }
-    lastEvaluatedKey = json['lastEvaluatedKey'];
+    lastEvaluatedKey = json['lastEvaluatedKey'] != null
+        ? new LastEvaluatedKey.fromJson(json['lastEvaluatedKey'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -22,95 +24,113 @@ class PostModel {
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['lastEvaluatedKey'] = this.lastEvaluatedKey;
+    if (this.lastEvaluatedKey != null) {
+      data['lastEvaluatedKey'] = this.lastEvaluatedKey!.toJson();
+    }
     return data;
   }
 }
 
 class Data {
+  int? commentsCount;
   String? content;
+  int? likesCount;
+  bool? active;
+  String? resourceType;
   String? privacy;
+  String? userId;
   String? status;
+  String? posttitle;
   String? createdAt;
   int? views;
   String? postId;
-  int? commentsCount;
-  bool? active;
-  int? likesCount;
-  List<MediaItems>? mediaItems;
-  String? resourceType;
-  String? userId;
-  String? updatedAt;
-  String? posttitle;
   ReactionsCount? reactionsCount;
   int? totalReactions;
+  List<MediaItems>? mediaItems;
+  String? updatedAt;
 
   Data(
-      {this.content,
+      {this.commentsCount,
+      this.content,
+      this.likesCount,
+      this.active,
+      this.resourceType,
       this.privacy,
+      this.userId,
       this.status,
+      this.posttitle,
       this.createdAt,
       this.views,
       this.postId,
-      this.commentsCount,
-      this.active,
-      this.likesCount,
-      this.mediaItems,
-      this.resourceType,
-      this.userId,
-      this.updatedAt,
-      this.posttitle,
       this.reactionsCount,
-      this.totalReactions});
+      this.totalReactions,
+      this.mediaItems,
+      this.updatedAt});
 
   Data.fromJson(Map<String, dynamic> json) {
+    commentsCount = json['commentsCount'];
     content = json['content'];
+    likesCount = json['likesCount'];
+    active = json['active'];
+    resourceType = json['resourceType'];
     privacy = json['privacy'];
+    userId = json['userId'];
     status = json['status'];
+    posttitle = json['posttitle'];
     createdAt = json['createdAt'];
     views = json['views'];
     postId = json['postId'];
-    commentsCount = json['commentsCount'];
-    active = json['active'];
-    likesCount = json['likesCount'];
+    reactionsCount = json['reactionsCount'] != null
+        ? new ReactionsCount.fromJson(json['reactionsCount'])
+        : null;
+    totalReactions = json['totalReactions'];
     if (json['mediaItems'] != null) {
       mediaItems = <MediaItems>[];
       json['mediaItems'].forEach((v) {
         mediaItems!.add(new MediaItems.fromJson(v));
       });
     }
-    resourceType = json['resourceType'];
-    userId = json['userId'];
     updatedAt = json['updatedAt'];
-    posttitle = json['posttitle'];
-    reactionsCount = json['reactionsCount'] != null
-        ? new ReactionsCount.fromJson(json['reactionsCount'])
-        : null;
-    totalReactions = json['totalReactions'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['commentsCount'] = this.commentsCount;
     data['content'] = this.content;
+    data['likesCount'] = this.likesCount;
+    data['active'] = this.active;
+    data['resourceType'] = this.resourceType;
     data['privacy'] = this.privacy;
+    data['userId'] = this.userId;
     data['status'] = this.status;
+    data['posttitle'] = this.posttitle;
     data['createdAt'] = this.createdAt;
     data['views'] = this.views;
     data['postId'] = this.postId;
-    data['commentsCount'] = this.commentsCount;
-    data['active'] = this.active;
-    data['likesCount'] = this.likesCount;
-    if (this.mediaItems != null) {
-      data['mediaItems'] = this.mediaItems!.map((v) => v.toJson()).toList();
-    }
-    data['resourceType'] = this.resourceType;
-    data['userId'] = this.userId;
-    data['updatedAt'] = this.updatedAt;
-    data['posttitle'] = this.posttitle;
     if (this.reactionsCount != null) {
       data['reactionsCount'] = this.reactionsCount!.toJson();
     }
     data['totalReactions'] = this.totalReactions;
+    if (this.mediaItems != null) {
+      data['mediaItems'] = this.mediaItems!.map((v) => v.toJson()).toList();
+    }
+    data['updatedAt'] = this.updatedAt;
+    return data;
+  }
+}
+
+class ReactionsCount {
+  int? love;
+
+  ReactionsCount({this.love});
+
+  ReactionsCount.fromJson(Map<String, dynamic> json) {
+    love = json['love'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['love'] = this.love;
     return data;
   }
 }
@@ -152,18 +172,18 @@ class MediaItems {
   }
 }
 
-class ReactionsCount {
-  int? love;
+class LastEvaluatedKey {
+  String? postId;
 
-  ReactionsCount({this.love});
+  LastEvaluatedKey({this.postId});
 
-  ReactionsCount.fromJson(Map<String, dynamic> json) {
-    love = json['love'];
+  LastEvaluatedKey.fromJson(Map<String, dynamic> json) {
+    postId = json['postId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['love'] = this.love;
+    data['postId'] = this.postId;
     return data;
   }
 }

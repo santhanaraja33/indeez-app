@@ -1,7 +1,6 @@
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/views/signup/model/signup_model.dart';
-
 import 'dart:convert';
 
 class SharedPreferencesHelper {

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
@@ -102,39 +101,30 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
 
 //MARK: Get user info API
   Future<UpdatedAttributes?> getUserDetailAPI() async {
-    setBusy(true); // Start loader
-    try {
-      final getUserId =
-          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+    final getUserId =
+        await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
 
-      final UpdatedAttributes? authResponse = await ApiService().getUserInfo(
-        endpoint: ApiConstants.baseURL +
-            ApiEndpoints.getProfileAPI +
-            (getUserId ?? ''),
-      );
+    final UpdatedAttributes? authResponse = await ApiService().getUserInfo(
+      endpoint: ApiConstants.baseURL +
+          ApiEndpoints.getProfileAPI +
+          (getUserId ?? ''), // Replace with actual user ID
+    );
+    // CommonLoader.showLoader(context);
+    // await Future.delayed(const Duration(seconds: 1));
+    actualInfo = authResponse!; // model with existing values
 
-      if (authResponse != null) {
-        actualInfo = authResponse;
-
-        firstNameController.text = authResponse.firstName ?? '';
-        lastNameController.text = authResponse.lastName ?? '';
-        emailController.text = authResponse.email ?? '';
-        phoneController.text = authResponse.phone ?? '';
-        zipCodeController.text = authResponse.zipCode ?? '';
-        userProfileImage = authResponse.avatarUrl ?? '';
-        selectedValue = authResponse.userType ?? '';
-        acceptPrivacyPolicy = authResponse.acceptPrivacyPolicy ?? false;
-        acceptTerms = authResponse.acceptTerms ?? false;
-        rebuildUi();
-      }
-
-      return authResponse;
-    } catch (e) {
-      // Handle error (optional: show toast/snackbar)
-      rethrow;
-    } finally {
-      setBusy(false); // Stop loader
-    }
+    firstNameController.text = authResponse.firstName!;
+    lastNameController.text = authResponse.lastName!;
+    emailController.text = authResponse.email!;
+    phoneController.text = authResponse.phone!;
+    zipCodeController.text = authResponse.zipCode!;
+    userProfileImage = authResponse.avatarUrl!;
+    selectedValue = authResponse.userType!;
+    acceptPrivacyPolicy = authResponse.acceptPrivacyPolicy!;
+    acceptTerms = authResponse.acceptTerms!;
+    rebuildUi();
+    // CommonLoader.hideLoader(context!);
+    return null;
   }
 
   bool isValidEmail(String email) {
@@ -142,10 +132,8 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
   }
 
   //MARK:  User profile update API
-  Future<UpdatedAttributes?> userUpdateDetailAPI(BuildContext context) async {
+  Future<UpdatedAttributes?> userUpdateDetailAPI() async {
     try {
-      CommonLoader.showLoader(context);
-
       final getUserId =
           await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
 
@@ -204,7 +192,6 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
       if (actualInfo.bio != "Singer/songwriter") {
         updatedFields["bio"] = "Singer/songwriter";
       }
-
       final authResponse = await ApiService().updateUserInfo(
         endpoint:
             ApiConstants.baseURL + ApiEndpoints.profileUpdateAPI + getUserId!,
@@ -212,32 +199,11 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
       );
 
       safePrint("Profile $authResponse");
-
-      // final authResponse = await ApiService().updateUserInfo(
-      //   endpoint:
-      //       ApiConstants.baseURL + ApiEndpoints.profileUpdateAPI + getUserId!,
-      //   data: {
-      //     "firstName": firstNameController.text.trim(),
-      //     "lastName": lastNameController.text.trim(),
-      //     "email": emailController.text.trim().isNotEmpty
-      //         ? emailController.text.trim()
-      //         : null,
-      //     "phone": phoneController.text.trim(),
-      //     "zipCode": zipCodeController.text.trim(),
-      //     "userType": selectedValue,
-      //     "acceptPrivacyPolicy": acceptPrivacyPolicy,
-      //     "acceptTerms": acceptTerms,
-      //     "avatarUrl": "https://cdn.example.com/avatars/default.png",
-      //     "bio": "Singer/songwriter"
-      //   },
-      // );
       if (authResponse != null) {
         safePrint("Profile updated successfully.");
-        safePrint("Profile ${authResponse}");
-
+        safePrint("Profile $authResponse");
         isChecked = false;
         rebuildUi();
-        CommonLoader.hideLoader(context);
         Fluttertoast.showToast(msg: "Profile updated successfully");
       } else {
         safePrint("Profile update failed.");

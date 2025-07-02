@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,6 +21,7 @@ class OtpVerifyViewModel extends BaseViewModel {
   final TextEditingController otpController = TextEditingController();
   var signUpResponse = SignUpModel();
   final String email = '';
+  final sharedPreferencesHelper = SharedPreferencesHelper();
 
   Future<void> saveString(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
@@ -45,10 +47,6 @@ class OtpVerifyViewModel extends BaseViewModel {
 
       bool? forgotPageValue = await SharedPreferencesHelper.getFromPage(
           ksSharedPreferenceFromForgotPasswordPage);
-
-      safePrint('fromPage: $fromPage');
-      safePrint('isForgotPasswordFlow: $forgotPageValue');
-      safePrint('fromPage: $fromPage1');
 
       if (fromPage == true) {
         final result1 = await Amplify.Auth.confirmSignUp(
@@ -87,21 +85,38 @@ class OtpVerifyViewModel extends BaseViewModel {
         final result1 = await Amplify.Auth.confirmSignIn(
           confirmationValue: otp.trim(),
         );
-        print("result : ${result1}");
-        final result2 = await Amplify.Auth.fetchAuthSession();
-        safePrint('User is signed in: ${result2.isSignedIn}');
-        safePrint('User is signed in: ${result2}');
-
+        safePrint("result : $result1");
+        final result2 =
+            await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+        safePrint('User is signed in: $result2');
         if (result1.isSignedIn) {
-          Fluttertoast.showToast(msg: "Sign in confirmed!");
-          await SharedPreferencesHelper.saveLoginStatus(true);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            navigationService.clearStackAndShow(Routes.bottomBarView);
-          });
+          List<AuthUserAttribute> attributes =
+              await Amplify.Auth.fetchUserAttributes();
+
+          final subAttribute = attributes.firstWhere(
+            (attr) => attr.userAttributeKey == CognitoUserAttributeKey.sub,
+            orElse: () => throw Exception('User sub not found'),
+          );
+
+          await sharedPreferencesHelper.saveLoginUserId(
+              ksLoggedinUserId, subAttribute.value);
+          print('User sub: ${subAttribute.value}');
+
+          final accessToken = result2.userPoolTokensResult.value.accessToken;
+          await SharedPreferencesHelper.saveAccessToken(
+              ksAccessToekn, accessToken.raw);
         } else {
-          Fluttertoast.showToast(msg: "Confirmation incomplete");
+          safePrint('User is not signed in or no tokens available');
         }
+        Fluttertoast.showToast(msg: "Sign in confirmed!");
+        await SharedPreferencesHelper.saveLoginStatus(true);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigationService.clearStackAndShow(Routes.bottomBarView);
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Confirmation incomplete");
       }
+
       if (forgotPageValue != null && forgotPageValue) {
         await saveString('otp', otp.trim());
         CommonLoader.hideLoader(context);
@@ -121,6 +136,16 @@ class OtpVerifyViewModel extends BaseViewModel {
       safePrint("Unexpected error: $e");
       Fluttertoast.showToast(msg: "Something went wrong!");
       CommonLoader.hideLoader(context);
+    }
+  }
+
+  Future<void> fetchAccessTokenAfterSignIn() async {
+    try {
+      // First, check if session is valid and signed in
+    } on AuthException catch (e) {
+      print('AuthException: ${e.message}');
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
@@ -173,7 +198,6 @@ class OtpVerifyViewModel extends BaseViewModel {
     print(signUpResponse.message);
     if (signUpResponse.message == "User created") {
       Fluttertoast.showToast(msg: "Sign up confirmed!");
-      final sharedPreferencesHelper = SharedPreferencesHelper();
       await sharedPreferencesHelper.saveLoginUserId(
           ksLoggedinUserId, signUpResponse.userId ?? '');
       await SharedPreferencesHelper.saveLoginStatus(true);

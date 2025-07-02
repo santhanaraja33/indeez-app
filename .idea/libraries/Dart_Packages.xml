@@ -110,7 +110,7 @@
         <entry key="asn1lib">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.4/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.5/lib" />
             </list>
           </value>
         </entry>
@@ -145,7 +145,7 @@
         <entry key="build">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build-2.5.3/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build-2.5.4/lib" />
             </list>
           </value>
         </entry>
@@ -166,21 +166,21 @@
         <entry key="build_resolvers">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_resolvers-2.5.3/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_resolvers-2.5.4/lib" />
             </list>
           </value>
         </entry>
         <entry key="build_runner">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.5.3/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.5.4/lib" />
             </list>
           </value>
         </entry>
         <entry key="build_runner_core">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner_core-9.1.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner_core-9.1.2/lib" />
             </list>
           </value>
         </entry>
@@ -1237,7 +1237,7 @@
         <entry key="synchronized">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/synchronized-3.3.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/synchronized-3.4.0/lib" />
             </list>
           </value>
         </entry>
@@ -1454,17 +1454,17 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/amplify_secure_storage_dart-0.5.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/analyzer-6.11.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/args-2.7.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/async-2.13.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/aws_common-0.7.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/aws_signature_v4-0.6.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/boolean_selector-2.1.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build-2.5.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build-2.5.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_config-1.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_daemon-4.0.4/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_resolvers-2.5.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.5.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner_core-9.1.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_resolvers-2.5.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner-2.5.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/build_runner_core-9.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/built_collection-5.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/built_value-8.10.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/cached_network_image-3.4.1/lib" />
@@ -1610,7 +1610,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stream_channel-2.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stream_transform-2.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/string_scanner-1.4.1/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/synchronized-3.3.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/synchronized-3.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/table_calendar-3.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/term_glyph-1.2.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.4/lib" />

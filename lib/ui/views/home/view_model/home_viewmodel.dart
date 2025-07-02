@@ -1,17 +1,19 @@
 import 'dart:io';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:dio/dio.dart';
 import 'package:emoji_selector/emoji_selector.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
 import 'package:music_app/core/api/api_services.dart';
+import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_button.dart';
 import 'package:music_app/ui/common/app_common_textfield.dart';
@@ -21,29 +23,33 @@ import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
 import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
+import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart'
+    hide Data;
+import 'package:music_app/ui/views/home/model/post/create_post_model.dart';
+import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_model.dart';
+import 'package:music_app/ui/views/home/model/post/post_update_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:path/path.dart' as p;
 
 class HomeViewModel extends BaseViewModel {
-//Post
-
   PostModel? _post;
   bool _isLoading = false;
   String? _error;
+  PostDownloadMediaModel? downloadMedia;
+  List<PostDownloadMediaModel> downloadMediaList = [];
+  CreatePostModel? createPostModel;
+  List<String> selectedFiles = [];
+  List<File> selectedImages = [];
+  List<Map<String, dynamic>> selectedImageItems = [];
+  PostUpdateModel? updatePostModel;
 
   PostModel? get post => _post;
   bool get isLoading => _isLoading;
   String? get post_error => _error;
 
   List<Data> get postList => _post?.data ?? [];
-
-  String? userProfileImage;
-  String? images;
-
-  File? file;
-  File? imageFile;
-  List<File> selectedFiles = [];
 
   final navigationService = locator<NavigationService>();
   bool isImageSelected = false;
@@ -56,6 +62,30 @@ class HomeViewModel extends BaseViewModel {
     );
     rebuildUi();
   }
+
+  late Map<String, dynamic> emojiList;
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
+  bool isPrivate = false;
+  String? selectedResourceType;
+  String? selectedMode;
+
+  final List<String> resourceTypes = ['Image', 'Video', 'Audio'];
+
+  final Map<String, String> reactionEmojiMap = {
+    "right_facing_fist": "🤜",
+    "left_facing_fist": "🤛",
+    "raised_back_of_hand": "🤚",
+    "victory_hand": "✌️",
+    "ear": "👂",
+    "hand_with_fingers_splayed": "🖐️",
+    "raised_hand_with_part_between_middle_and_ring_fingers": "🖖",
+    "white_up_pointing_backhand_index": "👆",
+    "white_down_pointing_backhand_index": "👇",
+    "pinched_fingers": "🤌",
+    "flexed_biceps": "💪",
+    'like': '❤️',
+  };
 
   final homeModel = [
     HomePageModel(
@@ -440,11 +470,19 @@ class HomeViewModel extends BaseViewModel {
     _isLoading = true;
     notifyListeners();
     try {
-      const String endpoint = ApiConstants.baseURL + ApiEndpoints.getPostsAPI;
+      const String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.getPostsAPI}";
       final PostModel? post = await ApiService().homePost(endpoint: endpoint);
       if (post != null && post.data != null) {
         _post = post;
-        debugPrint("First post image key: ${_post!.data!.first.mediaItems}");
+        // Loop through each post and call download
+        for (final postItem in _post!.data!) {
+          final postId = postItem.postId;
+          if (postId != null) {
+            await Future.wait(_post!.data!
+                .map((postItem) => postImageDownloadAPI(postItem.postId!)));
+          }
+        }
       } else {
         _error = 'No posts found';
       }
@@ -455,14 +493,33 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  //Get Post List API
+  Future<void> postImageDownloadAPI(String postId) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.getPostImageDownloadAPI}$postId";
+
+      final PostDownloadMediaModel? postImageDownload =
+          await ApiService().postImageDownloadAPI(endpoint: endpoint);
+
+      if (postImageDownload != null && postImageDownload.success == true) {
+        // Add to a list if you're collecting all downloads
+        downloadMediaList.add(postImageDownload);
+        debugPrint(
+            "Media URL for $postId: ${postImageDownload.mediaFiles?.first.mediaUrl}");
+      } else {
+        debugPrint('No media found for post: $postId');
+      }
+    } catch (e) {
+      debugPrint('Error downloading media for $postId: $e');
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
   void showCreatePostDialog(BuildContext context) {
-    final TextEditingController titleController = TextEditingController();
-    final TextEditingController descController = TextEditingController();
-    bool isPrivate = false;
-    String? selectedResourceType;
-
-    final List<String> resourceTypes = ['Image', 'Video', 'Audio'];
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -539,7 +596,7 @@ class HomeViewModel extends BaseViewModel {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: Image.file(
-                                    selectedFiles[index],
+                                    selectedImages[index],
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                     height: double.infinity,
@@ -610,7 +667,7 @@ class HomeViewModel extends BaseViewModel {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Private Post ?',
+                              ksPrivatePostTitle,
                               style: GoogleFonts.lato(
                                   color: Colors.white, fontSize: 15),
                             ),
@@ -619,6 +676,11 @@ class HomeViewModel extends BaseViewModel {
                               onChanged: (val) {
                                 setState(() {
                                   isPrivate = val;
+                                  if (isPrivate == true) {
+                                    selectedMode = "private";
+                                  } else {
+                                    selectedMode = "public";
+                                  }
                                 });
                               },
                               activeColor: Colors.white,
@@ -633,7 +695,9 @@ class HomeViewModel extends BaseViewModel {
                         AppDropDown(
                           title: 'Resource Type',
                           dropDownHint: 'Select a resource',
-                          value: selectedResourceType,
+                          value: resourceTypes.contains(selectedResourceType)
+                              ? selectedResourceType
+                              : null,
                           onChanged: (val) {
                             setState(() {
                               selectedResourceType = val;
@@ -644,14 +708,13 @@ class HomeViewModel extends BaseViewModel {
                               value: type,
                               child: Text(
                                 type,
-                                style: GoogleFonts.lato(color: Colors.white),
+                                style: GoogleFonts.lato(color: Colors.blueGrey),
                               ),
                             );
                           }).toList(),
-                          titleTextColor: Colors.white,
+                          titleTextColor: Colors.grey,
                           bgColor: Colors.black87,
                         ),
-
                         const SizedBox(height: 30),
 
                         // Submit Button
@@ -659,9 +722,9 @@ class HomeViewModel extends BaseViewModel {
                           width: double.infinity,
                           child: AppCommonButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              createPostMethod(context);
                             },
-                            buttonName: 'Create Post',
+                            buttonName: ksCreatePost,
                           ),
                         ),
                       ],
@@ -683,11 +746,166 @@ class HomeViewModel extends BaseViewModel {
 
       if (files == null || files.isEmpty) return;
 
-      selectedFiles = files.map((xfile) => File(xfile.path)).toList();
+      selectedImages = files.map((xfile) => File(xfile.path)).toList();
+      for (var xfile in files) {
+        final _ = p.extension(xfile.path);
+        selectedFiles.add(p.basename(xfile.path));
+      }
+
       setState(() {});
       notifyListeners();
     } catch (e) {
       debugPrint('Error picking images: $e');
     }
+  }
+
+  Future<void> createPostMethod(BuildContext context) async {
+    if (titleController.text.isEmpty || titleController.text.trim().isEmpty) {
+      Fluttertoast.showToast(msg: ksPostTitle);
+      return;
+    }
+    if (descController.text.isEmpty || descController.text.trim().isEmpty) {
+      Fluttertoast.showToast(msg: ksPostDescription);
+      return;
+    }
+    if (selectedResourceType!.isEmpty || selectedResourceType!.trim().isEmpty) {
+      Fluttertoast.showToast(msg: ksResourceType);
+      return;
+    }
+    if (selectedFiles.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "Post creation $selectedResourceType is required");
+      return;
+    }
+    if (selectedFiles.isNotEmpty) {
+      List<Map<String, dynamic>> fileList = createFileList(selectedFiles);
+      debugPrint('Error picking images: $fileList');
+      selectedImageItems.addAll(fileList);
+      debugPrint('Error picking images 123 : \n $selectedImageItems');
+    }
+
+    notifyListeners();
+    try {
+      String endpoint = "${ApiConstants.baseURL}${ApiEndpoints.createPostAPI}";
+      safePrint(endpoint);
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreatePostModel? createPost =
+          await ApiService().createPostAPI(endpoint: endpoint, data: {
+        "userId": getUserId,
+        "posttitle": titleController.text.trim(),
+        "content": descController.text.trim(),
+        "privacy": selectedMode ?? '',
+        "resourceType": selectedResourceType?.toLowerCase(),
+        "files": selectedImageItems
+      });
+
+      if (createPost?.success == true) {
+        createPostModel = createPost;
+        debugPrint("Create post api response : ${createPostModel?.message}");
+        Navigator.of(context).pop();
+        for (int i = 0; i < createPostModel!.mediaUploadUrls!.length; i++) {
+          final uploadUrl = createPostModel!.mediaUploadUrls![i].uploadUrl;
+          final imagePath = selectedImages[i].path;
+          final index =
+              createPostModel!.postData!.mediaItems![i].index.toString();
+          await uploadImageToAPI(
+              uploadUrl!, imagePath, createPostModel!.postId!, index);
+        }
+        rebuildUi();
+      } else {}
+    } catch (e) {
+      print('Create post api failed: $e');
+    }
+    notifyListeners();
+  }
+
+//ImageUrl upload
+  Future<void> uploadImageToAPI(String imageUploadUrl, String selectedImagePath,
+      String postId, String index) async {
+    final dio = Dio();
+    try {
+      final imageBytes = await File(selectedImagePath).readAsBytes();
+      final mimeType =
+          lookupMimeType(selectedImagePath) ?? 'application/octet-stream';
+      Response response = await dio.put(
+        imageUploadUrl,
+        data: imageBytes,
+        options: Options(
+          headers: {
+            'Content-Type': mimeType,
+          },
+        ),
+      );
+      print('Upload success: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        imageUploadUpdateStatusAPI(postId, index);
+      }
+    } catch (e) {
+      print('Upload failed: $e');
+    }
+  }
+
+//Update Image upload status
+  Future<void> imageUploadUpdateStatusAPI(String postId, String index) async {
+    notifyListeners();
+    try {
+      String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.updatePostAPI}${"/$postId"}";
+      safePrint(endpoint);
+      safePrint("imageUploadUpdateStatusAPI $index");
+
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final PostUpdateModel? updatePost = await ApiService().updatePostAPI(
+          endpoint: endpoint,
+          data: {"userId": getUserId, "index": index, "status": "uplpaded"});
+      if (updatePost?.success == true) {
+        updatePostModel = updatePost;
+        debugPrint("Update post api response : ${updatePostModel?.message}");
+        rebuildUi();
+      } else {}
+    } catch (e) {
+      print('Update post api failed: $e');
+    }
+    notifyListeners();
+  }
+
+  List<Map<String, dynamic>> createFileList(List<String> fileNames) {
+    return List.generate(fileNames.length, (index) {
+      final fileName = fileNames[index];
+      final mimeType = getMimeType(fileName);
+      return {
+        "fileName": fileName,
+        "mimeType": mimeType,
+        "index": index,
+      };
+    });
+  }
+
+// Helper function to get MIME type from file extension
+  String getMimeType(String fileName) {
+    if (fileName.endsWith(".png")) return "image/png";
+    if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+      return "image/jpeg";
+    }
+    if (fileName.endsWith(".gif")) return "image/gif";
+    return "application/octet-stream"; // default fallback
+  }
+
+  List<String> get reactionTextList1 {
+    final List<String> result = [];
+    for (final postItem in _post!.data!) {
+      final reactions = postItem.reactionsCount?.toJson() ?? {};
+      print('reactions result $reactions');
+
+      reactions.forEach((key, value) {
+        if (value is int && value > 0 && reactionEmojiMap.containsKey(key)) {
+          result.add('${reactionEmojiMap[key]} $value');
+        }
+      });
+    }
+    print('reactionTextList1 result $result');
+    return result;
   }
 }

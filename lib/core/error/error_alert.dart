@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/messages/app_messages.dart';
+import 'package:music_app/ui/common/app_strings.dart';
 
 class AppError {
   static void showDialogWithExternalFunction(
@@ -8,7 +8,7 @@ class AppError {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(AppMessages.errorTitle),
+          title: const Text(errorTitle),
           content: Text(errorMsg),
           actions: [
             TextButton(
@@ -16,7 +16,7 @@ class AppError {
                 // Close the dialog when the button is pressed
                 Navigator.of(context).pop();
               },
-              child: const Text(AppMessages.closeTitle),
+              child: const Text(closeTitle),
             ),
           ],
         );

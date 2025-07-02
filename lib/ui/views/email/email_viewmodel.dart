@@ -13,28 +13,15 @@ import 'package:local_auth/local_auth.dart';
 
 class EmailViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  bool isLoading = false;
-  bool isPassword = true;
-  bool isSignedIn = false;
 
   final navigationService = locator<NavigationService>();
-  final LocalAuthentication auth = LocalAuthentication();
-  String _message = "Not Authenticated";
 
-  String? challengeHint;
+  final LocalAuthentication auth = LocalAuthentication();
+
+  String _message = "Not Authenticated";
 
   void navigationToSignUP() {
     navigationService.navigateToSignupView();
-  }
-
-  void isPasswordShow() {
-    isPassword = !isPassword;
-  }
-
-  void navigationToForgotPassword() {
-    navigationService.navigateToForgotpasswordView();
   }
 
   bool isValidEmail(String email) {
@@ -42,7 +29,7 @@ class EmailViewModel extends ChangeNotifier {
     return emailRegex.hasMatch(email);
   }
 
-  void handleSignIn(BuildContext context, String email, String password) async {
+  void handleSignIn(BuildContext context, String email) async {
     try {
       if (email.isEmpty) {
         Fluttertoast.showToast(msg: "Email is required!");
@@ -69,6 +56,8 @@ class EmailViewModel extends ChangeNotifier {
         ),
       );
       safePrint("user login result : $result");
+      CommonLoader.hideLoader(context);
+
       await SharedPreferencesHelper.setEmailId(email.trim());
       await SharedPreferencesHelper.saveFromPage(
           ksSharedPreferenceFromPage, true);
@@ -93,35 +82,13 @@ class EmailViewModel extends ChangeNotifier {
       safePrint('Sign out completed successfully');
     } else if (result is CognitoPartialSignOut) {
       final globalSignOutException = result.globalSignOutException!;
-      final accessToken = globalSignOutException.accessToken;
-      // Retry the global sign out using the access token, if desired
-      // ...
       safePrint('Error signing user out: ${globalSignOutException.message}');
     } else if (result is CognitoFailedSignOut) {
       safePrint('Error signing user out: ${result.exception.message}');
     }
   }
 
-  void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
-    safePrint(
-      'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
-      'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
-    );
-  }
-
-// Sign out
-
-  Future<void> handleSignOut(BuildContext context) async {
-    try {
-      await Amplify.Auth.signOut();
-      Fluttertoast.showToast(msg: "Signed out");
-    } on AuthException catch (e) {
-      Fluttertoast.showToast(msg: e.message);
-    }
-  }
-
   //Show Toast
-
   void showToast(String message) {
     Fluttertoast.showToast(
       msg: message,
@@ -150,7 +117,7 @@ class EmailViewModel extends ChangeNotifier {
               ListTile(
                 title: const Text('Use Password', textAlign: TextAlign.center),
                 onTap: () {
-                  print("Use password clicked");
+                  debugPrint("Use password clicked");
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     navigationService.clearStackAndShow(Routes.passwordView);
                   });
@@ -160,14 +127,8 @@ class EmailViewModel extends ChangeNotifier {
                 title:
                     const Text('Use Biometrics', textAlign: TextAlign.center),
                 onTap: () async {
-                  print("Biometrics clicked");
+                  debugPrint("Biometrics clicked");
                   authenticateWithBiometrics(ctx);
-                  // _authenticate();
-                  // List<BiometricType> types =
-                  //     await auth.getAvailableBiometrics();
-                  // for (var type in types) {
-                  //   print(type); // face, fingerprint, etc.
-                  // }
                 },
               ),
               ListTile(
@@ -188,13 +149,13 @@ class EmailViewModel extends ChangeNotifier {
     bool isDeviceSupported = await auth.isDeviceSupported();
 
     if (!canCheck || !isDeviceSupported) {
-      print("Biometric authentication not available.");
+      debugPrint("Biometric authentication not available.");
       return;
     }
 
     List<BiometricType> availableBiometrics =
         await auth.getAvailableBiometrics();
-    print("Available biometrics: $availableBiometrics");
+    debugPrint("Available biometrics: $availableBiometrics");
 
     try {
       bool didAuthenticate = await auth.authenticate(
@@ -212,12 +173,12 @@ class EmailViewModel extends ChangeNotifier {
           navigationService.clearStackAndShow(Routes.bottomBarView);
         });
       } else {
-        print("Authentication failed.");
+        debugPrint("Authentication failed.");
         Fluttertoast.showToast(msg: "Authentication failed.");
       }
       // Close the bottom sheet after authentication
     } catch (e) {
-      print("Error using biometrics: $e");
+      debugPrint("Error using biometrics: $e");
       Fluttertoast.showToast(msg: "Error using biometrics: $e");
     }
   }
@@ -255,11 +216,8 @@ class EmailViewModel extends ChangeNotifier {
         ),
       );
     } catch (e) {
-      // setState(() {
       _message = "Error: $e";
       Fluttertoast.showToast(msg: _message);
-
-      // });
     }
   }
 }

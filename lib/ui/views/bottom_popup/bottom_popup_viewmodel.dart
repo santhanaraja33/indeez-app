@@ -1,7 +1,6 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:emoji_selector/emoji_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
@@ -19,6 +18,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 class BottomPopupViewModel extends BaseViewModel {
   final TextEditingController commentController = TextEditingController();
+  final TextEditingController replyController = TextEditingController();
 
   final navigationService = locator<NavigationService>();
 
@@ -33,8 +33,6 @@ class BottomPopupViewModel extends BaseViewModel {
   CreateReactionsModel? createReactions;
 
   int? replyingToCommentIndex;
-  TextEditingController replyController = TextEditingController();
-
   Set<String> likedCommentIds = {};
 
   bool isCommentLiked(String commentId) {
@@ -42,8 +40,22 @@ class BottomPopupViewModel extends BaseViewModel {
   }
 
   EmojiData? emojiData;
-  final emojis = [EmojiData];
+  List<EmojiData> emojis = [];
 
+  final Map<String, String> reactionEmojiMap = {
+    "right_facing_fist": "🤜",
+    "left_facing_fist": "🤛",
+    "raised_back_of_hand": "🤚",
+    "victory_hand": "✌️",
+    "ear": "👂",
+    "hand_with_fingers_splayed": "🖐️",
+    "raised_hand_with_part_between_middle_and_ring_fingers": "🖖",
+    "white_up_pointing_backhand_index": "👆",
+    "white_down_pointing_backhand_index": "👇",
+    "pinched_fingers": "🤌",
+    "flexed_biceps": "💪",
+    'like': '❤️',
+  };
   final homeModel = [
     HomePageModel(
       bgImage:
@@ -98,35 +110,32 @@ class BottomPopupViewModel extends BaseViewModel {
       {bool showLoader = true}) async {
     if (showLoader) setBusy(true);
 
+    notifyListeners();
+    safePrint('post id $postId');
     try {
       String endpoint =
           ApiConstants.baseURL + ApiEndpoints.getCommentsAPI + postId;
+      safePrint('ENdpint $endpoint');
       final GetCommentsModel? _comments =
           await ApiService().commentsListAPI(endpoint: endpoint);
-
       if (_comments != null && _comments.data != null) {
         comments = _comments;
-        debugPrint("Loaded comments: ${comments!.data!.length}");
-        rebuildUi();
-      }
-    } catch (e) {
-      // Handle error
-    }
-
+        debugPrint("First comments : ${comments!.data!.length}");
+      } else {}
+    } catch (e) {}
+    notifyListeners();
     if (showLoader) setBusy(false);
   }
 
-  Future<void> submitComment(String comments) async {
+  Future<void> submitComment(String comments, String from) async {
     safePrint("post id $postId");
-    safePrint("Commetns $comments");
-
-    if (containsOnlyText(comments)) {
+    safePrint("Comments $comments");
+    if (from == 'comments') {
       createCommentsAPI(postId!, comments);
-    } else {
+    } else if (from == 'emojis') {
       createReactionsAPI(postId!, emojiStr!.snakeCase);
       safePrint(emojiStr?.snakeCase);
     }
-    safePrint(comments);
   }
 
   //Get Reactions List API
@@ -138,10 +147,42 @@ class BottomPopupViewModel extends BaseViewModel {
       safePrint(endpoint);
       final GetReactionsModel? reaction =
           await ApiService().reactionsListAPI(endpoint: endpoint);
-      if (reaction != null && reaction.data != null) {
+
+      print('reaction ${reaction!.data?.length}');
+
+      if (reaction != null &&
+          reaction.data != null &&
+          reaction.data!.isNotEmpty) {
         reactions = reaction;
-        debugPrint("First reaction : ${reactions!.data!.length}");
-      } else {}
+
+        final List<EmojiData> matchedEmojis = [];
+        final dataList = reaction.data!;
+        print("dataList $dataList");
+
+        for (var reactionItem in dataList) {
+          print("reactionItem ${reactionItem.reactionType}");
+
+          final reactionType = reactionItem
+              .reactionType; // or reactionItem.reactionType if strongly typed
+          print("reactionType $reactionType");
+          final emojiChar = reactionEmojiMap[reactionType];
+
+          if (emojiChar != null) {
+            final emoji = EmojiData(
+              id: '',
+              name: '',
+              unified: '',
+              char: emojiChar,
+              category: '',
+              skin: 0,
+            );
+            matchedEmojis.add(emoji);
+          }
+        }
+
+        emojis = matchedEmojis;
+        rebuildUi();
+      }
     } catch (e) {}
     notifyListeners();
   }
@@ -161,10 +202,8 @@ class BottomPopupViewModel extends BaseViewModel {
               data: {"userId": getUserId, "commentText": comments});
       if (createdComments != null && createdComments.data != null) {
         createComments = createdComments;
-        debugPrint("Create comments : ${createComments!.data!}");
         rebuildUi();
-        getCommentsListAPI(postId, showLoader: false);
-      } else {}
+      }
     } catch (e) {}
     notifyListeners();
   }
@@ -212,15 +251,10 @@ class BottomPopupViewModel extends BaseViewModel {
         createReactions = createdReactions;
         debugPrint("Create reactions : ${createReactions!.data!}");
         rebuildUi();
-      } else {}
+      }
     } catch (e) {}
     notifyListeners();
   }
-
-  // bool containsOnlyText(String text) {
-  //   final textRegex = RegExp(r'^[a-zA-Z0-9\s]+$');
-  //   return textRegex.hasMatch(text);
-  // }
 
   bool containsOnlyText(String text) {
     final emojiRegex = RegExp(
@@ -232,13 +266,43 @@ class BottomPopupViewModel extends BaseViewModel {
   }
 
   //Comment like
-  void toggleLike(String commentId) {
+  void toggleLike(String commentId, String postId) async {
+    final reactions;
     if (isCommentLiked(commentId)) {
       likedCommentIds.remove(commentId);
+      reactions = "dislike";
     } else {
       likedCommentIds.add(commentId);
+      reactions = "like";
     }
+    notifyListeners();
+    try {
+      String endpoint = ApiConstants.baseURL + ApiEndpoints.createReactionsAPI;
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreateReactionsModel? createdReactions =
+          await ApiService().createReactionsAPI(endpoint: endpoint, data: {
+        "userId": getUserId,
+        "postId": postId,
+        "commentId": commentId,
+        "reactionType": reactions
+      });
+      if (createdReactions != null && createdReactions.data != null) {
+        createReactions = createdReactions;
+        debugPrint("Create reactions : ${createReactions!.data!}");
+        rebuildUi();
+      }
+    } catch (e) {}
+    notifyListeners();
+  }
+}
 
-    rebuildUi();
+extension on GetReactions {
+  operator [](String other) {}
+}
+
+extension on GetReactionsModel? {
+  List? operator [](String other) {
+    return null;
   }
 }

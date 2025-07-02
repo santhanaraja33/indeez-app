@@ -2,11 +2,8 @@ const String ksHomeBottomSheetTitle = 'Build Great Apps!';
 const String ksHomeBottomSheetDescription =
     'Stacked is built to help you build better apps. Give us a chance and we\'ll prove it to you. Check out stacked.filledstacks.com to learn more';
 const String ksPassword = 'Password';
-const String ksUsername = 'Username';
-const String ksDisplayname = 'Display name';
 const String ksZipcode = 'Zip code';
 const String ksNEXT = 'NEXT';
-const String ksOTP = 'GET OTP';
 
 const String ksAccessToekn = 'AccessToken';
 const String ksLoggedinUserId = 'userId';
@@ -21,9 +18,6 @@ const String ksFirstName = 'First name';
 const String ksLastName = 'Last name';
 const String ksEmail = 'Email';
 const String ksPhone = 'Phone';
-const String ksTitle = 'Title';
-const String ksDesc = 'Description';
-
 const String ksTypeofUser = 'Type of User';
 const String ksConfirmPassword = 'Confirm Password';
 const String ksPrivacypolicy = 'Privacy policy';
@@ -44,9 +38,12 @@ const String ksResendOTP = 'Resend OTP';
 const String ksForgotPassword = 'Forgot Password';
 const String ksSignup = 'Sign up';
 const String ksSignIn = 'Sign In';
-
+const String ksTitle = 'Title';
+const String ksDesc = 'Description';
 const String ksSignout = 'Sign Out';
 const String ksMoreOption = 'More Options';
+const String ksCreatePost = 'Create Post';
+const String ksPrivatePostTitle = 'Private Post ?';
 
 const String ksProfile = 'Profile';
 const String ksTac = 'Terms & Condition';
@@ -100,8 +97,45 @@ const String ksSharedPreferenceForgotPasswordWithOTP = 'ForgotPasswordOTP';
 const String ksSharedPreferenceFromSignupPage = 'SignupPage';
 const String ksSharedPreferenceSignupWithOTP = 'true';
 
-const String ksAWSClientId = 'gcdvf03t4358m5kvu1ckrkd9g';
-const String AWSUserPoolId = 'us-east-1_2b3c4d5e6f';
+const String ksPostTitle = 'Title field is required';
+const String ksPostDescription = 'Description field is required';
+const String ksResourceType = 'Resource type is required';
+
+//error messages
+const String headerValueMissed = 'Internal server error';
+
+const String mobileNumberEmpty = 'Mobile Number Field is Empty';
+const String mobileNumberLength = 'Mobile Number max 10 digits';
+
+const String otpFieldEmpty = 'OTP Field is Empty';
+const String otpLength = 'Enter valid OTP';
+
+const String errorTitle = 'Error';
+const String successTitle = 'Success';
+const String closeTitle = 'Close';
+
+const String loginStatusStr = 'loginStatus';
+const String locationPermissionStatus = 'locationPermission';
+const String saveGetAddress = 'address';
+
+const bool loginStatusBool = true;
+const String logoutTitleMsg = 'Are you sure\nwant to logout ?';
+const String logoutBtnMsg = 'Logout';
+const String cancelBtnMsg = 'Cancel';
+
+const String changeTxt = 'Change';
+const String verifyTxt = 'Verify';
+const String addTxt = 'Add';
+
+//api response
+const String refreshToken = 'refreshToken';
+const String token = 'token';
+const String contactNo = 'contactNo';
+
+const String otpSuccessMsg = 'Verification code sent to mobile number.';
+const String otpErrorMsg = 'Contact information is missing.';
+const String invalidOtp = 'Invalid or expired OTP. Please try again.';
+const String otpVerification = 'Verification already completed.';
 
 const String ksUserProfile =
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpav1iIAD5EfBHc-QxBecROMSg5a8jouIN5Q&s';

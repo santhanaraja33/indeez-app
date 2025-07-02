@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,10 @@ import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart';
 import 'package:music_app/ui/views/home/model/comments/get_comments_model.dart';
+import 'package:music_app/ui/views/home/model/post/create_post_model.dart';
+import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_model.dart';
+import 'package:music_app/ui/views/home/model/post/post_update_model.dart';
 import 'package:music_app/ui/views/home/model/reactions/create_reactions_model.dart';
 import 'package:music_app/ui/views/home/model/reactions/get_reactions_model.dart';
 import 'package:music_app/ui/views/signup/model/signup_model.dart';
@@ -178,10 +180,81 @@ class ApiService {
     }
   }
 
-  // Home Post API
+  //MARK: Create Post API
+  Future<CreatePostModel?> createPostAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Create Post API $endpoint");
+    safePrint("Create Post API $data");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return CreatePostModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Create Post API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Create Post API Error fetching post: $e');
+      return null;
+    }
+  }
+
+  //MARK: Post update  API
+  Future<PostUpdateModel?> updatePostAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    safePrint('Post Update api endpoint : \n $endpoint');
+    safePrint('Post Update api data : \n $data');
+    try {
+      final response = await _dio.patch(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        }),
+      );
+      safePrint('Post Update api response: ${response.data['users']}');
+      final decodedData =
+          response.data is String ? jsonDecode(response.data) : response.data;
+      safePrint("Post Update $decodedData");
+      if (decodedData is Map<String, dynamic> &&
+          decodedData.containsKey("message")) {
+        return PostUpdateModel.fromJson(decodedData);
+      }
+      safePrint("Post Update api response structure: $decodedData");
+      return null;
+    } catch (e) {
+      if (e is DioException) {
+        safePrint('Post Update api failed: ${e.response?.data}');
+      } else {
+        safePrint('Post Update api Unexpected error: $e');
+      }
+      return null;
+    }
+  }
+
+  //MARK: Home Post API
   Future<PostModel?> homePost({required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
-    print("Access Token :  ${token.toString()}");
     final dio = Dio();
     safePrint("Home Post API $endpoint");
     try {
@@ -208,7 +281,36 @@ class ApiService {
     }
   }
 
-//Get Comments list api
+  //MARK:  Home Post Image download API
+  Future<PostDownloadMediaModel?> postImageDownloadAPI(
+      {required String endpoint}) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Home Post Image download API $endpoint");
+    try {
+      final response = await dio.get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return PostDownloadMediaModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Home Post Image download API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Home Post Image download API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Get Comments list api
   Future<GetCommentsModel?> commentsListAPI({required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
     final dio = Dio();
@@ -238,7 +340,7 @@ class ApiService {
     }
   }
 
-//Create Comments api
+//MARK: Create Comments api
   Future<CreateCommentsModel?> createCommentsAPI({
     required String endpoint,
     required Map<String, dynamic> data,
@@ -274,7 +376,7 @@ class ApiService {
     }
   }
 
-  //Create Reactions api
+  //MARK: Create Reactions api
   Future<CreateReactionsModel?> createReactionsAPI({
     required String endpoint,
     required Map<String, dynamic> data,
@@ -311,7 +413,7 @@ class ApiService {
     }
   }
 
-//Get Reactions list api
+//MARK: Get Reactions list api
   Future<GetReactionsModel?> reactionsListAPI(
       {required String endpoint}) async {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:music_app/ui/common/app_common_button.dart';
-import 'package:music_app/ui/common/app_common_textfield.dart';
-import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/data/bean/model/bottom_bar_model.dart';
 import 'package:music_app/ui/views/event/event_view.dart';
 import 'package:music_app/ui/views/home/presentation/home_view.dart';

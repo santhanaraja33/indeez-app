@@ -60,28 +60,13 @@ class EmailView extends StackedView<EmailViewModel> {
                       backgroundColor: kcButtonColr,
                       onPressed: () {
                         final email = viewModel.emailController.text.trim();
-                        final password =
-                            viewModel.passwordController.text.trim();
-                        viewModel.handleSignIn(context, email, password);
+                        viewModel.handleSignIn(context, email);
                       },
                       buttonName: ksSignIn,
                     ),
                     const Row(
                       children: [
                         Spacer(),
-                        // TextButton(
-                        //   onPressed: () {
-                        //     viewModel.navigationToForgotPassword();
-                        //   },
-                        //   child: Text(
-                        //     ksForgotPassword,
-                        //     style: GoogleFonts.lato(
-                        //       fontSize: size_16,
-                        //       fontWeight: FontWeight.bold,
-                        //       color: kcPinkColor,
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                     Row(
