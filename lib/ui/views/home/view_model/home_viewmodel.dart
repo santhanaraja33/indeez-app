@@ -467,20 +467,32 @@ class HomeViewModel extends BaseViewModel {
 
   //Get Post List API
   Future<void> getUserPostsAPI() async {
+    if (isLoading) return;
+
     _isLoading = true;
+    _error = null;
     notifyListeners();
+
+    // Clear previous data
+    downloadMediaList.clear();
+    postList.clear();
+
     try {
       const String endpoint =
           "${ApiConstants.baseURL}${ApiEndpoints.getPostsAPI}";
       final PostModel? post = await ApiService().homePost(endpoint: endpoint);
-      if (post != null && post.data != null) {
+
+      if (post?.data?.isNotEmpty == true) {
         _post = post;
-        // Loop through each post and call download
+
+        // Process image downloads for all posts
         for (final postItem in _post!.data!) {
-          final postId = postItem.postId;
-          if (postId != null) {
-            await Future.wait(_post!.data!
-                .map((postItem) => postImageDownloadAPI(postItem.postId!)));
+          if (postItem.resourceType == 'image' && postItem.postId != null) {
+            postImageDownloadAPI(postItem.postId!).then((_) {
+              notifyListeners();
+            }).catchError((error) {
+              print('Image download error for post ${postItem.postId}: $error');
+            });
           }
         }
       } else {
@@ -488,9 +500,11 @@ class HomeViewModel extends BaseViewModel {
       }
     } catch (e) {
       _error = 'Error: $e';
+      print('getUserPostsAPI error: $e'); // Add logging
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   //Get Post List API
@@ -503,6 +517,8 @@ class HomeViewModel extends BaseViewModel {
 
       final PostDownloadMediaModel? postImageDownload =
           await ApiService().postImageDownloadAPI(endpoint: endpoint);
+
+      print(postImageDownload!.mediaFiles?.length);
 
       if (postImageDownload != null && postImageDownload.success == true) {
         // Add to a list if you're collecting all downloads
