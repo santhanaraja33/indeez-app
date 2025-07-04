@@ -22,12 +22,13 @@ import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/data/bean/model/comment_model.dart';
 import 'package:music_app/ui/data/bean/model/home_page_model.dart';
-import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
-import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart'
-    hide Data;
+import 'package:music_app/ui/views/bottom_popup/presentation/bottom_popup_view.dart';
+import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart';
 import 'package:music_app/ui/views/home/model/post/create_post_model.dart';
+import 'package:music_app/ui/views/home/model/post/homefeed_public_post_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
-import 'package:music_app/ui/views/home/model/post/post_model.dart';
+import 'package:music_app/ui/views/home/model/post/post_model.dart'
+    hide Data, ReactionsCount;
 import 'package:music_app/ui/views/home/model/post/post_update_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -45,11 +46,16 @@ class HomeViewModel extends BaseViewModel {
   List<Map<String, dynamic>> selectedImageItems = [];
   PostUpdateModel? updatePostModel;
 
+  final List<String> reactionResult = [];
+  String? reactionResultAdd;
+
   PostModel? get post => _post;
   bool get isLoading => _isLoading;
   String? get post_error => _error;
+  HomefeedPublicPostModel? _publicPostModel;
+  List<PublicPostData> get homePostModel => _publicPostModel?.data ?? [];
 
-  List<Data> get postList => _post?.data ?? [];
+  List<Object> get postList => _post?.data ?? [];
 
   final navigationService = locator<NavigationService>();
   bool isImageSelected = false;
@@ -337,7 +343,9 @@ class HomeViewModel extends BaseViewModel {
                     Row(
                       children: [
                         Text(
-                          '${postList[index].commentsCount ?? ''} $ksCOMMENTS',
+                          // '${postList[index].commentsCount ?? ''} $ksCOMMENTS',
+                          '',
+
                           style: GoogleFonts.lato(
                             color: kcTextGrey,
                             fontSize: 10,
@@ -348,7 +356,8 @@ class HomeViewModel extends BaseViewModel {
                           width: width_10,
                         ),
                         Text(
-                          '${postList[index].likesCount ?? ''} $ksREACTIONS',
+                          // '${postList[index].likesCount ?? ''} $ksREACTIONS',
+                          '',
                           style: GoogleFonts.lato(
                             color: kcTextGrey,
                             fontSize: 10,
@@ -493,6 +502,59 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+//Get Public post List API
+  Future<void> getPublicPostsAPI() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.publicPostAPI}$getUserId";
+      final HomefeedPublicPostModel? post =
+          await ApiService().postUpdateAPI(endpoint: endpoint);
+      print("HomefeedPublicPostModel lenght ${post?.data?.length}");
+
+      if (post != null && post.data != null) {
+        _publicPostModel = post;
+        print("_publicPostModel ${_publicPostModel!.data?.length}");
+
+        // Loop through each post and call download
+        for (final postItem in post.data!) {
+          int postIndex = post.data!.indexOf(postItem);
+          print("postIndex ${postIndex}");
+
+          reactionResultAdd = getReactionTextListForPost(postIndex).join(' ');
+          print("reactionResultAdd ${reactionResultAdd}");
+
+          if (postItem.resourceType == "image") {
+            if (postItem.mediaItems!.isNotEmpty) {
+              for (int i = 0; i < (postItem.mediaItems?.length ?? 0); i++) {
+                if (postItem.mediaItems?[i].status == "uploaded") {
+                  final postId = postItem.postId;
+                  print("postIdr ${postId}");
+
+                  if (postId != null) {
+                    await Future.wait(post.data!.map(
+                        (postItem) => postImageDownloadAPI(postItem.postId!)));
+                  }
+                }
+              }
+            }
+          }
+        }
+        print("length of total length ${_publicPostModel?.data}");
+        rebuildUi();
+      } else {
+        _error = 'No posts found';
+      }
+    } catch (e) {
+      _error = 'Error: $e';
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
   //Get Post List API
   Future<void> postImageDownloadAPI(String postId) async {
     _isLoading = true;
@@ -507,8 +569,7 @@ class HomeViewModel extends BaseViewModel {
       if (postImageDownload != null && postImageDownload.success == true) {
         // Add to a list if you're collecting all downloads
         downloadMediaList.add(postImageDownload);
-        debugPrint(
-            "Media URL for $postId: ${postImageDownload.mediaFiles?.first.mediaUrl}");
+        debugPrint("downloadMediaList $downloadMediaList");
       } else {
         debugPrint('No media found for post: $postId');
       }
@@ -893,19 +954,27 @@ class HomeViewModel extends BaseViewModel {
     return "application/octet-stream"; // default fallback
   }
 
-  List<String> get reactionTextList1 {
+  List<String> getReactionTextListForPost(int index) {
     final List<String> result = [];
-    for (final postItem in _post!.data!) {
-      final reactions = postItem.reactionsCount?.toJson() ?? {};
-      print('reactions result $reactions');
 
-      reactions.forEach((key, value) {
-        if (value is int && value > 0 && reactionEmojiMap.containsKey(key)) {
-          result.add('${reactionEmojiMap[key]} $value');
-        }
-      });
+    if (_publicPostModel?.data != null &&
+        index < _publicPostModel!.data!.length) {
+      final postItem = _publicPostModel!.data![index];
+      final reactions = postItem.reactionsCount?.toJson() ?? {};
+
+      if (reactions.isEmpty) {
+        result.add("No reactions");
+      } else {
+        reactions.forEach((key, value) {
+          if (value is int && value > 0 && reactionEmojiMap.containsKey(key)) {
+            result.add('${reactionEmojiMap[key]} $value');
+          }
+        });
+      }
+    } else {
+      result.add("No post");
     }
-    print('reactionTextList1 result $result');
+
     return result;
   }
 }

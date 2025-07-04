@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/amplifyconfiguration.dart';
 import 'package:music_app/app/app.bottomsheets.dart';
 import 'package:music_app/app/app.dialogs.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart';
-import 'package:music_app/ui/views/email/email_view.dart';
+import 'package:music_app/ui/views/email/presentation/email_view.dart';
 import 'package:music_app/ui/views/password/provider/login_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -17,7 +19,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool isLoggedIn = await SharedPreferencesHelper.getLoginStatus();
-  print('main loggedin $isLoggedIn');
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details); // Print error in release too
   };
@@ -60,17 +61,39 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    print('widegt loggedin ${widget.isLoggedIn}');
-    return MaterialApp(
-      title: ksAppName,
-      debugShowCheckedModeBanner: false,
-      home: widget.isLoggedIn ? const BottomBarView() : const EmailView(),
-      initialRoute: Routes.startupView,
-      onGenerateRoute: StackedRouter().onGenerateRoute,
-      navigatorKey: StackedService.navigatorKey,
-      navigatorObservers: [
-        StackedService.routeObserver,
-      ],
-    );
+    return ScreenUtilInit(
+        designSize: const Size(393, 852),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (_, child) {
+          return MaterialApp(
+            title: ksAppName,
+            debugShowCheckedModeBanner: false,
+            home: widget.isLoggedIn ? const BottomBarView() : const EmailView(),
+            initialRoute: Routes.startupView,
+            theme: ThemeData(
+              appBarTheme:
+                  const AppBarTheme(backgroundColor: kcBackgroundColor),
+              fontFamily: 'Inter',
+              textTheme: TextTheme(
+                titleLarge: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 45.sp,
+                  // color: AppColorsSchemes.titleColor
+                ),
+                titleMedium: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 24.sp,
+                  // color: AppColorsSchemes.titleColor
+                ),
+              ),
+            ),
+            onGenerateRoute: StackedRouter().onGenerateRoute,
+            navigatorKey: StackedService.navigatorKey,
+            navigatorObservers: [
+              StackedService.routeObserver,
+            ],
+          );
+        });
   }
 }

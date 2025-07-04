@@ -5,6 +5,7 @@ import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_bg_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/home/model/post/homefeed_public_post_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
 import 'package:stacked/stacked.dart';
 import '../view_model/home_viewmodel.dart';
@@ -17,7 +18,8 @@ class HomeView extends StackedView<HomeViewModel> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.downloadMediaList.clear();
       viewModel.postList.clear();
-      viewModel.getUserPostsAPI();
+      viewModel.reactionResult.clear();
+      viewModel.getPublicPostsAPI();
     });
   }
 
@@ -61,43 +63,52 @@ class HomeView extends StackedView<HomeViewModel> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: viewModel.post?.data?.length ?? 0,
+                    itemCount: viewModel.homePostModel.length,
                     physics: const ScrollPhysics(),
                     itemBuilder: (context, index) {
-                      if ((viewModel.post?.data == null ||
-                              viewModel.post!.data!.isEmpty) ||
-                          index >= (viewModel.post?.data?.length ?? 0)) {
+                      print("homePostModel ${viewModel.homePostModel.length}");
+
+                      if ((viewModel.homePostModel.isEmpty) ||
+                          index >= (viewModel.homePostModel.length)) {
                         return const SizedBox(); // Or handle empty case
                       }
-                      final post = viewModel.downloadMediaList[index];
-                      final reactionTextList =
-                          viewModel.post?.data?[index].reactionsCount;
-                      print("reactionTextList ${reactionTextList?.toJson()}");
+                      var selectedImageUrl = '';
+                      if (viewModel.homePostModel[index].resourceType ==
+                          "image") {
+                        print(
+                            "resourceType image ${viewModel.homePostModel[index].mediaItems?[index].status}");
 
-                      final reactionTextList1 = viewModel.reactionTextList1;
+                        print(
+                            "download media list length ${viewModel.downloadMediaList[index]}");
 
-                      print("reactionTextList1 $reactionTextList1");
-                      // Safely get media items
-                      final foregroundImage = post.mediaFiles?.firstWhere(
-                        (file) => file.index == 0,
-                        orElse: () =>
-                            MediaFiles(), // Provide a default MediaFiles instance
-                      );
+                        final post = viewModel.downloadMediaList[index];
+                        print("post images ${post}");
+                        final foregroundImage = post.mediaFiles?.firstWhere(
+                          (file) => file.index == 0,
+                          orElse: () =>
+                              MediaFiles(), // Provide a default MediaFiles instance
+                        );
 
-                      final backgroundImage = post.mediaFiles?.firstWhere(
-                        (file) => file.index == 1,
-                        orElse: () =>
-                            MediaFiles(), // Provide a default MediaFiles instance
-                      );
-                      final imageToShow = (index % 2 == 0)
-                          ? foregroundImage?.mediaUrl
-                          : backgroundImage?.mediaUrl;
+                        final backgroundImage = post.mediaFiles?.firstWhere(
+                          (file) => file.index == 1,
+                          orElse: () =>
+                              MediaFiles(), // Provide a default MediaFiles instance
+                        );
+                        final imageToShow = (index % 2 == 0)
+                            ? foregroundImage?.mediaUrl
+                            : backgroundImage?.mediaUrl;
 
-                      // Use your selection logic here
-                      final selectedImageUrl =
-                          viewModel.homeModel[index].isImageSelected == true
-                              ? foregroundImage?.mediaUrl ?? ''
-                              : backgroundImage?.mediaUrl ?? '';
+                        // Use your selection logic here
+                        selectedImageUrl =
+                            viewModel.homeModel[index].isImageSelected == true
+                                ? foregroundImage?.mediaUrl ?? ''
+                                : backgroundImage?.mediaUrl ?? '';
+                      }
+
+                      final reaction =
+                          viewModel.getReactionTextListForPost(index);
+                      print('reactionResultAddt $reaction');
+
                       return Padding(
                         padding: const EdgeInsets.only(top: padding_20),
                         child: Column(
@@ -171,7 +182,7 @@ class HomeView extends StackedView<HomeViewModel> {
                               children: [
                                 const Spacer(),
                                 Text(
-                                  viewModel.postList[index].posttitle ??
+                                  viewModel.homePostModel[index].posttitle ??
                                       'No title',
                                   style: GoogleFonts.bokor(
                                     color: kcWhite,
@@ -186,14 +197,28 @@ class HomeView extends StackedView<HomeViewModel> {
                                 viewModel.popupPhotoUploadNavigation(
                                     context,
                                     index,
-                                    viewModel.postList[index].postId ?? '0');
+                                    viewModel.homePostModel[index].postId ??
+                                        '0');
                               },
                               child: Row(
                                 children: [
                                   const Spacer(),
-                                  Text(reactionTextList1.join('')),
+                                  Text(viewModel
+                                      .getReactionTextListForPost(
+                                        index,
+                                      )
+                                      .join(" • "))
                                 ],
                               ),
+                              // ListView.builder(
+                              //   itemCount: viewModel.reactionTextList1.length,
+                              //   itemBuilder: (context, i) {
+                              //     final reaction =
+                              //         viewModel.reactionTextList1[i];
+                              //     return Text(reaction,
+                              //         style: TextStyle(color: Colors.white));
+                              //   },
+                              // ),
                             ),
                             const SizedBox(
                               height: height_5,
@@ -203,13 +228,14 @@ class HomeView extends StackedView<HomeViewModel> {
                                 viewModel.popupPhotoUploadNavigation(
                                     context,
                                     index,
-                                    viewModel.postList[index].postId ?? '0');
+                                    viewModel.homePostModel[index].postId ??
+                                        '0');
                               },
                               child: Row(
                                 children: [
                                   const Spacer(),
                                   Text(
-                                    '${viewModel.postList[index].commentsCount ?? 0} $ksCOMMENTS',
+                                    '${viewModel.homePostModel[index].commentsCount ?? 0} $ksCOMMENTS',
                                     style: GoogleFonts.lato(
                                       color: kcWhite,
                                       fontSize: size_14,
@@ -220,7 +246,7 @@ class HomeView extends StackedView<HomeViewModel> {
                                     width: width_10,
                                   ),
                                   Text(
-                                    '${viewModel.postList[index].totalReactions ?? 0} $ksREACTIONS',
+                                    '${viewModel.homePostModel[index].totalReactions ?? 0} $ksREACTIONS',
                                     style: GoogleFonts.lato(
                                       color: kcWhite,
                                       fontSize: size_14,

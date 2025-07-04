@@ -6,7 +6,7 @@ import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/home/model/comments/get_comments_model.dart';
 import 'package:stacked/stacked.dart';
-import 'bottom_popup_viewmodel.dart';
+import '../view_model/bottom_popup_viewmodel.dart';
 
 class BottomPopupView extends StackedView<BottomPopupViewModel> {
   final String postId;

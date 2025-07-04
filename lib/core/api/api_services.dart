@@ -10,6 +10,7 @@ import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart';
 import 'package:music_app/ui/views/home/model/comments/get_comments_model.dart';
 import 'package:music_app/ui/views/home/model/post/create_post_model.dart';
+import 'package:music_app/ui/views/home/model/post/homefeed_public_post_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_update_model.dart';
@@ -211,6 +212,37 @@ class ApiService {
       }
     } catch (e) {
       debugPrint('Create Post API Error fetching post: $e');
+      return null;
+    }
+  }
+
+  //MARK: Create Post API
+  Future<HomefeedPublicPostModel?> postUpdateAPI(
+      {required String endpoint}) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Public Post API $endpoint");
+
+    try {
+      final response = await dio.get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return HomefeedPublicPostModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Public Post API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Public Post API Error fetching post: $e');
       return null;
     }
   }

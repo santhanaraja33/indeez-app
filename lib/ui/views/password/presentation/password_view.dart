@@ -100,7 +100,7 @@ class PasswordView extends StackedView<PasswordViewModel> {
                       child: TextButton(
                         onPressed: viewModel.navigationToSignUP,
                         child: Text(
-                          '$ksSignup?',
+                          '$ksSignup',
                           style: GoogleFonts.lato(
                             fontSize: size_16,
                             fontWeight: FontWeight.bold,

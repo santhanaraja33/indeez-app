@@ -36,7 +36,7 @@ const String ksImageNotFound = 'Image Not Found';
 const String ksSendOTP = 'Send OTP';
 const String ksResendOTP = 'Resend OTP';
 const String ksForgotPassword = 'Forgot Password';
-const String ksSignup = 'Sign up';
+const String ksSignup = 'Sign up?';
 const String ksSignIn = 'Sign In';
 const String ksTitle = 'Title';
 const String ksDesc = 'Description';
@@ -44,6 +44,8 @@ const String ksSignout = 'Sign Out';
 const String ksMoreOption = 'More Options';
 const String ksCreatePost = 'Create Post';
 const String ksPrivatePostTitle = 'Private Post ?';
+const String ksUsePassword = 'Use Password';
+const String ksUseBiometrics = 'Use Biometrics';
 
 const String ksProfile = 'Profile';
 const String ksTac = 'Terms & Condition';
@@ -127,6 +129,11 @@ const String changeTxt = 'Change';
 const String verifyTxt = 'Verify';
 const String addTxt = 'Add';
 
+const String ksEmailRequired = 'Email is required';
+const String ksValidEmailAddress = 'Please enter a valid email address.';
+const String ksEmailNotRegistered = 'User Email is not registered';
+const String ksAuthenticateBiometrics = 'Authenticated successfully!';
+const String ksBiometricsAuthenticatioFailed = 'Authentication failed.';
 //api response
 const String refreshToken = 'refreshToken';
 const String token = 'token';
@@ -156,6 +163,7 @@ const double height_30 = 30.0;
 const double height_150 = 150.0;
 const double height_40 = 40.0;
 const double height_50 = 50.0;
+const double height_60 = 60.0;
 const double height_260 = 260.0;
 const double height_270 = 270.0;
 const double height_15 = 15.0;
