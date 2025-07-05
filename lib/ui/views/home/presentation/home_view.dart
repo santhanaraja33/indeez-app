@@ -74,34 +74,41 @@ class HomeView extends StackedView<HomeViewModel> {
                       var selectedImageUrl = '';
                       if (viewModel.homePostModel[index].resourceType ==
                           "image") {
-                        print(
-                            "resourceType image ${viewModel.homePostModel[index].mediaItems?[index].status}");
+                        // print(
+                        //     "resourceType image ${viewModel.homePostModel[index].mediaItems?[index].status}");
 
-                        print(
-                            "download media list length ${viewModel.downloadMediaList[index]}");
+                        // print(
+                        //     "download media list length ${viewModel.downloadMediaList[index]}");
 
-                        final post = viewModel.downloadMediaList[index];
-                        print("post images ${post}");
-                        final foregroundImage = post.mediaFiles?.firstWhere(
-                          (file) => file.index == 0,
-                          orElse: () =>
-                              MediaFiles(), // Provide a default MediaFiles instance
-                        );
+                        if (index < viewModel.downloadMediaList.length) {
+                          final post = viewModel.downloadMediaList[index];
 
-                        final backgroundImage = post.mediaFiles?.firstWhere(
-                          (file) => file.index == 1,
-                          orElse: () =>
-                              MediaFiles(), // Provide a default MediaFiles instance
-                        );
-                        final imageToShow = (index % 2 == 0)
-                            ? foregroundImage?.mediaUrl
-                            : backgroundImage?.mediaUrl;
+                          print("post images ${post}");
+                          final foregroundImage = post.mediaFiles?.firstWhere(
+                            (file) => file.index == 0,
+                            orElse: () =>
+                                MediaFiles(), // Provide a default MediaFiles instance
+                          );
 
-                        // Use your selection logic here
-                        selectedImageUrl =
-                            viewModel.homeModel[index].isImageSelected == true
-                                ? foregroundImage?.mediaUrl ?? ''
-                                : backgroundImage?.mediaUrl ?? '';
+                          final backgroundImage = post.mediaFiles?.firstWhere(
+                            (file) => file.index == 1,
+                            orElse: () =>
+                                MediaFiles(), // Provide a default MediaFiles instance
+                          );
+                          final imageToShow = (index % 2 == 0)
+                              ? foregroundImage?.mediaUrl
+                              : backgroundImage?.mediaUrl;
+
+                          // Use your selection logic here
+                          selectedImageUrl =
+                              viewModel.homeModel[index].isImageSelected == true
+                                  ? foregroundImage?.mediaUrl ?? ''
+                                  : backgroundImage?.mediaUrl ?? '';
+                        }
+                        // Do something with post
+                      } else {
+                        debugPrint(
+                            'Index $index out of bounds for downloadMediaList');
                       }
 
                       final reaction =

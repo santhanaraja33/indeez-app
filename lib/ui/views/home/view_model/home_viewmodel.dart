@@ -549,8 +549,19 @@ class HomeViewModel extends BaseViewModel {
                   print("postIdr ${postId}");
 
                   if (postId != null) {
-                    await Future.wait(post.data!.map(
-                        (postItem) => postImageDownloadAPI(postItem.postId!)));
+                    // await Future.wait(post.data!.map(
+                    //     (postItem) => postImageDownloadAPI(postItem.postId!)));
+
+                    for (final postItem in post.data!) {
+                      if (postItem.resourceType == "image" &&
+                          postItem.mediaItems
+                                  ?.any((item) => item.status == "uploaded") ==
+                              true) {
+                        if (postItem.postId != null) {
+                          await postImageDownloadAPI(postItem.postId!);
+                        }
+                      }
+                    }
                   }
                 }
               }
