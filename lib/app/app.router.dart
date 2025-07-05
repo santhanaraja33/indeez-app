@@ -10,7 +10,8 @@ import 'dart:math';
 import 'package:flutter/material.dart' as _i23;
 import 'package:flutter/material.dart';
 import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart' as _i7;
-import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart' as _i17;
+import 'package:music_app/ui/views/bottom_popup/presentation/bottom_popup_view.dart'
+    as _i17;
 import 'package:music_app/ui/views/calendar/calendar_view.dart' as _i22;
 import 'package:music_app/ui/views/changepassword/changepassword_view.dart'
     as _i14;
@@ -39,7 +40,7 @@ import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dar
     as _i16;
 import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i24;
-import 'package:music_app/ui/views/email/email_view.dart' as _i23;
+import 'package:music_app/ui/views/email/presentation/email_view.dart' as _i23;
 
 class Routes {
   static const homeView = '/home-view';

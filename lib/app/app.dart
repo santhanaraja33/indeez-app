@@ -17,7 +17,7 @@ import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
 import 'package:music_app/ui/views/changepassword/changepassword_view.dart';
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart';
 import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart';
-import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
+import 'package:music_app/ui/views/bottom_popup/presentation/bottom_popup_view.dart';
 import 'package:music_app/ui/views/paylist_popup/paylist_popup_view.dart';
 import 'package:music_app/ui/views/search/search_view.dart';
 import 'package:music_app/ui/views/search_details/search_details_view.dart';
