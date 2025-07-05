@@ -48,6 +48,8 @@ class PublicPostData {
   ReactionsCount? reactionsCount;
   int? totalReactions;
 
+  bool isImageSelected = false;
+
   PublicPostData(
       {this.content,
       this.privacy,
@@ -153,18 +155,24 @@ class MediaItems {
 }
 
 class ReactionsCount {
-  int? like;
+  Map<String, int> counts = {};
 
-  ReactionsCount({this.like});
+  ReactionsCount({Map<String, int>? counts}) {
+    if (counts != null) {
+      this.counts = counts;
+    }
+  }
 
   ReactionsCount.fromJson(Map<String, dynamic> json) {
-    like = json['like'];
+    json.forEach((key, value) {
+      if (value is int) {
+        counts[key] = value;
+      }
+    });
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['like'] = this.like;
-    return data;
+    return counts;
   }
 }
 

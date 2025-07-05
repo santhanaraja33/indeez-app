@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_bg_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
+import 'package:music_app/ui/views/home/widgets/post_image.dart';
+import 'package:music_app/ui/views/home/widgets/reactions_row.dart';
 import 'package:stacked/stacked.dart';
 import '../view_model/home_viewmodel.dart';
 
@@ -28,7 +29,25 @@ class HomeView extends StackedView<HomeViewModel> {
     HomeViewModel viewModel,
     Widget? child,
   ) {
+    if (viewModel.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: kcWhite),
+      );
+    }
+
+    Future<void> RefreshFunction() async {
+      viewModel.getPublicPostsAPI();
+    }
+
+    Future<void> prefetchImages(String bgUrl, String fgUrl) async {
+      await Future.wait([
+        precacheImage(CachedNetworkImageProvider(bgUrl), context),
+        precacheImage(CachedNetworkImageProvider(fgUrl), context),
+      ]);
+    }
+
     return Scaffold(
+      //Floating Action button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           viewModel.selectedFiles.clear();
@@ -47,233 +66,241 @@ class HomeView extends StackedView<HomeViewModel> {
           color: Colors.white,
         ),
       ),
+
+      // body part
       body: Stack(
         children: [
+          //Background Image
           const AppCommonBGImage(),
-          SafeArea(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: padding_20, right: padding_20),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: height_30,
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: viewModel.homePostModel.length,
-                    physics: const ScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      print("homePostModel ${viewModel.homePostModel.length}");
 
-                      if ((viewModel.homePostModel.isEmpty) ||
-                          index >= (viewModel.homePostModel.length)) {
-                        return const SizedBox(); // Or handle empty case
-                      }
-                      var selectedImageUrl = '';
-                      if (viewModel.homePostModel[index].resourceType ==
-                          "image") {
-                        // print(
-                        //     "resourceType image ${viewModel.homePostModel[index].mediaItems?[index].status}");
-
-                        // print(
-                        //     "download media list length ${viewModel.downloadMediaList[index]}");
-
-                        if (index < viewModel.downloadMediaList.length) {
-                          final post = viewModel.downloadMediaList[index];
-
-                          print("post images ${post}");
-                          final foregroundImage = post.mediaFiles?.firstWhere(
-                            (file) => file.index == 0,
-                            orElse: () =>
-                                MediaFiles(), // Provide a default MediaFiles instance
+          //Main Content
+          RefreshIndicator(
+            onRefresh: RefreshFunction,
+            child: SafeArea(
+                child: SingleChildScrollView(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: padding_20, right: padding_20),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: height_30,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: viewModel.homePostModel.length,
+                      physics: const ScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        // Empty Post Part
+                        if ((viewModel.homePostModel.isEmpty) ||
+                            index >= (viewModel.homePostModel.length)) {
+                          return Center(
+                            child: Text(
+                              "No Posts Found",
+                              style: GoogleFonts.lato(
+                                color: kcTextGrey,
+                                fontSize: size_18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           );
-
-                          final backgroundImage = post.mediaFiles?.firstWhere(
-                            (file) => file.index == 1,
-                            orElse: () =>
-                                MediaFiles(), // Provide a default MediaFiles instance
-                          );
-                          final imageToShow = (index % 2 == 0)
-                              ? foregroundImage?.mediaUrl
-                              : backgroundImage?.mediaUrl;
-
-                          // Use your selection logic here
-                          selectedImageUrl =
-                              viewModel.homeModel[index].isImageSelected == true
-                                  ? foregroundImage?.mediaUrl ?? ''
-                                  : backgroundImage?.mediaUrl ?? '';
                         }
-                        // Do something with post
-                      } else {
-                        debugPrint(
-                            'Index $index out of bounds for downloadMediaList');
-                      }
+                        //Separate the Backgroung and foreground Images
+                        var selectedImageUrl = '';
 
-                      final reaction =
-                          viewModel.getReactionTextListForPost(index);
-                      print('reactionResultAddt $reaction');
+                        var bgUrl = '';
+                        var fgUrl = '';
+                        if (viewModel.homePostModel[index].resourceType ==
+                            "image") {
+                          if (index < viewModel.downloadMediaList.length) {
+                            final post = viewModel.downloadMediaList[index];
 
-                      return Padding(
-                        padding: const EdgeInsets.only(top: padding_20),
-                        child: Column(
-                          children: [
-                            Stack(
-                              alignment: const Alignment(2, 0),
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    final getUserId =
-                                        await SharedPreferencesHelper
-                                            .getLoginUserId(ksLoggedinUserId);
-                                    debugPrint('User ID: $getUserId');
-                                    viewModel.isImageSelected =
-                                        !viewModel.isImageSelected;
-                                    viewModel.rebuildUi();
-                                  },
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    imageUrl: selectedImageUrl,
-                                    placeholder: (context, url) => const Column(
-                                      children: [
-                                        // Transform.scale(
-                                        //     scale: 0.6,
-                                        //     child:
-                                        //         const CircularProgressIndicator(
-                                        //       color: kcTransparent,
-                                        //     )),
-                                      ],
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    viewModel.homeModel[index].isImageSelected =
-                                        !viewModel
-                                            .homeModel[index].isImageSelected;
-                                    viewModel.rebuildUi();
-                                  },
-                                  child: Transform(
-                                    alignment: Alignment.center,
-                                    transform: Matrix4.rotationZ(
-                                      2 / 15,
-                                    ),
-                                    child: CachedNetworkImage(
-                                      fit: BoxFit.cover,
-                                      imageUrl: selectedImageUrl,
-                                      placeholder: (context, url) => Column(
+                            final backgroundImage = post.mediaFiles?.firstWhere(
+                              (file) => file.index == 0,
+                              orElse: () =>
+                                  MediaFiles(), // Provide a default MediaFiles instance
+                            );
+
+                            final foregroundImage = post.mediaFiles?.firstWhere(
+                              (file) => file.index == 1,
+                              orElse: () =>
+                                  MediaFiles(), // Provide a default MediaFiles instance
+                            );
+
+                            bgUrl = backgroundImage?.mediaUrl ?? '';
+                            fgUrl = foregroundImage?.mediaUrl ?? '';
+
+                            prefetchImages(bgUrl, fgUrl);
+
+                            // Use your selection logic here
+                            selectedImageUrl = viewModel
+                                        .homePostModel[index].isImageSelected ==
+                                    true
+                                ? fgUrl
+                                : bgUrl;
+                          }
+                        } else {
+                          debugPrint(
+                              'Index $index out of bounds for downloadMediaList');
+                        }
+
+                        //Split the reactions
+                        final reactionsMap = viewModel
+                                .homePostModel[index].reactionsCount?.counts ??
+                            {};
+
+                        final reactionList = reactionsMap.entries
+                            .where((entry) =>
+                                viewModel.reactionEmojiMap
+                                    .containsKey(entry.key) &&
+                                entry.value > 0)
+                            .map((entry) => Reaction(
+                                  key: entry.key,
+                                  emoji: viewModel.reactionEmojiMap[entry.key]!,
+                                  count: entry.value,
+                                ))
+                            .toList();
+
+                        return Padding(
+                          padding: const EdgeInsets.only(top: padding_20),
+                          child: Column(
+                            children: [
+                              //NO Image Part
+                              selectedImageUrl.isEmpty
+                                  ? Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Transform.scale(
-                                              scale: 0.6,
-                                              child:
-                                                  const CircularProgressIndicator(
-                                                color: kcWhite,
-                                              )),
+                                          Icon(
+                                            Icons.photo_library_outlined,
+                                            size: 48,
+                                            color: Colors.grey[400],
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            "No Media Found",
+                                            style: GoogleFonts.lato(
+                                              color: kcTextGrey,
+                                              fontSize: size_14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                                    )
+                                  :
+
+                                  // Post Image Part
+
+                                  Stack(
+                                      alignment: const Alignment(2, 0),
+                                      children: [
+                                        // Foreground image
+
+                                        buildBackgroundImage(selectedImageUrl,
+                                            () async {
+                                          viewModel.isImageSelected =
+                                              !viewModel.isImageSelected;
+                                          viewModel.rebuildUi();
+                                        }),
+
+                                        // Background image
+
+                                        buildForegroundImage(selectedImageUrl,
+                                            () async {
+                                          viewModel.homePostModel[index]
+                                                  .isImageSelected =
+                                              !viewModel.homePostModel[index]
+                                                  .isImageSelected;
+                                          viewModel.rebuildUi();
+                                        }),
+                                      ],
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: height_20,
-                            ),
-                            Row(
-                              children: [
-                                const Spacer(),
-                                Text(
-                                  viewModel.homePostModel[index].posttitle ??
-                                      'No title',
-                                  style: GoogleFonts.bokor(
-                                    color: kcWhite,
-                                    fontSize: size_22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                viewModel.popupPhotoUploadNavigation(
-                                    context,
-                                    index,
-                                    viewModel.homePostModel[index].postId ??
-                                        '0');
-                              },
-                              child: Row(
-                                children: [
-                                  const Spacer(),
-                                  Text(viewModel
-                                      .getReactionTextListForPost(
-                                        index,
-                                      )
-                                      .join(" • "))
-                                ],
+
+                              const SizedBox(
+                                height: height_30,
                               ),
-                              // ListView.builder(
-                              //   itemCount: viewModel.reactionTextList1.length,
-                              //   itemBuilder: (context, i) {
-                              //     final reaction =
-                              //         viewModel.reactionTextList1[i];
-                              //     return Text(reaction,
-                              //         style: TextStyle(color: Colors.white));
-                              //   },
-                              // ),
-                            ),
-                            const SizedBox(
-                              height: height_5,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                viewModel.popupPhotoUploadNavigation(
-                                    context,
-                                    index,
-                                    viewModel.homePostModel[index].postId ??
-                                        '0');
-                              },
-                              child: Row(
+
+                              //Post Title
+
+                              Row(
                                 children: [
                                   const Spacer(),
                                   Text(
-                                    '${viewModel.homePostModel[index].commentsCount ?? 0} $ksCOMMENTS',
-                                    style: GoogleFonts.lato(
+                                    viewModel.homePostModel[index].posttitle ??
+                                        'No title',
+                                    style: GoogleFonts.bokor(
                                       color: kcWhite,
-                                      fontSize: size_14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: width_10,
-                                  ),
-                                  Text(
-                                    '${viewModel.homePostModel[index].totalReactions ?? 0} $ksREACTIONS',
-                                    style: GoogleFonts.lato(
-                                      color: kcWhite,
-                                      fontSize: size_14,
+                                      fontSize: size_22,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: height_30,
-                  ),
-                ],
+
+                              //Reaction Part
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Spacer(),
+                                  buildReactionRow(reactionList),
+                                ],
+                              ),
+
+                              const SizedBox(
+                                height: height_5,
+                              ),
+
+                              //Comments Count Part
+
+                              GestureDetector(
+                                onTap: () {
+                                  viewModel.popupPhotoUploadNavigation(
+                                      context,
+                                      index,
+                                      viewModel.homePostModel[index].postId ??
+                                          '0');
+                                },
+                                child: Row(
+                                  children: [
+                                    const Spacer(),
+                                    Text(
+                                      '${viewModel.homePostModel[index].commentsCount ?? 0} $ksCOMMENTS',
+                                      style: GoogleFonts.lato(
+                                        color: kcWhite,
+                                        fontSize: size_14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: width_10,
+                                    ),
+                                    Text(
+                                      '${viewModel.homePostModel[index].totalReactions ?? 0} $ksREACTIONS',
+                                      style: GoogleFonts.lato(
+                                        color: kcWhite,
+                                        fontSize: size_14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: height_30,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          )),
+            )),
+          ),
         ],
       ),
     );

@@ -101,6 +101,7 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
 
 //MARK: Get user info API
   Future<UpdatedAttributes?> getUserDetailAPI() async {
+    setBusy(true);
     final getUserId =
         await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
 
@@ -123,6 +124,7 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
     acceptPrivacyPolicy = authResponse.acceptPrivacyPolicy!;
     acceptTerms = authResponse.acceptTerms!;
     rebuildUi();
+    setBusy(false);
     // CommonLoader.hideLoader(context!);
     return null;
   }

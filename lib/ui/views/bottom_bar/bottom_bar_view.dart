@@ -58,8 +58,10 @@ class BottomBarView extends StackedView<BottomBarViewModel> {
           children: [
             const AppCommonBGImage(),
             Center(
-              child:
-                  viewModel.pages.elementAt(viewModel.bottomBarSelectedIndex),
+              child: IndexedStack(
+                index: viewModel.bottomBarSelectedIndex,
+                children: viewModel.pages,
+              ),
             ),
           ],
         ),
