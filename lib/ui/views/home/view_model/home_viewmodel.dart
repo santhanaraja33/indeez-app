@@ -32,6 +32,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:path/path.dart' as p;
 
 class HomeViewModel extends BaseViewModel {
+  late ScrollController scrollController;
   PostModel? _post;
   bool _isLoading = false;
   String? _error;
@@ -49,8 +50,19 @@ class HomeViewModel extends BaseViewModel {
   PostModel? get post => _post;
   bool get isLoading => _isLoading;
   String? get post_error => _error;
-  HomefeedPublicPostModel? _publicPostModel;
-  List<PublicPostData> get homePostModel => _publicPostModel?.data ?? [];
+  final List<PublicPostData> _postList = [];
+  List<PublicPostData> get homePostModel => _postList;
+
+  String? _lastEvaluatedKey;
+  int _pageOffset = 0;
+  bool _hasMore = true;
+  bool _isPaginating = false;
+
+  bool get isPaginating => _isPaginating;
+  bool get hasMore => _hasMore;
+
+  bool _hasInitialLoadCompleted = false;
+  bool get hasInitialLoadCompleted => _hasInitialLoadCompleted;
 
   List<Object> get postList => _post?.data ?? [];
 
@@ -134,51 +146,69 @@ class HomeViewModel extends BaseViewModel {
   }
 
 //Get Public post List API
-  Future<void> getPublicPostsAPI() async {
-    _isLoading = true;
+  Future<void> getPublicPostsAPI({bool isRefresh = false}) async {
+    if (_isPaginating || (!_hasMore && !isRefresh)) return;
+
+    if (isRefresh) {
+      // Don't set _isLoading = true here to avoid full-screen loader
+      _postList.clear();
+      _lastEvaluatedKey = null;
+      _pageOffset = 0;
+      _hasMore = true;
+      notifyListeners();
+    }
+
+    _isPaginating = true;
     notifyListeners();
+
     try {
       final getUserId =
           await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+
       String endpoint =
-          "${ApiConstants.baseURL}${ApiEndpoints.publicPostAPI}$getUserId";
+          "${ApiConstants.baseURL}${ApiEndpoints.publicPostAPI}$getUserId"
+          "&limit=10&privacy=public";
+
+      if (_lastEvaluatedKey != null) {
+        endpoint +=
+            "&lastEvaluatedKey=$_lastEvaluatedKey&pageOffset=$_pageOffset";
+      }
+
       final HomefeedPublicPostModel? post =
           await ApiService().postUpdateAPI(endpoint: endpoint);
 
       if (post != null && post.data != null) {
-        _publicPostModel = post;
+        if (post.data!.isEmpty && !_hasMore) {
+          Fluttertoast.showToast(
+            msg: "No more posts",
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
 
-        // Loop through each post and call download
+        // Download and add posts
         for (final postItem in post.data!) {
-          int postIndex = post.data!.indexOf(postItem);
-          print("postIndex ${postIndex}");
-          if (postItem.resourceType == "image") {
-            if (postItem.mediaItems!.isNotEmpty) {
-              for (int i = 0; i < (postItem.mediaItems?.length ?? 0); i++) {
-                if (postItem.mediaItems?[i].status == "uploaded") {
-                  final postId = postItem.postId;
-                  print("postIdr ${postId}");
-
-                  if (postId != null) {
-                    // await Future.wait(post.data!.map(
-                    //     (postItem) => postImageDownloadAPI(postItem.postId!)));
-
-                    for (final postItem in post.data!) {
-                      if (postItem.resourceType == "image" &&
-                          postItem.mediaItems
-                                  ?.any((item) => item.status == "uploaded") ==
-                              true) {
-                        if (postItem.postId != null) {
-                          await postImageDownloadAPI(postItem.postId!);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+          if (postItem.resourceType == "image" &&
+              postItem.mediaItems?.any((item) => item.status == "uploaded") ==
+                  true) {
+            await postImageDownloadAPI(postItem.postId!);
           }
         }
+
+        _postList.addAll(post.data!);
+
+        // Pagination control
+        _hasMore = post.pagination?.hasMore ?? false;
+        _lastEvaluatedKey = post.pagination?.lastEvaluatedKey;
+        _pageOffset += post.data!.length;
+
+        // Last page is reached
+        if (!_hasMore) {
+          Fluttertoast.showToast(
+            msg: "No more posts",
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
+
         rebuildUi();
       } else {
         _error = 'No posts found';
@@ -186,7 +216,15 @@ class HomeViewModel extends BaseViewModel {
     } catch (e) {
       _error = 'Error: $e';
     }
+
     _isLoading = false;
+    _isPaginating = false;
+
+    // Mark initial load as completed
+    if (!_hasInitialLoadCompleted) {
+      _hasInitialLoadCompleted = true;
+    }
+
     notifyListeners();
   }
 
