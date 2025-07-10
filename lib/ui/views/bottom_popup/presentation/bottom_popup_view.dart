@@ -29,7 +29,10 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
     Widget? child,
   ) {
     return viewModel.isBusy
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: CircularProgressIndicator(
+            color: kcWhite,
+          ))
         : SafeArea(
             child: Scaffold(
             resizeToAvoidBottomInset: true,
@@ -143,6 +146,13 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                             viewModel.submitComment(comment, 'comments');
                             viewModel.commentController.clear();
                             FocusManager.instance.primaryFocus?.unfocus();
+
+                            viewModel.getCommentsListAPI(
+                              postId,
+                              showLoader: false,
+                            );
+                            // const CircularProgressIndicator();
+                            viewModel.rebuildUi();
                           }
                         },
                       ),
@@ -344,6 +354,7 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                           );
                           const CircularProgressIndicator();
                           viewModel.rebuildUi();
+                          viewModel.notifyListeners();
                         }
                       },
                     ),

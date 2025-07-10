@@ -202,6 +202,8 @@ class BottomPopupViewModel extends BaseViewModel {
               data: {"userId": getUserId, "commentText": comments});
       if (createdComments != null && createdComments.data != null) {
         createComments = createdComments;
+        // Add this line to refresh the comments list and update the count
+        await getCommentsListAPI(postId, showLoader: false);
         rebuildUi();
       }
     } catch (e) {}
@@ -250,6 +252,8 @@ class BottomPopupViewModel extends BaseViewModel {
       if (createdReactions != null && createdReactions.data != null) {
         createReactions = createdReactions;
         debugPrint("Create reactions : ${createReactions!.data!}");
+        // Add this line to refresh the reactions list and update the count
+        await getReactionsListAPI(postId);
         rebuildUi();
       }
     } catch (e) {}
