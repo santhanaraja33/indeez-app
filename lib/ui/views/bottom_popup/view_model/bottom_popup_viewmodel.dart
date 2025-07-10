@@ -27,6 +27,10 @@ class BottomPopupViewModel extends BaseViewModel {
   String? postId;
   String? emojiStr;
 
+  // Add callback functions to notify HomeView
+  Function(String postId, int newCommentCount)? onCommentCountUpdated;
+  Function(String postId, int newReactionCount)? onReactionCountUpdated;
+
   GetCommentsModel? comments;
   GetReactionsModel? reactions;
   CreateCommentsModel? createComments;
@@ -56,6 +60,7 @@ class BottomPopupViewModel extends BaseViewModel {
     "flexed_biceps": "💪",
     'like': '❤️',
   };
+
   final homeModel = [
     HomePageModel(
       bgImage:
@@ -89,6 +94,7 @@ class BottomPopupViewModel extends BaseViewModel {
   ];
 
   void navi() {}
+
   final commentModel = [
     CommentModel(
       title: 'MusicLover94',
@@ -104,6 +110,15 @@ class BottomPopupViewModel extends BaseViewModel {
           "I loved this album! It was so good! I can't wait for the next one!",
     ),
   ];
+
+  // Initialize with callback functions
+  void initializeCallbacks({
+    Function(String postId, int newCommentCount)? onCommentUpdated,
+    Function(String postId, int newReactionCount)? onReactionUpdated,
+  }) {
+    onCommentCountUpdated = onCommentUpdated;
+    onReactionCountUpdated = onReactionUpdated;
+  }
 
   //Get Comments List API
   Future<void> getCommentsListAPI(String postId,
@@ -121,6 +136,11 @@ class BottomPopupViewModel extends BaseViewModel {
       if (_comments != null && _comments.data != null) {
         comments = _comments;
         debugPrint("First comments : ${comments!.data!.length}");
+
+        // Notify HomeView about comment count update
+        if (onCommentCountUpdated != null) {
+          onCommentCountUpdated!(postId, comments!.data!.length);
+        }
       } else {}
     } catch (e) {}
     notifyListeners();
@@ -181,6 +201,12 @@ class BottomPopupViewModel extends BaseViewModel {
         }
 
         emojis = matchedEmojis;
+
+        // Notify HomeView about reaction count update
+        if (onReactionCountUpdated != null) {
+          onReactionCountUpdated!(postId, reaction.data!.length);
+        }
+
         rebuildUi();
       }
     } catch (e) {}

@@ -136,6 +136,7 @@ const String ksAuthenticateBiometrics = 'Authenticated successfully!';
 const String ksBiometricsAuthenticatioFailed = 'Authentication failed.';
 //api response
 const String refreshToken = 'refreshToken';
+const String idToken = 'idToken';
 const String token = 'token';
 const String contactNo = 'contactNo';
 

@@ -73,7 +73,17 @@ class HomeViewModel extends BaseViewModel {
       BuildContext context, int index, String posId) async {
     showCupertinoModalPopup(
       context: context,
-      builder: (context) => BottomPopupView(posId),
+      builder: (context) => BottomPopupView(
+        posId,
+        onCommentUpdated: (postId, count) {
+          // print("Updated comment count: $count for $postId");
+          updateCommentCount(postId, count);
+        },
+        onReactionUpdated: (postId, count) {
+          // print("Updated reaction count: $count for $postId");
+          updateReactionCount(postId, count);
+        },
+      ),
     );
     rebuildUi();
   }
@@ -102,6 +112,22 @@ class HomeViewModel extends BaseViewModel {
     'like': '❤️',
     'person_raising_both_hands_in_celebration': '🙌'
   };
+
+  void updateCommentCount(String postId, int newCount) {
+    final index = homePostModel.indexWhere((post) => post.postId == postId);
+    if (index != -1) {
+      homePostModel[index].commentsCount = newCount;
+      rebuildUi(); // or notifyListeners() if using BaseViewModel directly
+    }
+  }
+
+  void updateReactionCount(String postId, int newCount) {
+    final index = homePostModel.indexWhere((post) => post.postId == postId);
+    if (index != -1) {
+      homePostModel[index].totalReactions = newCount;
+      rebuildUi(); // or notifyListeners()
+    }
+  }
 
   //Get Post List API
   Future<void> getUserPostsAPI() async {

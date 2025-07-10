@@ -10,13 +10,27 @@ import '../view_model/bottom_popup_viewmodel.dart';
 
 class BottomPopupView extends StackedView<BottomPopupViewModel> {
   final String postId;
+  final Function(String postId, int newCommentCount)? onCommentUpdated;
+  final Function(String postId, int newReactionCount)? onReactionUpdated;
 
-  const BottomPopupView(this.postId, {Key? key}) : super(key: key);
+  const BottomPopupView(
+    this.postId, {
+    this.onCommentUpdated,
+    this.onReactionUpdated,
+    Key? key,
+  }) : super(key: key);
 
   @override
   void onViewModelReady(BottomPopupViewModel viewModel) {
+    viewModel.postId = postId;
+
+    // 👇 Set the callbacks
+    viewModel.initializeCallbacks(
+      onCommentUpdated: onCommentUpdated,
+      onReactionUpdated: onReactionUpdated,
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      viewModel.postId = postId;
       await viewModel.getCommentsListAPI(postId);
       await viewModel.getReactionsListAPI(postId);
     });
