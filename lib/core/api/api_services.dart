@@ -7,6 +7,10 @@ import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/model/auth_response.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/create_post/model/create_audio_post_model.dart';
+import 'package:music_app/ui/views/followers/model/follow_user_model.dart';
+import 'package:music_app/ui/views/following/model/get_followers_list_model.dart';
+import 'package:music_app/ui/views/followers/model/get_following_list_model.dart';
 import 'package:music_app/ui/views/home/model/comments/create_comments_model.dart';
 import 'package:music_app/ui/views/home/model/comments/get_comments_model.dart';
 import 'package:music_app/ui/views/home/model/post/create_post_model.dart';
@@ -116,16 +120,17 @@ class ApiService {
         }),
       );
       safePrint(
-          'Logged in user profile api response: ${response.data['users']}');
-      String decrypted = await decryptData(response.data['users']);
+          'Logged in user profile api response: ${response.data['encrypted']}');
+      String decrypted = await decryptData(response.data['encrypted']);
       final Map<String, dynamic> decodedJson = json.decode(decrypted);
+
       // If Dio gives a string, decode it
-      if (decodedJson['users'] != null && decodedJson['users'] is List) {
-        final List<dynamic> usersList = decodedJson['users'];
+      if (response.data['success'] == true) {
+        final Map<String, dynamic> usersList = decodedJson['users'];
+
         if (usersList.isNotEmpty) {
           // Parse the first user from the list
-          final userJson = usersList[0];
-          safePrint("Get Profile API response structure: $userJson");
+          final userJson = usersList;
           return UpdatedAttributes.fromJson(userJson);
         } else {
           throw Exception("User list is empty");
@@ -161,7 +166,7 @@ class ApiService {
           'Content-Type': 'application/json',
         }),
       );
-      safePrint('Profile Update api response: ${response.data['users']}');
+      safePrint('Profile Update api response: ${response.data['encrypted']}');
       final decodedData =
           response.data is String ? jsonDecode(response.data) : response.data;
       safePrint("Profile update $decodedData");
@@ -203,6 +208,9 @@ class ApiService {
         ),
       );
 
+      safePrint("Create Post API ${response.statusCode}");
+      safePrint("Create Post API ${response.data}");
+
       if (response.statusCode == 200) {
         return CreatePostModel.fromJson(response.data);
       } else {
@@ -212,6 +220,44 @@ class ApiService {
       }
     } catch (e) {
       debugPrint('Create Post API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Create Audio Post API
+  Future<CreateAudioPostModel?> createAudioPostAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Create Post API $endpoint");
+    safePrint("Create Post API $data");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      safePrint("Create Audio Post API ${response.statusCode}");
+      safePrint("Create Audio Post API ${response.data}");
+
+      if (response.statusCode == 200) {
+        return CreateAudioPostModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Create Audio Post API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Create Audio Post API Error fetching post: $e');
       return null;
     }
   }
@@ -241,9 +287,10 @@ class ApiService {
             'Public Post API Failed: ${response.statusCode} - ${response.statusMessage}');
         return null;
       }
-    } catch (e) {
+    } on ApiException catch (e) {
       debugPrint('Public Post API Error fetching post: $e');
-      return null;
+      throw Exception("Public Post API exception: ${e.message}");
+      // return null;
     }
   }
 
@@ -366,7 +413,10 @@ class ApiService {
             'Comment List  API Failed: ${response.statusCode} - ${response.statusMessage}');
         return null;
       }
-    } catch (e) {
+    } on ApiException catch (e) {
+      // Show SnackBar, AlertDialog, or handle gracefully
+      print('Error: ${e.message}');
+
       debugPrint('Comment List API Error fetching post: $e');
       return null;
     }
@@ -416,8 +466,6 @@ class ApiService {
     final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
     final dio = Dio();
     safePrint("Reactions API $endpoint");
-    safePrint("Reactions API $data");
-    safePrint("Reactions API $token");
 
     try {
       final response = await dio.post(
@@ -472,6 +520,175 @@ class ApiService {
       }
     } catch (e) {
       debugPrint('Reactions List API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Get Followers list api
+  Future<GetFollowingListModel?> getFollowingListAPI(
+      {required String endpoint}) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Get Followers List API $endpoint");
+    try {
+      final response = await dio.get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Get Following List response ${response.data}");
+
+      if (response.data != null) {
+        return GetFollowingListModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Get Following List  API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Get Following List API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Get Followers list api
+  Future<GetFollowersListModel?> getFollowersListAPI(
+      {required String endpoint}) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Get Followers List API $endpoint");
+    try {
+      final response = await dio.get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Get Following List response ${response.data}");
+
+      if (response.data != null) {
+        return GetFollowersListModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Get Following List  API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Get Following List API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Create Reactions api
+  Future<CreateReactionsModel?> toFollowingUsers({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Reactions API $endpoint");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Create Reactions response ${response.data}");
+
+      if (response.statusCode == 200) {
+        return CreateReactionsModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Create Reactions API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Create Reactions API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Get Followers list api
+  Future<FollowUserModel?> toFollowAUserAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Follow User API $endpoint");
+    safePrint("Follow User API data $data");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Follow User API response ${response.data}");
+
+      if (response.data != null) {
+        return FollowUserModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Follow User API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Follow User API Error fetching post: $e');
+      return null;
+    }
+  }
+
+//MARK: Get Followers list api
+  Future<GetFollowersListModel?> toFollowingUserAPI({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    final token = await SharedPreferencesHelper.getAccessToken(ksAccessToekn);
+    final dio = Dio();
+    safePrint("Follow User API $endpoint");
+    safePrint("Follow User API data $data");
+
+    try {
+      final response = await dio.post(
+        endpoint,
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      safePrint("Follow User API response ${response.data}");
+
+      if (response.data != null) {
+        return GetFollowersListModel.fromJson(response.data);
+      } else {
+        debugPrint(
+            'Follow User API Failed: ${response.statusCode} - ${response.statusMessage}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Follow User API Error fetching post: $e');
       return null;
     }
   }

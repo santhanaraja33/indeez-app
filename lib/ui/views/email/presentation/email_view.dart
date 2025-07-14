@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/email/widget/email_view_widget.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
@@ -27,11 +28,11 @@ class EmailView extends StackedView<EmailViewModel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    emailViewWidget(),
+                    appLogoImageWidget(AppImage.appLogoGif),
                     const SizedBox(
                       height: height_10,
                     ),
-                    emailTextFieldWidget(viewModel),
+                    emailTextFieldWidget(viewModel, viewModel.emailController),
                     const SizedBox(
                       height: height_20,
                     ),

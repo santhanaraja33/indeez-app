@@ -225,14 +225,14 @@ class PasswordViewModel extends BaseViewModel {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: const Text(cancelBtnMsg),
             ),
             ElevatedButton(
               onPressed: () async {
                 final otp = otpController.text.trim();
 
                 if (otp.isEmpty) {
-                  Fluttertoast.showToast(msg: "Please enter OTP");
+                  Fluttertoast.showToast(msg: ksEnterOTP);
                   return;
                 }
                 try {
@@ -242,10 +242,10 @@ class PasswordViewModel extends BaseViewModel {
                   );
 
                   if (result.isSignUpComplete) {
-                    Fluttertoast.showToast(msg: "Sign-up confirmed!");
+                    Fluttertoast.showToast(msg: ksSignupConfirmed);
                     Navigator.pop(context);
                   } else {
-                    Fluttertoast.showToast(msg: "Confirmation incomplete");
+                    Fluttertoast.showToast(msg: ksConfirmationIncomplete);
                   }
                 } on AuthException catch (e) {
                   Fluttertoast.showToast(msg: e.message);
@@ -275,144 +275,18 @@ class PasswordViewModel extends BaseViewModel {
 
     if (authResponse != null) {
       safePrint("Login success.");
-      Fluttertoast.showToast(msg: "Login success.");
-      final accessToken = authResponse.authenticationResult.accessToken;
-      await SharedPreferencesHelper.saveAccessToken(ksAccessToekn, accessToken);
+      Fluttertoast.showToast(msg: ksLoginSuccess);
+      await SharedPreferencesHelper.saveAccessToken(
+          ksAccessToekn, authResponse.authenticationResult.accessToken);
+      await SharedPreferencesHelper.saveRefreshToken(
+          ksRefreshToekn, authResponse.authenticationResult.refreshToken);
+
       await SharedPreferencesHelper.saveLoginStatus(true);
       navigationService.clearStackAndShow(Routes.bottomBarView);
     } else {
       safePrint("Login failed.");
-      Fluttertoast.showToast(msg: "Login failed. Please try again.");
+      Fluttertoast.showToast(msg: ksLoginFailed);
+      throw Exception(ksLoginFailed);
     }
   }
 }
-    
-  // Future<void> loginUser(String email, String password) async {
-  //   final dio = Dio();
-
-  //   const String url =
-  //       'https://cognito-idp.us-west-2.amazonaws.com'; // full URL
-
-  //   final Map<String, dynamic> loginPayload = {
-  //     "AuthParameters": {
-  //       "USERNAME": "amuthakumari.g@gmail.com",
-  //       "PASSWORD": "32132Test@"
-  //     },
-  //     "AuthFlow": "USER_PASSWORD_AUTH",
-  //     "ClientId": "gcdvf03t4358m5kvu1ckrkd9g"
-  //   };
-  //     //application/x-amz-json-1.1
-  //   final headers = {
-  //     'Content-Type': 'application/x-amz-json-1.1',
-  //     'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
-  //   };
-
-  //   try {
-  //     dio.interceptors
-  //         .add(LogInterceptor(requestBody: true, responseBody: true));
-
-  //     final response = await dio.post(
-  //       url,
-  //       data: loginPayload,
-  //       options: Options(
-  //         headers: headers,
-  //         sendTimeout: const Duration(seconds: 3000),
-  //         receiveTimeout: const Duration(seconds: 3000),
-  //       ),
-  //     );
-
-  //     print('Login Success: ${response.statusCode}');
-  //     print('✅ Login Success: ${response.data}');
-  //     final model = PasswordModel.fromJson(response.data);
-  //     print('Access Token: ${model.authenticationResult.accessToken}');
-
-  //     final loginModel = PasswordModel.fromJson(response.data);
-  //     print(loginModel.authenticationResult.accessToken);
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = response.data;
-
-  //       if (responseData is List) {
-  //         print(responseData[0]); // ✅ Access by index if it’s a list
-  //       } else if (responseData is Map) {
-  //         print(responseData['message']); // ✅ Access by key if it's a map
-  //       }
-  //       if (responseData['AuthenticationResult'] != null) {
-  //         final authResult = responseData['AuthenticationResult'];
-  //         final accessToken = authResult['AccessToken'];
-  //         final idToken = authResult['IdToken'];
-  //         final refreshToken = authResult['RefreshToken'];
-
-  //         // Store tokens securely or use them as needed
-  //         safePrint("Access Token: $accessToken");
-  //         safePrint("ID Token: $idToken");
-  //         safePrint("Refresh Token: $refreshToken");
-
-  //         // Optionally, navigate to the home view or perform other actions
-  //         // navigationService.clearStackAndShow(Routes.homeView);
-  //       } else {
-  //         Fluttertoast.showToast(msg: "Login failed. Please try again.");
-  //       }
-  //     } else {
-  //       print("Failed: ${response.statusCode}");
-  //     }
-  //   } catch (e) {
-  //     if (e is DioException) {
-  //       print('Login Failed: ${e.response?.data}');
-  //     } else {
-  //       print('Unexpected error: $e');
-  //     }
-  //   }
-  // }
-
-  // Future<Map<String, String>> loginAPICall(
-  //     BuildContext context, String email, String password) async {
-  //   try {
-  //     final url = Uri.parse(ApiConstants.loginAWSUrl); // Replace with your API
-
-  //     safePrint("Login API URL: $url");
-  //     Map<String, dynamic> loginPayload = {
-  //       "AuthParameters": {"USERNAME": email, "PASSWORD": password},
-  //       "AuthFlow": "USER_PASSWORD_AUTH",
-  //       "ClientId": ksAWSClientId,
-  //     };
-  //     safePrint(loginPayload);
-  //     final response = await http.post(
-  //       url,
-  //       headers: {
-  //         "Content-Type": "application/x-amz-json-1.1",
-  //         "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
-  //       },
-  //       body: jsonEncode(loginPayload),
-  //     );
-  //     print("Success: ${response.body}");
-  //     safePrint("Response status: ${response.statusCode}");
-  //     if (response.statusCode == 200) {
-  //       print("Success: ${response.body}");
-  //       final responseData = jsonDecode(response.body);
-  //       if (responseData['AuthenticationResult'] != null) {
-  //         final authResult = responseData['AuthenticationResult'];
-  //         final accessToken = authResult['AccessToken'];
-  //         final idToken = authResult['IdToken'];
-  //         final refreshToken = authResult['RefreshToken'];
-
-  //         // Store tokens securely or use them as needed
-  //         safePrint("Access Token: $accessToken");
-  //         safePrint("ID Token: $idToken");
-  //         safePrint("Refresh Token: $refreshToken");
-
-  //         // Optionally, navigate to the home view or perform other actions
-  //         // navigationService.clearStackAndShow(Routes.homeView);
-  //       } else {
-  //         Fluttertoast.showToast(msg: "Login failed. Please try again.");
-  //       }
-  //     } else {
-  //       print("Failed: ${response.statusCode}");
-  //     }
-  //   } on AuthException catch (e) {
-  //     Fluttertoast.showToast(msg: e.message);
-  //   }
-  //   // Return an empty map or throw as appropriate
-  //   return <String, String>{};
-  // }
-

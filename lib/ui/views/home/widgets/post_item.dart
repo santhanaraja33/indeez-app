@@ -1,9 +1,9 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
 import 'package:music_app/ui/views/home/view_model/home_viewmodel.dart';
 import 'package:music_app/ui/views/home/widgets/post_image.dart';
 import 'package:music_app/ui/views/home/widgets/reactions_row.dart';
@@ -12,31 +12,40 @@ Widget buildPostItem(BuildContext context, int index, HomeViewModel viewModel) {
   String selectedImageUrl = '';
   String bgUrl = '';
   String fgUrl = '';
+  safePrint(
+      "buildPostItem resourcetype : ${viewModel.homePostModel[index].resourceType}");
 
   if (viewModel.homePostModel[index].resourceType == "image") {
-    if (index < viewModel.downloadMediaList.length) {
-      final post = viewModel.downloadMediaList[index];
+    if (viewModel.homePostModel[index].mediaItems!.isNotEmpty) {
+      for (var item in viewModel.homePostModel[index].mediaItems!) {
+        if (item.status == "uploaded" || item.status == "uplpaded") {
+          safePrint("index ${index}: ${item.mediaUrl}");
 
-      final backgroundImage = post.mediaFiles?.firstWhere(
-        (file) => file.index == 0,
-        orElse: () => MediaFiles(),
-      );
+          bgUrl = item.mediaUrl ?? '';
+          fgUrl = item.mediaUrl ?? '';
 
-      final foregroundImage = post.mediaFiles?.firstWhere(
-        (file) => file.index == 1,
-        orElse: () => MediaFiles(),
-      );
+          safePrint("fgUrl: $fgUrl");
+          safePrint("bgUrl: $bgUrl");
 
-      bgUrl = backgroundImage?.mediaUrl ?? '';
-      fgUrl = foregroundImage?.mediaUrl ?? '';
+          precacheImage(CachedNetworkImageProvider(bgUrl), context);
+          precacheImage(CachedNetworkImageProvider(fgUrl), context);
 
-      precacheImage(CachedNetworkImageProvider(bgUrl), context);
-      precacheImage(CachedNetworkImageProvider(fgUrl), context);
-
-      selectedImageUrl = viewModel.homePostModel[index].isImageSelected == true
-          ? fgUrl
-          : bgUrl;
+          selectedImageUrl =
+              viewModel.homePostModel[index].isImageSelected == true
+                  ? fgUrl
+                  : bgUrl;
+          break;
+        }
+      }
     }
+  }
+  if (viewModel.homePostModel[index].resourceType == "audio") {
+    if (viewModel.homePostModel[index].mediaItems!.isNotEmpty) {
+      for (var item in viewModel.homePostModel[index].mediaItems!) {
+        fgUrl = item.mediaUrl ?? '';
+      }
+    }
+    precacheImage(CachedNetworkImageProvider(selectedImageUrl), context);
   }
 
   final reactionsMap =
@@ -75,17 +84,25 @@ Widget buildPostItem(BuildContext context, int index, HomeViewModel viewModel) {
               ),
             )
           : Stack(
-              alignment: const Alignment(2, 0),
+              alignment: Alignment.center,
               children: [
-                buildBackgroundImage(selectedImageUrl, () async {
-                  viewModel.isImageSelected = !viewModel.isImageSelected;
-                  viewModel.rebuildUi();
-                }),
-                buildForegroundImage(selectedImageUrl, () async {
-                  viewModel.homePostModel[index].isImageSelected =
-                      !viewModel.homePostModel[index].isImageSelected;
-                  viewModel.rebuildUi();
-                }),
+                Center(
+                    child: buildBackgroundImage(
+                  selectedImageUrl,
+                  () async {
+                    viewModel.isImageSelected = !viewModel.isImageSelected;
+                    viewModel.rebuildUi();
+                  },
+                )),
+                Center(
+                    child: buildForegroundImage(
+                  selectedImageUrl,
+                  () async {
+                    viewModel.homePostModel[index].isImageSelected =
+                        !viewModel.homePostModel[index].isImageSelected;
+                    viewModel.rebuildUi();
+                  },
+                )),
               ],
             ),
       const SizedBox(height: height_30),

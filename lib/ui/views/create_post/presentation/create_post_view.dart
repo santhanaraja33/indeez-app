@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:music_app/ui/views/create_post/view_model/create_post_viewmodel.dart';
-import 'package:music_app/ui/views/create_post/widgets/create_post_form.dart';
+import 'package:music_app/ui/views/create_post/widget/create_post_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class CreatePostView extends StackedView<CreatePostViewmodel> {

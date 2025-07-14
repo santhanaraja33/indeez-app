@@ -11,7 +11,7 @@ import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/email/view_model/email_viewmodel.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-Widget emailViewWidget() {
+Widget appLogoImageWidget(String image) {
   return Center(
     child: Image.asset(
       AppImage.appLogoGif,
@@ -22,13 +22,15 @@ Widget emailViewWidget() {
   );
 }
 
-Widget emailTextFieldWidget(dynamic viewModel) {
+Widget emailTextFieldWidget(
+    dynamic viewModel, TextEditingController controller) {
   return AppCommonTextfield(
     controller: viewModel.emailController,
     label: Text(
       ksEmail,
       style: GoogleFonts.lato(color: kcTextGrey),
     ),
+    onSubmitted: (p0) {},
   );
 }
 
@@ -72,15 +74,7 @@ Widget listTileWidget(BuildContext context, String from, dynamic viewModel) {
   emailViewModel = viewModel;
   final navigationService = locator<NavigationService>();
   return ListTile(
-    title: Text(
-      from,
-      textAlign: TextAlign.center,
-      style: GoogleFonts.lato(
-        fontSize: size_16,
-        fontWeight: FontWeight.bold,
-        color: kcBlack,
-      ),
-    ),
+    title: textWidget(from),
     onTap: () async {
       if (from == ksUseBiometrics) {
         debugPrint("Biometrics clicked");
@@ -95,4 +89,14 @@ Widget listTileWidget(BuildContext context, String from, dynamic viewModel) {
       }
     },
   );
+}
+
+Widget textWidget(String from) {
+  return Text(from,
+      textAlign: TextAlign.center,
+      style: GoogleFonts.lato(
+        fontSize: size_16,
+        fontWeight: FontWeight.bold,
+        color: kcBlack,
+      ));
 }

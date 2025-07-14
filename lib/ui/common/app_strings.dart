@@ -7,6 +7,7 @@ const String ksNEXT = 'NEXT';
 
 const String ksAccessToekn = 'AccessToken';
 const String ksLoggedinUserId = 'userId';
+const String ksRefreshToekn = 'RefreshToken';
 
 const String ksIAgreeToThe = 'I agree to the';
 const String ksTermsConditions = 'Terms & Conditions';
@@ -40,13 +41,15 @@ const String ksSignup = 'Sign up?';
 const String ksSignIn = 'Sign In';
 const String ksTitle = 'Title';
 const String ksDesc = 'Description';
+const String ksAudioTrackTitle = 'Audio Track Title';
+
 const String ksSignout = 'Sign Out';
 const String ksMoreOption = 'More Options';
 const String ksCreatePost = 'Create Post';
 const String ksPrivatePostTitle = 'Private Post ?';
 const String ksUsePassword = 'Use Password';
 const String ksUseBiometrics = 'Use Biometrics';
-
+const String ksPasswordResetSuccessful = 'Password reset successful';
 const String ksProfile = 'Profile';
 const String ksTac = 'Terms & Condition';
 const String ksLogout = 'Log out';
@@ -72,6 +75,8 @@ const String ksDMS = 'DMS';
 const String ksCalendar = 'Calendar';
 const String ksNotifications = 'Notifications';
 const String ksAccountDetails = 'Account details';
+const String ksAccountSettings = 'Account settings';
+const String ksOTPSentSuccess = 'OTP resent successfully!';
 const String ksAccountPrivacy = 'Account privacy';
 const String ksBlockedAccounts = 'Blocked accounts';
 const String ksMediaquality = 'Media quality';
@@ -86,12 +91,23 @@ const String ksUnblockHint =
     'Are you sure, Do you want to Un Block This Account';
 const String unBlockAccount = 'Un Block Account';
 const String ksChangeProfile = 'Change Profile';
+const String ksFollowing = 'Following';
+const String ksFollowers = 'My Followers';
+const String ksFollowersNotFound = 'No Followers Found';
+const String ksSignupConfirmed = 'Sign up confirmed!';
+const String ksUserCreated = 'User created';
+const String ksConfirmationIncomplete = 'Confirmation incomplete';
 //User Profile
 const String ksLoginStatus = 'isLoggedIn';
 const String ksSharedPreferenceOTP = 'otp';
 const String ksSharedPreferenceEmail = 'email';
 const String ksSharedPreferenceFromPage = 'email';
 const String ksSharedPreferenceEmailWithOTP = 'EmailWithOTP';
+const String ksUserFollowedSuccessfully = 'Followed successfully';
+const String ksUserUnFollowedSuccessfully = 'Unfollowed successfully';
+
+const String ksFollowingUsers = 'Following Users';
+const String ksUserFollowers = 'My Followers';
 
 const String ksSharedPreferenceFromForgotPasswordPage = 'ForgotPasswordPage';
 const String ksSharedPreferenceForgotPasswordWithOTP = 'ForgotPasswordOTP';
@@ -111,7 +127,7 @@ const String mobileNumberLength = 'Mobile Number max 10 digits';
 
 const String otpFieldEmpty = 'OTP Field is Empty';
 const String otpLength = 'Enter valid OTP';
-
+const String ksEnterOTP = 'Please enter OTP';
 const String errorTitle = 'Error';
 const String successTitle = 'Success';
 const String closeTitle = 'Close';
@@ -129,14 +145,15 @@ const String changeTxt = 'Change';
 const String verifyTxt = 'Verify';
 const String addTxt = 'Add';
 
+const String ksLoginSuccess = 'Login successful';
 const String ksEmailRequired = 'Email is required';
 const String ksValidEmailAddress = 'Please enter a valid email address.';
 const String ksEmailNotRegistered = 'User Email is not registered';
 const String ksAuthenticateBiometrics = 'Authenticated successfully!';
 const String ksBiometricsAuthenticatioFailed = 'Authentication failed.';
+const String ksLoginFailed = 'Login failed. Please try again.';
 //api response
 const String refreshToken = 'refreshToken';
-const String idToken = 'idToken';
 const String token = 'token';
 const String contactNo = 'contactNo';
 
@@ -199,6 +216,7 @@ const double padding_100 = 100.0;
 const double padding_90 = 90.0;
 const double padding_40 = 40.0;
 const double padding_0 = 0.0;
+const double padding_30 = 30.0;
 
 //Size
 const double size_12 = 12.0;

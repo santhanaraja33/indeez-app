@@ -1,7 +1,10 @@
 import 'package:music_app/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:music_app/ui/dialogs/info_alert/info_alert_dialog.dart';
+import 'package:music_app/ui/views/account_settings/presentation/account_settings_view.dart';
 import 'package:music_app/ui/views/create_post/presentation/create_post_view.dart';
 import 'package:music_app/ui/views/email/presentation/email_view.dart';
+import 'package:music_app/ui/views/followers/presentation/followers_list_view.dart';
+import 'package:music_app/ui/views/following/presentation/following_list_view.dart';
 import 'package:music_app/ui/views/home/presentation/home_view.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -14,9 +17,9 @@ import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart';
 import 'package:music_app/ui/views/swipe/swipe_view.dart';
 import 'package:music_app/ui/views/event/event_view.dart';
 import 'package:music_app/ui/views/shop/shop_view.dart';
-import 'package:music_app/ui/views/forgotpassword/forgotpassword_view.dart';
+import 'package:music_app/ui/views/forgotpassword/presentation/forgotpassword_view.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
-import 'package:music_app/ui/views/changepassword/changepassword_view.dart';
+import 'package:music_app/ui/views/changepassword/presentation/changepassword_view.dart';
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart';
 import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart';
 import 'package:music_app/ui/views/bottom_popup/presentation/bottom_popup_view.dart';
@@ -32,7 +35,6 @@ import 'package:music_app/ui/views/calendar/calendar_view.dart';
     MaterialRoute(page: HomeView),
     MaterialRoute(page: StartupView),
     MaterialRoute(page: PasswordView),
-    MaterialRoute(page: EmailView),
     MaterialRoute(page: SignupView),
     MaterialRoute(page: CreateAccountView),
     MaterialRoute(page: BottomBarView),
@@ -51,7 +53,12 @@ import 'package:music_app/ui/views/calendar/calendar_view.dart';
     MaterialRoute(page: SearchDetailsView),
     MaterialRoute(page: NotificationView),
     MaterialRoute(page: CalendarView),
+    MaterialRoute(page: AccountSettingsView),
+    MaterialRoute(page: EmailView),
+    MaterialRoute(page: FollowersListView),
+    MaterialRoute(page: FollowingListView),
     MaterialRoute(page: CreatePostView),
+
 // @stacked-route
   ],
   dependencies: [

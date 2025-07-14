@@ -167,7 +167,6 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                               controller: viewModel.firstNameController,
                               keyboardType: TextInputType.name,
                               readOnly: !viewModel.isChecked,
-// 👈 disables input unless in edit mode
                               label: Text(
                                 ksFirstName,
                                 style: GoogleFonts.lato(color: kcTextGrey),
@@ -230,13 +229,37 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                             const SizedBox(
                               height: height_10,
                             ),
+                            // AppDropDown(
+                            //   titleTextColor: kcWhite,
+                            //   dropDownHint: viewModel.listModeModel.first,
+                            //   // bgColor: kcBlack,
+                            //   value: viewModel.listModeModel
+                            //           .contains(viewModel.selectedValue)
+                            //       ? viewModel.selectedValue
+                            //       : null,
+                            //   onChanged: (val) {
+                            //     viewModel.selectedValue = val;
+                            //     viewModel.rebuildUi();
+                            //   },
+                            //   items: viewModel.listModeModel
+                            //       .map(
+                            //           (String item) => DropdownMenuItem<String>(
+                            //                 value: item,
+                            //                 child: Text(
+                            //                   item,
+                            //                   style: GoogleFonts.lato(
+                            //                     fontSize: size_14,
+                            //                     color: kcBlack,
+                            //                     fontWeight: FontWeight.w500,
+                            //                   ),
+                            //                 ),
+                            //               ))
+                            //       .toList(),
+                            // ),
                             AppDropDown(
-                              titleTextColor: kcTextGrey,
-                              dropDownHint: viewModel.listModeModel.first,
-                              value: viewModel.listModeModel
-                                      .contains(viewModel.selectedValue)
-                                  ? viewModel.selectedValue
-                                  : null,
+                              titleTextColor: kcWhite,
+                              dropDownHint: ksTypeofUser,
+                              value: viewModel.selectedValue,
                               onChanged: (val) {
                                 viewModel.selectedValue = val;
                                 viewModel.rebuildUi();
@@ -249,7 +272,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                                               item,
                                               style: GoogleFonts.lato(
                                                 fontSize: size_14,
-                                                color: kcBlack,
+                                                color: kcTextGrey,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

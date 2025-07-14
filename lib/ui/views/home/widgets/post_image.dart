@@ -20,7 +20,12 @@ Widget buildForegroundImage(String foregroundImageUrl, VoidCallback onTap) {
             child: CircularProgressIndicator(color: kcWhite),
           ),
           errorWidget: (context, url, error) => const Center(
-            child: FittedBox(child: Icon(Icons.error, size: 100)),
+            child: FittedBox(
+                child: Icon(
+              Icons.error,
+              size: 100,
+              color: kcRed,
+            )),
           ),
         ),
       ),
@@ -41,7 +46,12 @@ Widget buildBackgroundImage(String backgroundImageUrl, VoidCallback onTap) {
           child: CircularProgressIndicator(color: kcTransparent),
         ),
         errorWidget: (context, url, error) => const Center(
-          child: FittedBox(child: Icon(Icons.error, size: 100)),
+          child: FittedBox(
+              child: Icon(
+            Icons.error,
+            size: 100,
+            color: kcWhite,
+          )),
         ),
       ),
     ),

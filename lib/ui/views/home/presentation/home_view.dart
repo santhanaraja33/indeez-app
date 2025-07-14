@@ -101,10 +101,6 @@ class _HomeViewContentState extends State<_HomeViewContent> {
           viewModel.descController.clear();
           viewModel.selectedMode = '';
           viewModel.selectedResourceType = '';
-          viewModel.showCreatePostDialog(context);
-          // viewModel.navigationService
-          //     .pushNamedAndRemoveUntil(Routes.createPostView);
-
           viewModel.navigationService.navigateToCreatePostView();
         },
         backgroundColor: kcBlue,
@@ -119,34 +115,42 @@ class _HomeViewContentState extends State<_HomeViewContent> {
             onRefresh: () async {
               await widget.viewModel.getPublicPostsAPI(isRefresh: true);
             },
-            child: SafeArea(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: padding_20),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: height_30),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: viewModel.homePostModel.length,
-                          itemBuilder: (context, index) {
-                            return buildPostItem(context, index, viewModel);
-                          }),
-                      const SizedBox(height: height_30),
-                      // Show pagination loader only when paginating and there are posts
-                      if (viewModel.isPaginating &&
-                          viewModel.homePostModel.isNotEmpty) ...[
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: CircularProgressIndicator(color: kcWhite),
-                        ),
-                      ]
-                    ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: padding_20),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: height_30),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: viewModel.homePostModel.length,
+                              itemBuilder: (context, index) {
+                                return buildPostItem(context, index, viewModel);
+                              }),
+                          const SizedBox(height: height_30),
+                          // Show pagination loader only when paginating and there are posts
+                          if (viewModel.isPaginating &&
+                              viewModel.homePostModel.isNotEmpty) ...[
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: CircularProgressIndicator(color: kcWhite),
+                            ),
+                          ]
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

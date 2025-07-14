@@ -70,11 +70,41 @@ class HomeViewModel extends BaseViewModel {
   final navigationService = locator<NavigationService>();
   bool isImageSelected = false;
   bool isemoji = false;
+
+  void updateCommentCount(String postId, int newCount) {
+    final index = homePostModel.indexWhere((post) => post.postId == postId);
+    if (index != -1) {
+      homePostModel[index].commentsCount = newCount;
+      rebuildUi(); // or notifyListeners() if using BaseViewModel directly
+    }
+  }
+
+  void updateReactionCount(String postId, int newCount) {
+    final index = homePostModel.indexWhere((post) => post.postId == postId);
+    if (index != -1) {
+      homePostModel[index].totalReactions = newCount;
+      rebuildUi(); // or notifyListeners()
+    }
+  }
+
   void popupPhotoUploadNavigation(
-      BuildContext context, int index, String posId) async {
+    BuildContext context,
+    int index,
+    String posId,
+  ) async {
     showCupertinoModalPopup(
       context: context,
-      builder: (context) => BottomPopupView(posId),
+      builder: (context) => BottomPopupView(
+        posId,
+        onCommentUpdated: (postId, count) {
+          print("Updated comment count: $count for $postId");
+          updateCommentCount(postId, count);
+        },
+        onReactionUpdated: (postId, count) {
+          print("Updated reaction count: $count for $postId");
+          updateReactionCount(postId, count);
+        },
+      ),
     );
     rebuildUi();
   }
@@ -551,7 +581,8 @@ class HomeViewModel extends BaseViewModel {
 
     notifyListeners();
     try {
-      String endpoint = "${ApiConstants.baseURL}${ApiEndpoints.createPostAPI}";
+      String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.createPostAPIImage}";
       safePrint(endpoint);
       final getUserId =
           await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);

@@ -42,6 +42,18 @@ class SharedPreferencesHelper {
     return prefs.getString(key);
   }
 
+  //save refresh token
+  static Future<bool> saveRefreshToken(String key, String refreshToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.setString(key, refreshToken);
+  }
+
+  //get accesstoken
+  static Future<String?> getRefreshToken(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
   //signup user api model
   static Future<void> saveUser(SignupUserInfo user) async {
     final prefs = await SharedPreferences.getInstance();

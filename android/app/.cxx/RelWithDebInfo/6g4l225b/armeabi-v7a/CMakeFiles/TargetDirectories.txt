@@ -1,0 +1,2 @@
+C:/Users/hp/Desktop/indeez-app-main/android/app/.cxx/RelWithDebInfo/6g4l225b/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/hp/Desktop/indeez-app-main/android/app/.cxx/RelWithDebInfo/6g4l225b/armeabi-v7a/CMakeFiles/rebuild_cache.dir

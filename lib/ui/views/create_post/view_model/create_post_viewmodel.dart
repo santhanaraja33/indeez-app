@@ -2,16 +2,26 @@ import 'dart:io';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:music_app/app/app.locator.dart';
+import 'package:music_app/app/app.router.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/core/api/api_endpoints.dart';
 import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
+import 'package:music_app/ui/common/app_colors.dart';
+import 'package:music_app/ui/common/app_common_button.dart';
+import 'package:music_app/ui/common/app_common_textfield.dart';
+import 'package:music_app/ui/common/app_dropdown.dart';
+import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart';
+import 'package:music_app/ui/views/create_post/model/create_audio_post_model.dart';
 import 'package:music_app/ui/views/home/model/post/create_post_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_download_media_model.dart';
 import 'package:music_app/ui/views/home/model/post/post_update_model.dart'
@@ -28,10 +38,13 @@ class CreatePostViewmodel extends BaseViewModel {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descController = TextEditingController();
+  final TextEditingController mediaTitleController = TextEditingController();
+
   bool isPrivate = false;
   String? selectedMode = 'public';
-
+  FilePickerResult? audioResult;
   PostUpdateModel? updatePostModel;
+  bool _isPickingAudio = false;
 
   PostDownloadMediaModel? downloadMedia;
   List<PostDownloadMediaModel> downloadMediaList = [];
@@ -39,13 +52,141 @@ class CreatePostViewmodel extends BaseViewModel {
   List<String> selectedFiles = [];
   List<File> selectedImages = [];
   List<Map<String, dynamic>> selectedImageItems = [];
-  // void navigationToBottomBar() {
-  //   navigationService.back();
-  // }
+
+  CreateAudioPostModel? createAudioPostModel;
+
+  void navigationToBottomBar() {
+    navigationService.navigateToBottomBarView();
+  }
 
   void checkBoxSelected(bool value) {
     isChecked = value;
     rebuildUi();
+  }
+
+  Future<void> pickAndUploadAudio(Function setState) async {
+    if (_isPickingAudio) return; // prevent double trigger
+    _isPickingAudio = true;
+
+    FilePickerResult? result1 = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav', 'aac', 'ogg'],
+    );
+    debugPrint("result1: ${result1?.files.single.name}");
+    if (result1 != null && result1.files.single.path != null) {
+      String filePath = result1.files.single.path!;
+      File _ = File(filePath);
+      audioResult = result1;
+    } else {
+      print('No file selected');
+    }
+  }
+
+  Future<void> createAudiPostMethod(BuildContext context) async {
+    notifyListeners();
+    try {
+      String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.createPostAPIAudio}";
+      safePrint(endpoint);
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreateAudioPostModel? createPost =
+          await ApiService().createAudioPostAPI(endpoint: endpoint, data: {
+        "userId": getUserId,
+        "posttitle": titleController.text.trim(),
+        "mediaTitlename": mediaTitleController.text.trim(),
+        "content": descController.text.trim(),
+        "resourceType": selectedResourceType?.toLowerCase(),
+        "audioMeta": {
+          "fileName": audioResult?.files.single.name,
+          "mimeType": "audio/mpeg"
+        },
+        "coverImageMeta": {
+          "fileName": selectedImages.isNotEmpty
+              ? selectedImages.first.path.split('/').last
+              : null,
+          "mimeType": "image/jpeg"
+        }
+      });
+      debugPrint("image path: ${selectedImages.first.path}");
+      if (createPost?.success == true) {
+        createAudioPostModel = createPost;
+        debugPrint(
+            "Create post api response : ${createAudioPostModel!.uploadUrls?.audio?.uploadUrl}");
+        await uploadAudioViaPut(
+            audioResult?.files.single.path,
+            createAudioPostModel!.uploadUrls!.audio!.uploadUrl,
+            createAudioPostModel!.postId!);
+
+        rebuildUi();
+      } else {}
+    } catch (e) {
+      print('Create post api failed: $e');
+    }
+    notifyListeners();
+  }
+
+  Future<void> uploadAudioViaPut(
+      String? audioPath, String? uploadUrl, String? postId) async {
+    final dio = Dio();
+    final audioFile = File(audioPath!);
+
+    final mimeType = lookupMimeType(audioPath) ?? 'audio/mpeg';
+
+    try {
+      final audioBytes = await audioFile.readAsBytes();
+
+      final response = await dio.put(
+        uploadUrl!, // Replace with your actual upload URL
+        data: audioBytes,
+        options: Options(
+          headers: {
+            'Content-Type': mimeType,
+          },
+        ),
+      );
+      print('Audio Upload status code: ${response.statusCode}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Audio uploaded successfully.');
+        notifyListeners();
+        try {
+          String endpoint =
+              "${ApiConstants.baseURL}${ApiEndpoints.updatePostAPI}${"/$postId"}";
+          safePrint(endpoint);
+
+          final getUserId =
+              await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+          final PostUpdateModel? updatePost = await ApiService().updatePostAPI(
+              endpoint: endpoint,
+              data: {"userId": getUserId, "status": "uploaded"});
+          if (updatePost?.success == true) {
+            updatePostModel = updatePost;
+            debugPrint(
+                "Update post api response : ${updatePostModel?.message}");
+            // WidgetsBinding.instance.addPostFrameCallback((_) {
+            //   navigationService.clearStackAndShowView(const BottomBarView());
+            // });
+            if (selectedImages.isNotEmpty &&
+                createAudioPostModel?.uploadUrls?.coverImage?.uploadUrl !=
+                    null) {
+              await uploadImageToAPI(
+                  createAudioPostModel?.uploadUrls?.coverImage!.uploadUrl ?? '',
+                  selectedImages.first.path,
+                  createAudioPostModel!.postId!,
+                  "0");
+            }
+            rebuildUi();
+          } else {}
+        } catch (e) {
+          print('Update post api failed: $e');
+        }
+        notifyListeners();
+      } else {
+        print('Upload failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Upload error: $e');
+    }
   }
 
   Future<void> pickMultipleImages(Function setState) async {
@@ -107,7 +248,7 @@ class CreatePostViewmodel extends BaseViewModel {
       return;
     }
     if (selectedFiles.isNotEmpty) {
-      if (selectedResourceType == "image") {
+      if (selectedResourceType == "image" || selectedResourceType == "Image") {
         List<Map<String, dynamic>> fileList = createFileList(selectedFiles);
         debugPrint('Error picking images: $fileList');
         selectedImageItems.addAll(fileList);
@@ -121,7 +262,8 @@ class CreatePostViewmodel extends BaseViewModel {
 
     notifyListeners();
     try {
-      String endpoint = "${ApiConstants.baseURL}${ApiEndpoints.createPostAPI}";
+      String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.createPostAPIImage}";
       safePrint(endpoint);
       final getUserId =
           await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
@@ -138,7 +280,7 @@ class CreatePostViewmodel extends BaseViewModel {
       if (createPost?.success == true) {
         createPostModel = createPost;
         debugPrint("Create post api response : ${createPostModel?.message}");
-        Navigator.of(context).pop();
+
         for (int i = 0; i < createPostModel!.mediaUploadUrls!.length; i++) {
           final uploadUrl = createPostModel!.mediaUploadUrls![i].uploadUrl;
           final imagePath = selectedImages[i].path;
@@ -147,7 +289,7 @@ class CreatePostViewmodel extends BaseViewModel {
           await uploadImageToAPI(
               uploadUrl!, imagePath, createPostModel!.postId!, index);
         }
-        rebuildUi();
+        // rebuildUi();
       } else {}
     } catch (e) {
       print('Create post api failed: $e');
@@ -172,9 +314,9 @@ class CreatePostViewmodel extends BaseViewModel {
           },
         ),
       );
-      print('Upload success: ${response.statusCode}');
+      print('Upload success image : ${response.statusCode}');
       if (response.statusCode == 200) {
-        imageUploadUpdateStatusAPI(postId, index);
+        imageUploadUpdateStatusAPI(postId, index, selectedResourceType!);
       }
     } catch (e) {
       print('Upload failed: $e');
@@ -182,22 +324,35 @@ class CreatePostViewmodel extends BaseViewModel {
   }
 
 //Update Image upload status
-  Future<void> imageUploadUpdateStatusAPI(String postId, String index) async {
+  Future<void> imageUploadUpdateStatusAPI(
+      String postId, String index, String fromResourceType) async {
     notifyListeners();
     try {
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
       String endpoint =
           "${ApiConstants.baseURL}${ApiEndpoints.updatePostAPI}${"/$postId"}";
       safePrint(endpoint);
       safePrint("imageUploadUpdateStatusAPI $index");
+      safePrint("fromResourceType $fromResourceType");
 
-      final getUserId =
-          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
-      final PostUpdateModel? updatePost = await ApiService().updatePostAPI(
-          endpoint: endpoint,
-          data: {"userId": getUserId, "index": index, "status": "uplpaded"});
+      Map<String, dynamic> data = {};
+      if (fromResourceType == "image" || fromResourceType == "Image") {
+        data = {"userId": getUserId, "index": index, "status": "uploaded"};
+      } else if (fromResourceType == "video" || fromResourceType == "Video") {
+        // data = {"status": "uploaded", "index": index, "resourceType": "video"};
+      } else if (fromResourceType == "audio" || fromResourceType == "Audio") {
+        data = {"status": "uploaded", "userId": getUserId};
+      }
+
+      final PostUpdateModel? updatePost =
+          await ApiService().updatePostAPI(endpoint: endpoint, data: data);
       if (updatePost?.success == true) {
         updatePostModel = updatePost;
         debugPrint("Update post api response : ${updatePostModel?.message}");
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigationService.clearStackAndShowView(const BottomBarView());
+        });
         rebuildUi();
       } else {}
     } catch (e) {

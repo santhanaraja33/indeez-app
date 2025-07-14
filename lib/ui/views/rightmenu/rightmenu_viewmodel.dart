@@ -8,7 +8,6 @@ import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/rightmenu/model/rightmenu_model.dart';
-import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -22,7 +21,8 @@ class RightmenuViewModel extends BaseViewModel {
     DrawerItem(ksHome, Icons.home, 'dashboard_info', '', ''),
     DrawerItem(ksCalendar, Icons.calendar_month, 'dashboard_info', '', ''),
     DrawerItem(ksNotifications, Icons.notifications, 'dashboard_info', '', ''),
-    DrawerItem(ksAccountDetails, Icons.settings, 'dashboard_info', '', ''),
+    DrawerItem(ksAccountDetails, Icons.person_2, 'dashboard_info', '', ''),
+    DrawerItem(ksAccountSettings, Icons.settings, 'dashboard_info', '', ''),
     DrawerItem(ksLogout, Icons.logout, 'dashboard_info', '', ''),
   ];
   bool isSelected = false;
@@ -42,6 +42,7 @@ class RightmenuViewModel extends BaseViewModel {
     rebuildUi();
     DrawerItem selectedItem = (drawerItems)[index];
     String selectedMenuName = selectedItem.title ?? '';
+
     if (selectedMenuName.contains(ksAccountDetails)) {
       navigationService.back();
       navigationService.navigateToUserprofileView();
@@ -75,6 +76,9 @@ class RightmenuViewModel extends BaseViewModel {
       Theme.of(context).platform == TargetPlatform.iOS
           ? showiOSAlertDialog(context, '', '')
           : showAndroidAlertDialog(context, '', '');
+    } else if (selectedMenuName.contains(ksAccountSettings)) {
+      navigationService.back();
+      navigationService.navigateToAccountSettingsView();
     } else {
       navigationService.back();
       navigationService.navigateToBottomBarView();

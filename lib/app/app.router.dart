@@ -5,42 +5,48 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i25;
+import 'package:flutter/material.dart' as _i28;
 import 'package:flutter/material.dart';
-import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart' as _i8;
+import 'package:music_app/ui/views/account_settings/presentation/account_settings_view.dart'
+    as _i23;
+import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart' as _i7;
 import 'package:music_app/ui/views/bottom_popup/presentation/bottom_popup_view.dart'
-    as _i18;
-import 'package:music_app/ui/views/calendar/calendar_view.dart' as _i23;
-import 'package:music_app/ui/views/changepassword/changepassword_view.dart'
-    as _i15;
+    as _i17;
+import 'package:music_app/ui/views/calendar/calendar_view.dart' as _i22;
+import 'package:music_app/ui/views/changepassword/presentation/changepassword_view.dart'
+    as _i14;
 import 'package:music_app/ui/views/create_account/create_account_view.dart'
-    as _i7;
+    as _i6;
 import 'package:music_app/ui/views/create_post/presentation/create_post_view.dart'
-    as _i24;
-import 'package:music_app/ui/views/email/presentation/email_view.dart' as _i5;
-import 'package:music_app/ui/views/event/event_view.dart' as _i11;
-import 'package:music_app/ui/views/forgotpassword/forgotpassword_view.dart'
-    as _i13;
+    as _i27;
+import 'package:music_app/ui/views/email/presentation/email_view.dart' as _i24;
+import 'package:music_app/ui/views/event/event_view.dart' as _i10;
+import 'package:music_app/ui/views/followers/presentation/followers_list_view.dart'
+    as _i25;
+import 'package:music_app/ui/views/following/presentation/following_list_view.dart'
+    as _i26;
+import 'package:music_app/ui/views/forgotpassword/presentation/forgotpassword_view.dart'
+    as _i12;
 import 'package:music_app/ui/views/home/presentation/home_view.dart' as _i2;
-import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart' as _i9;
-import 'package:music_app/ui/views/notification/notification_view.dart' as _i22;
-import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart' as _i14;
+import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart' as _i8;
+import 'package:music_app/ui/views/notification/notification_view.dart' as _i21;
+import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart' as _i13;
 import 'package:music_app/ui/views/password/presentation/password_view.dart'
     as _i4;
 import 'package:music_app/ui/views/paylist_popup/paylist_popup_view.dart'
-    as _i19;
-import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart' as _i16;
-import 'package:music_app/ui/views/search/search_view.dart' as _i20;
+    as _i18;
+import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart' as _i15;
+import 'package:music_app/ui/views/search/search_view.dart' as _i19;
 import 'package:music_app/ui/views/search_details/search_details_view.dart'
-    as _i21;
-import 'package:music_app/ui/views/shop/shop_view.dart' as _i12;
-import 'package:music_app/ui/views/signup/presentation/signup_view.dart' as _i6;
+    as _i20;
+import 'package:music_app/ui/views/shop/shop_view.dart' as _i11;
+import 'package:music_app/ui/views/signup/presentation/signup_view.dart' as _i5;
 import 'package:music_app/ui/views/startup/startup_view.dart' as _i3;
-import 'package:music_app/ui/views/swipe/swipe_view.dart' as _i10;
+import 'package:music_app/ui/views/swipe/swipe_view.dart' as _i9;
 import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart'
-    as _i17;
+    as _i16;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i26;
+import 'package:stacked_services/stacked_services.dart' as _i29;
 
 class Routes {
   static const homeView = '/home-view';
@@ -48,8 +54,6 @@ class Routes {
   static const startupView = '/startup-view';
 
   static const passwordView = '/password-view';
-
-  static const emailView = '/email-view';
 
   static const signupView = '/signup-view';
 
@@ -87,13 +91,20 @@ class Routes {
 
   static const calendarView = '/calendar-view';
 
+  static const accountSettingsView = '/account-settings-view';
+
+  static const emailView = '/email-view';
+
+  static const followersListView = '/followers-list-view';
+
+  static const followingListView = '/following-list-view';
+
   static const createPostView = '/create-post-view';
 
   static const all = <String>{
     homeView,
     startupView,
     passwordView,
-    emailView,
     signupView,
     createAccountView,
     bottomBarView,
@@ -112,6 +123,10 @@ class Routes {
     searchDetailsView,
     notificationView,
     calendarView,
+    accountSettingsView,
+    emailView,
+    followersListView,
+    followingListView,
     createPostView,
   };
 }
@@ -131,231 +146,261 @@ class StackedRouter extends _i1.RouterBase {
       page: _i4.PasswordView,
     ),
     _i1.RouteDef(
-      Routes.emailView,
-      page: _i5.EmailView,
-    ),
-    _i1.RouteDef(
       Routes.signupView,
-      page: _i6.SignupView,
+      page: _i5.SignupView,
     ),
     _i1.RouteDef(
       Routes.createAccountView,
-      page: _i7.CreateAccountView,
+      page: _i6.CreateAccountView,
     ),
     _i1.RouteDef(
       Routes.bottomBarView,
-      page: _i8.BottomBarView,
+      page: _i7.BottomBarView,
     ),
     _i1.RouteDef(
       Routes.myPlaylistView,
-      page: _i9.MyPlaylistView,
+      page: _i8.MyPlaylistView,
     ),
     _i1.RouteDef(
       Routes.swipeView,
-      page: _i10.SwipeView,
+      page: _i9.SwipeView,
     ),
     _i1.RouteDef(
       Routes.eventView,
-      page: _i11.EventView,
+      page: _i10.EventView,
     ),
     _i1.RouteDef(
       Routes.shopView,
-      page: _i12.ShopView,
+      page: _i11.ShopView,
     ),
     _i1.RouteDef(
       Routes.forgotpasswordView,
-      page: _i13.ForgotpasswordView,
+      page: _i12.ForgotpasswordView,
     ),
     _i1.RouteDef(
       Routes.otpVerifyView,
-      page: _i14.OtpVerifyView,
+      page: _i13.OtpVerifyView,
     ),
     _i1.RouteDef(
       Routes.changepasswordView,
-      page: _i15.ChangepasswordView,
+      page: _i14.ChangepasswordView,
     ),
     _i1.RouteDef(
       Routes.rightmenuView,
-      page: _i16.RightmenuView,
+      page: _i15.RightmenuView,
     ),
     _i1.RouteDef(
       Routes.userprofileView,
-      page: _i17.UserprofileView,
+      page: _i16.UserprofileView,
     ),
     _i1.RouteDef(
       Routes.bottomPopupView,
-      page: _i18.BottomPopupView,
+      page: _i17.BottomPopupView,
     ),
     _i1.RouteDef(
       Routes.paylistPopupView,
-      page: _i19.PaylistPopupView,
+      page: _i18.PaylistPopupView,
     ),
     _i1.RouteDef(
       Routes.searchView,
-      page: _i20.SearchView,
+      page: _i19.SearchView,
     ),
     _i1.RouteDef(
       Routes.searchDetailsView,
-      page: _i21.SearchDetailsView,
+      page: _i20.SearchDetailsView,
     ),
     _i1.RouteDef(
       Routes.notificationView,
-      page: _i22.NotificationView,
+      page: _i21.NotificationView,
     ),
     _i1.RouteDef(
       Routes.calendarView,
-      page: _i23.CalendarView,
+      page: _i22.CalendarView,
+    ),
+    _i1.RouteDef(
+      Routes.accountSettingsView,
+      page: _i23.AccountSettingsView,
+    ),
+    _i1.RouteDef(
+      Routes.emailView,
+      page: _i24.EmailView,
+    ),
+    _i1.RouteDef(
+      Routes.followersListView,
+      page: _i25.FollowersListView,
+    ),
+    _i1.RouteDef(
+      Routes.followingListView,
+      page: _i26.FollowingListView,
     ),
     _i1.RouteDef(
       Routes.createPostView,
-      page: _i24.CreatePostView,
+      page: _i27.CreatePostView,
     ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
+      return _i28.MaterialPageRoute<dynamic>(
         builder: (context) => const _i2.HomeView(),
         settings: data,
       );
     },
     _i3.StartupView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
+      return _i28.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.StartupView(),
         settings: data,
       );
     },
     _i4.PasswordView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
+      return _i28.MaterialPageRoute<dynamic>(
         builder: (context) => const _i4.PasswordView(),
         settings: data,
       );
     },
-    _i5.EmailView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i5.EmailView(),
+    _i5.SignupView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i5.SignupView(),
         settings: data,
       );
     },
-    _i6.SignupView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i6.SignupView(),
+    _i6.CreateAccountView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i6.CreateAccountView(),
         settings: data,
       );
     },
-    _i7.CreateAccountView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i7.CreateAccountView(),
+    _i7.BottomBarView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i7.BottomBarView(),
         settings: data,
       );
     },
-    _i8.BottomBarView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i8.BottomBarView(),
+    _i8.MyPlaylistView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i8.MyPlaylistView(),
         settings: data,
       );
     },
-    _i9.MyPlaylistView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i9.MyPlaylistView(),
+    _i9.SwipeView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i9.SwipeView(),
         settings: data,
       );
     },
-    _i10.SwipeView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i10.SwipeView(),
+    _i10.EventView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i10.EventView(),
         settings: data,
       );
     },
-    _i11.EventView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i11.EventView(),
+    _i11.ShopView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i11.ShopView(),
         settings: data,
       );
     },
-    _i12.ShopView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i12.ShopView(),
+    _i12.ForgotpasswordView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i12.ForgotpasswordView(),
         settings: data,
       );
     },
-    _i13.ForgotpasswordView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i13.ForgotpasswordView(),
-        settings: data,
-      );
-    },
-    _i14.OtpVerifyView: (data) {
+    _i13.OtpVerifyView: (data) {
       final args = data.getArgs<OtpVerifyViewArguments>(nullOk: false);
-      return _i25.MaterialPageRoute<dynamic>(
+      return _i28.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i14.OtpVerifyView(key: args.key, email: args.email),
+            _i13.OtpVerifyView(key: args.key, email: args.email),
         settings: data,
       );
     },
-    _i15.ChangepasswordView: (data) {
+    _i14.ChangepasswordView: (data) {
       final args = data.getArgs<ChangepasswordViewArguments>(nullOk: false);
-      return _i25.MaterialPageRoute<dynamic>(
+      return _i28.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i15.ChangepasswordView(args.email, args.otp, key: args.key),
+            _i14.ChangepasswordView(args.email, args.otp, key: args.key),
         settings: data,
       );
     },
-    _i16.RightmenuView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i16.RightmenuView(),
+    _i15.RightmenuView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i15.RightmenuView(),
         settings: data,
       );
     },
-    _i17.UserprofileView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i17.UserprofileView(),
+    _i16.UserprofileView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i16.UserprofileView(),
         settings: data,
       );
     },
-    _i18.BottomPopupView: (data) {
+    _i17.BottomPopupView: (data) {
       final args = data.getArgs<BottomPopupViewArguments>(nullOk: false);
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => _i18.BottomPopupView(args.postId,
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => _i17.BottomPopupView(args.postId,
             onCommentUpdated: args.onCommentUpdated,
             onReactionUpdated: args.onReactionUpdated,
             key: args.key),
         settings: data,
       );
     },
-    _i19.PaylistPopupView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i19.PaylistPopupView(),
+    _i18.PaylistPopupView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i18.PaylistPopupView(),
         settings: data,
       );
     },
-    _i20.SearchView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i20.SearchView(),
+    _i19.SearchView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i19.SearchView(),
         settings: data,
       );
     },
-    _i21.SearchDetailsView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i21.SearchDetailsView(),
+    _i20.SearchDetailsView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i20.SearchDetailsView(),
         settings: data,
       );
     },
-    _i22.NotificationView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i22.NotificationView(),
+    _i21.NotificationView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i21.NotificationView(),
         settings: data,
       );
     },
-    _i23.CalendarView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i23.CalendarView(),
+    _i22.CalendarView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i22.CalendarView(),
         settings: data,
       );
     },
-    _i24.CreatePostView: (data) {
-      return _i25.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i24.CreatePostView(),
+    _i23.AccountSettingsView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i23.AccountSettingsView(),
+        settings: data,
+      );
+    },
+    _i24.EmailView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i24.EmailView(),
+        settings: data,
+      );
+    },
+    _i25.FollowersListView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i25.FollowersListView(),
+        settings: data,
+      );
+    },
+    _i26.FollowingListView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i26.FollowingListView(),
+        settings: data,
+      );
+    },
+    _i27.CreatePostView: (data) {
+      return _i28.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i27.CreatePostView(),
         settings: data,
       );
     },
@@ -374,7 +419,7 @@ class OtpVerifyViewArguments {
     required this.email,
   });
 
-  final _i25.Key? key;
+  final _i28.Key? key;
 
   final String email;
 
@@ -406,7 +451,7 @@ class ChangepasswordViewArguments {
 
   final String? otp;
 
-  final _i25.Key? key;
+  final _i28.Key? key;
 
   @override
   String toString() {
@@ -445,7 +490,7 @@ class BottomPopupViewArguments {
     int,
   )? onReactionUpdated;
 
-  final _i25.Key? key;
+  final _i28.Key? key;
 
   @override
   String toString() {
@@ -470,7 +515,7 @@ class BottomPopupViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i26.NavigationService {
+extension NavigatorStateExtension on _i29.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -507,20 +552,6 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition,
   ]) async {
     return navigateTo<dynamic>(Routes.passwordView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
-
-  Future<dynamic> navigateToEmailView([
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return navigateTo<dynamic>(Routes.emailView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -640,7 +671,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> navigateToOtpVerifyView({
-    _i25.Key? key,
+    _i28.Key? key,
     required String email,
     int? routerId,
     bool preventDuplicates = true,
@@ -659,7 +690,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> navigateToChangepasswordView({
     required String? email,
     required String? otp,
-    _i25.Key? key,
+    _i28.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -713,7 +744,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
       String,
       int,
     )? onReactionUpdated,
-    _i25.Key? key,
+    _i28.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -802,6 +833,62 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToAccountSettingsView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.accountSettingsView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToEmailView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.emailView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToFollowersListView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.followersListView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToFollowingListView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.followingListView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToCreatePostView([
     int? routerId,
     bool preventDuplicates = true,
@@ -852,20 +939,6 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.passwordView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
-  }
-
-  Future<dynamic> replaceWithEmailView([
-    int? routerId,
-    bool preventDuplicates = true,
-    Map<String, String>? parameters,
-    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return replaceWith<dynamic>(Routes.emailView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -985,7 +1058,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   }
 
   Future<dynamic> replaceWithOtpVerifyView({
-    _i25.Key? key,
+    _i28.Key? key,
     required String email,
     int? routerId,
     bool preventDuplicates = true,
@@ -1004,7 +1077,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
   Future<dynamic> replaceWithChangepasswordView({
     required String? email,
     required String? otp,
-    _i25.Key? key,
+    _i28.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1058,7 +1131,7 @@ extension NavigatorStateExtension on _i26.NavigationService {
       String,
       int,
     )? onReactionUpdated,
-    _i25.Key? key,
+    _i28.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1141,6 +1214,62 @@ extension NavigatorStateExtension on _i26.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.calendarView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithAccountSettingsView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.accountSettingsView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithEmailView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.emailView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithFollowersListView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.followersListView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithFollowingListView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.followingListView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

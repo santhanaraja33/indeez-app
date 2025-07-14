@@ -8,7 +8,7 @@ import 'package:music_app/app/app.router.dart';
 import 'package:music_app/core/api/api_constants.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/changepassword/changepassword_view.dart';
+import 'package:music_app/ui/views/changepassword/presentation/changepassword_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -129,11 +129,11 @@ class OtpVerifyViewModel extends BaseViewModel {
 
       CommonLoader.hideLoader(context);
     } on AuthException catch (e) {
-      safePrint("error : ${e.message}");
+      debugPrint("error : ${e.message}");
       Fluttertoast.showToast(msg: e.message);
       CommonLoader.hideLoader(context);
     } catch (e) {
-      safePrint("Unexpected error: $e");
+      debugPrint("Unexpected error: $e");
       Fluttertoast.showToast(msg: "Something went wrong!");
       CommonLoader.hideLoader(context);
     }
@@ -143,22 +143,20 @@ class OtpVerifyViewModel extends BaseViewModel {
     try {
       // First, check if session is valid and signed in
     } on AuthException catch (e) {
-      print('AuthException: ${e.message}');
+      debugPrint('AuthException: ${e.message}');
     } catch (e) {
-      print('Unexpected error: $e');
+      debugPrint('Unexpected error: $e');
     }
   }
 
   void handleResendOTP(BuildContext context, String? email) async {
     if (email!.isEmpty) {
-      Fluttertoast.showToast(msg: "Email is required!");
+      Fluttertoast.showToast(msg: ksEmailRequired);
       return;
     }
     try {
-      final result =
-          await Amplify.Auth.resendSignUpCode(username: email.trim());
-      print("resend otp result : ${result}");
-      Fluttertoast.showToast(msg: "OTP resent successfully!");
+      final _ = await Amplify.Auth.resendSignUpCode(username: email.trim());
+      Fluttertoast.showToast(msg: ksOTPSentSuccess);
     } on AuthException catch (e) {
       Fluttertoast.showToast(msg: e.message);
     }
@@ -195,9 +193,9 @@ class OtpVerifyViewModel extends BaseViewModel {
       },
     );
     signUpResponse = authResponse ?? SignUpModel();
-    print(signUpResponse.message);
-    if (signUpResponse.message == "User created") {
-      Fluttertoast.showToast(msg: "Sign up confirmed!");
+    debugPrint(signUpResponse.message);
+    if (signUpResponse.message == ksUserCreated) {
+      Fluttertoast.showToast(msg: ksSignupConfirmed);
       await sharedPreferencesHelper.saveLoginUserId(
           ksLoggedinUserId, signUpResponse.userId ?? '');
       await SharedPreferencesHelper.saveLoginStatus(true);
@@ -207,7 +205,7 @@ class OtpVerifyViewModel extends BaseViewModel {
       });
       CommonLoader.hideLoader(context); // 🔧 Important to hide loader
     } else {
-      print("Signup failed.");
+      debugPrint("Signup failed.");
       Fluttertoast.showToast(msg: "Error: ${signUpResponse.message}");
       CommonLoader.hideLoader(context); // 🔧 Important to hide loader
     }

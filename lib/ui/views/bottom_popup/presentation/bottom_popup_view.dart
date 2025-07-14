@@ -23,6 +23,8 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
   @override
   void onViewModelReady(BottomPopupViewModel viewModel) {
     viewModel.postId = postId;
+
+    // 👇 Set the callbacks
     viewModel.initializeCallbacks(
       onCommentUpdated: onCommentUpdated,
       onReactionUpdated: onReactionUpdated,
@@ -41,9 +43,12 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
     Widget? child,
   ) {
     return viewModel.isBusy
-        ? const Center(child: CircularProgressIndicator(color: kcWhite))
+        ? const Center(
+            child: CircularProgressIndicator(
+            color: kcWhite,
+          ))
         : SafeArea(
-          child: Scaffold(
+            child: Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: kcTransparent,
             body: Container(
@@ -110,27 +115,23 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                           ),
                           const SizedBox(width: 5),
                           Expanded(
-                            child:
-                                viewModel.emojis.isEmpty
-                                    ? Center(
-                                      child: Text(
-                                        'No reactions yet.',
-                                        style: GoogleFonts.lato(fontSize: 14),
-                                      ),
-                                    )
-                                    : Wrap(
-                                      spacing: 8,
-                                      runSpacing: 4,
-                                      children:
-                                          viewModel.emojis.map((emoji) {
-                                            return Text(
-                                              emoji.char,
-                                              style: GoogleFonts.lato(
-                                                fontSize: 20,
-                                              ),
-                                            );
-                                          }).toList(),
+                            child: viewModel.emojis.isEmpty
+                                ? Center(
+                                    child: Text(
+                                      'No reactions yet.',
+                                      style: GoogleFonts.lato(fontSize: 14),
                                     ),
+                                  )
+                                : Wrap(
+                                    spacing: 8,
+                                    runSpacing: 4,
+                                    children: viewModel.emojis.map((emoji) {
+                                      return Text(
+                                        emoji.char,
+                                        style: GoogleFonts.lato(fontSize: 20),
+                                      );
+                                    }).toList(),
+                                  ),
                           ),
                         ],
                       ),
@@ -185,14 +186,11 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                             viewModel.commentController.text = emoji.char;
                             viewModel.emojiStr = emoji.name;
                             viewModel.submitComment(
-                              viewModel.emojiStr ?? '',
-                              "emojis",
-                            );
+                                viewModel.emojiStr ?? '', "emojis");
 
                             if (viewModel.emojiData != null) {
-                              viewModel.emojis.add(
-                                viewModel.emojiData as EmojiData,
-                              );
+                              viewModel.emojis
+                                  .add(viewModel.emojiData as EmojiData);
                             }
                             viewModel.commentController.clear();
 
@@ -211,56 +209,54 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child:
-                              (viewModel.comments?.data == null ||
-                                      viewModel.comments!.data!.isEmpty)
-                                  ? Center(
-                                    child: Text(
-                                      'No comments yet.',
-                                      style: GoogleFonts.lato(
-                                        color: kcTextGrey,
-                                        fontSize: 14,
-                                      ),
+                          child: (viewModel.comments?.data == null ||
+                                  viewModel.comments!.data!.isEmpty)
+                              ? Center(
+                                  child: Text(
+                                    'No comments yet.',
+                                    style: GoogleFonts.lato(
+                                      color: kcTextGrey,
+                                      fontSize: 14,
                                     ),
-                                  )
-                                  : ListView.builder(
-                                    itemCount:
-                                        viewModel.comments?.data?.length ?? 0,
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    itemBuilder: (context, index) {
-                                      final comment =
-                                          viewModel.comments!.data![index];
-                                      return buildCommentItem(
-                                        userName:
-                                            comment.user?.firstName ?? 'User',
-                                        commentText: comment.commentText,
-                                        replies: comment.replies,
-                                        index: index,
-                                        level: 0,
-                                        onReplyTap: (i) {
-                                          viewModel.replyingToCommentIndex = i;
-                                          viewModel.replyController.clear();
-                                          viewModel.rebuildUi();
-                                        },
-                                        showReplyField:
-                                            viewModel.replyingToCommentIndex ==
-                                            index,
-                                        replyController:
-                                            viewModel.replyController,
-                                        commentId: comment.commentId,
-                                        userId: comment.userId,
-                                        viewModel: viewModel,
-                                      );
-                                    },
                                   ),
+                                )
+                              : ListView.builder(
+                                  itemCount:
+                                      viewModel.comments?.data?.length ?? 0,
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  itemBuilder: (context, index) {
+                                    final comment =
+                                        viewModel.comments!.data![index];
+                                    return buildCommentItem(
+                                      userName:
+                                          comment.user?.firstName ?? 'User',
+                                      commentText: comment.commentText,
+                                      replies: comment.replies,
+                                      index: index,
+                                      level: 0,
+                                      onReplyTap: (i) {
+                                        viewModel.replyingToCommentIndex = i;
+                                        viewModel.replyController.clear();
+                                        viewModel.rebuildUi();
+                                      },
+                                      showReplyField:
+                                          viewModel.replyingToCommentIndex ==
+                                              index,
+                                      replyController:
+                                          viewModel.replyController,
+                                      commentId: comment.commentId,
+                                      userId: comment.userId,
+                                      viewModel: viewModel,
+                                    );
+                                  },
+                                ),
                         ),
                       ),
                   ],
                 ),
               ),
             ),
-          ),
-        );
+          ));
   }
 
   Widget buildCommentItem({
@@ -308,10 +304,9 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
                           ? Icons.favorite
                           : Icons.favorite_border,
                       size: 16,
-                      color:
-                          viewModel.isCommentLiked(commentId)
-                              ? kcRed
-                              : kcTextGrey,
+                      color: viewModel.isCommentLiked(commentId)
+                          ? kcRed
+                          : kcTextGrey,
                     ),
                     const SizedBox(width: 4),
                     Text(

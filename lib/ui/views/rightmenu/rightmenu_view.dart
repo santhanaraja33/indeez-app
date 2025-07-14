@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
+import 'package:music_app/ui/views/email/widget/email_view_widget.dart';
 import 'package:stacked/stacked.dart';
 
 import 'rightmenu_viewmodel.dart';
@@ -26,12 +27,7 @@ class RightmenuView extends StackedView<RightmenuViewModel> {
               height: height_50,
             ),
             Center(
-              child: Image.asset(
-                AppImage.appLogoGif,
-                height: height_100,
-                width: width_100,
-                fit: BoxFit.cover,
-              ),
+              child: appLogoImageWidget(AppImage.appLogoGif),
             ),
             Center(
               child: Text(
