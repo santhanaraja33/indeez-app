@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dio/dio.dart';
-import 'package:emoji_selector/emoji_selector.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -65,6 +65,7 @@ class HomeViewModel extends BaseViewModel {
   bool get hasInitialLoadCompleted => _hasInitialLoadCompleted;
 
   List<Object> get postList => _post?.data ?? [];
+  File? videoFile;
 
   final navigationService = locator<NavigationService>();
   bool isImageSelected = false;
@@ -73,17 +74,7 @@ class HomeViewModel extends BaseViewModel {
       BuildContext context, int index, String posId) async {
     showCupertinoModalPopup(
       context: context,
-      builder: (context) => BottomPopupView(
-        posId,
-        onCommentUpdated: (postId, count) {
-          // print("Updated comment count: $count for $postId");
-          updateCommentCount(postId, count);
-        },
-        onReactionUpdated: (postId, count) {
-          // print("Updated reaction count: $count for $postId");
-          updateReactionCount(postId, count);
-        },
-      ),
+      builder: (context) => BottomPopupView(posId),
     );
     rebuildUi();
   }
@@ -93,7 +84,7 @@ class HomeViewModel extends BaseViewModel {
   final TextEditingController descController = TextEditingController();
   bool isPrivate = false;
   String? selectedResourceType;
-  String? selectedMode;
+  String? selectedMode = 'public';
 
   final List<String> resourceTypes = ['Image', 'Video', 'Audio'];
 
@@ -112,22 +103,6 @@ class HomeViewModel extends BaseViewModel {
     'like': '❤️',
     'person_raising_both_hands_in_celebration': '🙌'
   };
-
-  void updateCommentCount(String postId, int newCount) {
-    final index = homePostModel.indexWhere((post) => post.postId == postId);
-    if (index != -1) {
-      homePostModel[index].commentsCount = newCount;
-      rebuildUi(); // or notifyListeners() if using BaseViewModel directly
-    }
-  }
-
-  void updateReactionCount(String postId, int newCount) {
-    final index = homePostModel.indexWhere((post) => post.postId == postId);
-    if (index != -1) {
-      homePostModel[index].totalReactions = newCount;
-      rebuildUi(); // or notifyListeners()
-    }
-  }
 
   //Get Post List API
   Future<void> getUserPostsAPI() async {
@@ -162,9 +137,10 @@ class HomeViewModel extends BaseViewModel {
       } else {
         _error = 'No posts found';
       }
-    } catch (e) {
+    } on ApiException catch (e) {
       _error = 'Error: $e';
-      print('getUserPostsAPI error: $e'); // Add logging
+      print('getUserPostsAPI error: $e');
+      throw Exception(_error!); // Add logging
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -265,8 +241,6 @@ class HomeViewModel extends BaseViewModel {
       final PostDownloadMediaModel? postImageDownload =
           await ApiService().postImageDownloadAPI(endpoint: endpoint);
 
-      print(postImageDownload!.mediaFiles?.length);
-
       if (postImageDownload != null && postImageDownload.success == true) {
         // Add to a list if you're collecting all downloads
         downloadMediaList.add(postImageDownload);
@@ -310,11 +284,13 @@ class HomeViewModel extends BaseViewModel {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     title: const Text('Create Post',
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                   body: SingleChildScrollView(
                     padding: const EdgeInsets.all(20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // Image Picker Placeholder
                         if (selectedFiles.isEmpty)
@@ -427,6 +403,7 @@ class HomeViewModel extends BaseViewModel {
                         // Privacy Toggle
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               ksPrivatePostTitle,
@@ -451,7 +428,6 @@ class HomeViewModel extends BaseViewModel {
                         ),
 
                         const SizedBox(height: 15),
-
                         // Resource Type Dropdown
 
                         AppDropDown(
@@ -470,12 +446,13 @@ class HomeViewModel extends BaseViewModel {
                               value: type,
                               child: Text(
                                 type,
-                                style: GoogleFonts.lato(color: Colors.blueGrey),
+                                style: GoogleFonts.lato(
+                                    color: Colors.blueGrey, fontSize: 16),
                               ),
                             );
                           }).toList(),
                           titleTextColor: Colors.grey,
-                          bgColor: Colors.black87,
+                          // bgColor: Colors.black87,
                         ),
                         const SizedBox(height: 30),
 
@@ -503,12 +480,32 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> pickMultipleImages(Function setState) async {
     try {
+      // FilePickerResult? result =
+      //     await FilePicker.platform.pickFiles(type: FileType.video);
+      // if (result != null && result.files.single.path != null) {
+      //   videoFile = File(result.files.single.path!);
+      //   debugPrint("Selected video file: ${videoFile!.path}");
+      //   uploadVideo(videoFile!);
+      //   debugPrint("Selected video file: ${videoFile}");
+      // }
+      // selectedImages =
+      //     result!.files.map((file) => File(file.path!)).toList(growable: false);
+      // debugPrint("selectedImages: ${selectedImages}");
+
+      // for (var xfile in result!.files) {
+      //   final _ = p.extension(xfile.path ?? '');
+      //   if (xfile.path != null) {
+      //     selectedFiles.add(p.basename(xfile.path!));
+      //   }
+      // }
+      // debugPrint("selectedFiles: ${selectedFiles}");
+
       final List<XFile>? files =
           await ImagePicker().pickMultipleMedia(imageQuality: 100);
-
       if (files == null || files.isEmpty) return;
-
       selectedImages = files.map((xfile) => File(xfile.path)).toList();
+      debugPrint("selectedImages: ${selectedImages}");
+
       for (var xfile in files) {
         final _ = p.extension(xfile.path);
         selectedFiles.add(p.basename(xfile.path));
@@ -540,10 +537,16 @@ class HomeViewModel extends BaseViewModel {
       return;
     }
     if (selectedFiles.isNotEmpty) {
-      List<Map<String, dynamic>> fileList = createFileList(selectedFiles);
-      debugPrint('Error picking images: $fileList');
-      selectedImageItems.addAll(fileList);
-      debugPrint('Error picking images 123 : \n $selectedImageItems');
+      if (selectedResourceType == "image") {
+        List<Map<String, dynamic>> fileList = createFileList(selectedFiles);
+        debugPrint('Error picking images: $fileList');
+        selectedImageItems.addAll(fileList);
+        debugPrint('Error picking images 123 : \n $selectedImageItems');
+      } else {
+        pickVideo();
+        List<Map<String, dynamic>> fileList = createFileList(selectedFiles);
+        debugPrint('Error picking images: $fileList');
+      }
     }
 
     notifyListeners();
@@ -557,7 +560,7 @@ class HomeViewModel extends BaseViewModel {
         "userId": getUserId,
         "posttitle": titleController.text.trim(),
         "content": descController.text.trim(),
-        "privacy": selectedMode ?? '',
+        "privacy": selectedMode ?? 'public',
         "resourceType": selectedResourceType?.toLowerCase(),
         "files": selectedImageItems
       });
@@ -652,6 +655,61 @@ class HomeViewModel extends BaseViewModel {
       return "image/jpeg";
     }
     if (fileName.endsWith(".gif")) return "image/gif";
+    if (fileName.endsWith(".mp4")) return "video/mp4";
+
     return "application/octet-stream"; // default fallback
+  }
+
+  void pickVideo() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.video);
+
+    if (result != null && result.files.single.path != null) {
+      videoFile = File(result.files.single.path!);
+      debugPrint("Selected video file: ${videoFile!.path}");
+      uploadVideo(videoFile!);
+      debugPrint("Selected video file: ${videoFile}");
+    }
+  }
+
+  void uploadVideo(File videoFile) async {
+    String uploadUrl = "https://yourapi.com/upload"; // your endpoint
+
+    try {
+      FormData formData = FormData.fromMap({
+        "video": await MultipartFile.fromFile(
+          videoFile.path,
+          filename: videoFile.path.split('/').last,
+          // contentType: getMimeType(
+          //     filename), // Optional: use 'package:http_parser/http_parser.dart'
+        ),
+      });
+      debugPrint("Selected video file: ${formData}");
+      debugPrint("vidoe file path: ${videoFile.path.split('/').last}");
+
+      // Dio dio = Dio();
+
+      // Response response = await dio.post(
+      //   uploadUrl,
+      //   data: formData,
+      //   options: Options(
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //       "Authorization": "Bearer your_token", // if required
+      //     },
+      //   ),
+      //   onSendProgress: (int sent, int total) {
+      //     print("Uploading: ${(sent / total * 100).toStringAsFixed(2)}%");
+      //   },
+      // );
+
+      // if (response.statusCode == 200) {
+      //   print("Upload successful: ${response.data}");
+      // } else {
+      //   print("Upload failed: ${response.statusCode}");
+      // }
+    } catch (e) {
+      print("Upload error: $e");
+    }
   }
 }

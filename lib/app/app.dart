@@ -1,5 +1,7 @@
 import 'package:music_app/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:music_app/ui/dialogs/info_alert/info_alert_dialog.dart';
+import 'package:music_app/ui/views/create_post/presentation/create_post_view.dart';
+import 'package:music_app/ui/views/email/presentation/email_view.dart';
 import 'package:music_app/ui/views/home/presentation/home_view.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -30,6 +32,7 @@ import 'package:music_app/ui/views/calendar/calendar_view.dart';
     MaterialRoute(page: HomeView),
     MaterialRoute(page: StartupView),
     MaterialRoute(page: PasswordView),
+    MaterialRoute(page: EmailView),
     MaterialRoute(page: SignupView),
     MaterialRoute(page: CreateAccountView),
     MaterialRoute(page: BottomBarView),
@@ -48,6 +51,7 @@ import 'package:music_app/ui/views/calendar/calendar_view.dart';
     MaterialRoute(page: SearchDetailsView),
     MaterialRoute(page: NotificationView),
     MaterialRoute(page: CalendarView),
+    MaterialRoute(page: CreatePostView),
 // @stacked-route
   ],
   dependencies: [

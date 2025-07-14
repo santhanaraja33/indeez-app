@@ -7,7 +7,11 @@ import 'package:stacked/stacked.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class EventViewModel extends BaseViewModel {
+  late final ValueNotifier<List<Event>> _selectedEvents =
+      ValueNotifier<List<Event>>(getEventsForDay(DateTime.now()));
+
   int current = 0;
+
   final eventModel = [
     EventModel(
       today: 'Astrologer',
@@ -61,7 +65,8 @@ class EventViewModel extends BaseViewModel {
       address: 'Address',
     ),
   ];
-  late final ValueNotifier<List<Event>> _selectedEvents;
+
+  // late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat calendarFormat = CalendarFormat.month;
   RangeSelectionMode rangeSelectionMode = RangeSelectionMode
       .toggledOff; // Can be toggled on/off by longpressing a date

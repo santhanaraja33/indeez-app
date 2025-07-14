@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/app/app.router.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_bg_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
@@ -82,6 +84,13 @@ class _HomeViewContentState extends State<_HomeViewContent> {
       );
     }
 
+    Future<void> prefetchImages(String bgUrl, String fgUrl) async {
+      await Future.wait([
+        precacheImage(CachedNetworkImageProvider(bgUrl), context),
+        precacheImage(CachedNetworkImageProvider(fgUrl), context),
+      ]);
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -93,6 +102,10 @@ class _HomeViewContentState extends State<_HomeViewContent> {
           viewModel.selectedMode = '';
           viewModel.selectedResourceType = '';
           viewModel.showCreatePostDialog(context);
+          // viewModel.navigationService
+          //     .pushNamedAndRemoveUntil(Routes.createPostView);
+
+          viewModel.navigationService.navigateToCreatePostView();
         },
         backgroundColor: kcBlue,
         shape: const CircleBorder(),
@@ -106,41 +119,34 @@ class _HomeViewContentState extends State<_HomeViewContent> {
             onRefresh: () async {
               await widget.viewModel.getPublicPostsAPI(isRefresh: true);
             },
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: padding_20),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: height_30),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: viewModel.homePostModel.length,
-                            itemBuilder: (context, index) {
-                              return buildPostItem(context, index, viewModel);
-                            },
-                          ),
-                          const SizedBox(height: height_30),
-                          if (viewModel.isPaginating &&
-                              viewModel.homePostModel.isNotEmpty)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: CircularProgressIndicator(color: kcWhite),
-                            ),
-                        ],
-                      ),
-                    ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: padding_20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: height_30),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: viewModel.homePostModel.length,
+                          itemBuilder: (context, index) {
+                            return buildPostItem(context, index, viewModel);
+                          }),
+                      const SizedBox(height: height_30),
+                      // Show pagination loader only when paginating and there are posts
+                      if (viewModel.isPaginating &&
+                          viewModel.homePostModel.isNotEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: CircularProgressIndicator(color: kcWhite),
+                        ),
+                      ]
+                    ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ),
         ],

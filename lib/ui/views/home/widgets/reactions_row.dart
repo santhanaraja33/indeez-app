@@ -17,7 +17,7 @@ Widget buildReactionRow(List<Reaction> reactions) {
       textAlign: TextAlign.right,
     );
   }
-
+  debugPrint('reactions build ${reactions.length}');
   return SizedBox(
     height: 40,
     child: ListView.separated(
@@ -28,7 +28,6 @@ Widget buildReactionRow(List<Reaction> reactions) {
       separatorBuilder: (_, __) => const SizedBox(width: 12),
       itemBuilder: (context, index) {
         final reaction = reactions[index];
-
         return Container(
           width: 45,
           alignment: Alignment.centerRight,
