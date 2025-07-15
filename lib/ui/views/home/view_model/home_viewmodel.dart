@@ -182,11 +182,14 @@ class HomeViewModel extends BaseViewModel {
     if (_isPaginating || (!_hasMore && !isRefresh)) return;
 
     if (isRefresh) {
-      // Don't set _isLoading = true here to avoid full-screen loader
       _postList.clear();
       _lastEvaluatedKey = null;
       _pageOffset = 0;
       _hasMore = true;
+      notifyListeners();
+    } else if (_postList.isEmpty) {
+      // Set loading true only for initial load (not refresh)
+      _isLoading = true;
       notifyListeners();
     }
 
@@ -196,7 +199,6 @@ class HomeViewModel extends BaseViewModel {
     try {
       final getUserId =
           await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
-
       String endpoint =
           "${ApiConstants.baseURL}${ApiEndpoints.publicPostAPI}$getUserId"
           "&limit=10&privacy=public";
@@ -217,7 +219,6 @@ class HomeViewModel extends BaseViewModel {
           );
         }
 
-        // Download and add posts
         for (final postItem in post.data!) {
           if (postItem.resourceType == "image" &&
               postItem.mediaItems?.any((item) => item.status == "uploaded") ==
@@ -227,13 +228,10 @@ class HomeViewModel extends BaseViewModel {
         }
 
         _postList.addAll(post.data!);
-
-        // Pagination control
         _hasMore = post.pagination?.hasMore ?? false;
         _lastEvaluatedKey = post.pagination?.lastEvaluatedKey;
         _pageOffset += post.data!.length;
 
-        // Last page is reached
         if (!_hasMore) {
           Fluttertoast.showToast(
             msg: "No more posts",
@@ -252,7 +250,6 @@ class HomeViewModel extends BaseViewModel {
     _isLoading = false;
     _isPaginating = false;
 
-    // Mark initial load as completed
     if (!_hasInitialLoadCompleted) {
       _hasInitialLoadCompleted = true;
     }

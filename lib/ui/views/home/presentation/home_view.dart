@@ -68,11 +68,9 @@ class _HomeViewContentState extends State<_HomeViewContent> {
   Widget build(BuildContext context) {
     final viewModel = widget.viewModel;
 
-    if (viewModel.isLoading &&
-        !viewModel.isPaginating &&
-        viewModel.homePostModel.isEmpty) {
+    if (viewModel.isLoading && viewModel.homePostModel.isEmpty) {
       return const Center(
-        child: CircularProgressIndicator(color: kcWhite),
+        child: CircularProgressIndicator(color: Colors.white),
       );
     }
 

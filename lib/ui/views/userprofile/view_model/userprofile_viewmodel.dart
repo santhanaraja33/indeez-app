@@ -112,17 +112,21 @@ class UserprofileViewModel extends BaseViewModel implements ChangeNotifier {
     );
     // CommonLoader.showLoader(context);
     // await Future.delayed(const Duration(seconds: 1));
-    actualInfo = authResponse!; // model with existing values
+    actualInfo = authResponse ?? UpdatedAttributes();
+    // model with existing values
 
-    firstNameController.text = authResponse.firstName!;
-    lastNameController.text = authResponse.lastName!;
-    emailController.text = authResponse.email!;
-    phoneController.text = authResponse.phone!;
-    zipCodeController.text = authResponse.zipCode!;
-    userProfileImage = authResponse.avatarUrl!;
-    selectedValue = authResponse.userType!;
-    acceptPrivacyPolicy = authResponse.acceptPrivacyPolicy!;
-    acceptTerms = authResponse.acceptTerms!;
+    if (authResponse != null) {
+      firstNameController.text = authResponse.firstName ?? '';
+      lastNameController.text = authResponse.lastName ?? '';
+      emailController.text = authResponse.email ?? '';
+      phoneController.text = authResponse.phone ?? '';
+      zipCodeController.text = authResponse.zipCode ?? '';
+      userProfileImage = authResponse.avatarUrl ?? '';
+      selectedValue = authResponse.userType ?? '';
+      acceptPrivacyPolicy = authResponse.acceptPrivacyPolicy ?? false;
+      acceptTerms = authResponse.acceptTerms ?? false;
+    }
+
     rebuildUi();
     setBusy(false);
     // CommonLoader.hideLoader(context!);

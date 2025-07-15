@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:music_app/app/app.router.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_button.dart';
 import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_dropdown.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart';
 import 'package:music_app/ui/views/create_post/view_model/create_post_viewmodel.dart';
 
 Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
@@ -64,57 +62,70 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                             child: Text(
                               type,
                               style: GoogleFonts.lato(
-                                  color: Colors.blueGrey, fontSize: 16),
+                                  color: Colors.black, fontSize: 16),
                             ),
                           );
                         }).toList(),
-                        titleTextColor: Colors.grey,
-                        // bgColor: Colors.black87,
+                        titleTextColor: Colors.white60,
+                        border: Border.all(color: Colors.white, width: 1),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       const SizedBox(height: 20),
                       // Post Title
                       AppCommonTextfield(
                         controller: viewModel.titleController,
                         keyboardType: TextInputType.text,
+                        contentPadding: const EdgeInsets.only(
+                          left: padding_20,
+                          top: 25.0,
+                          bottom: padding_10,
+                        ),
                         label: Text(
                           ksTitle,
                           style: GoogleFonts.lato(color: kcTextGrey),
                         ),
                         onSubmitted: (p0) {},
-                      ),
-
-                      AppCommonTextfield(
-                        controller: viewModel.titleController,
-                        keyboardType: TextInputType.name,
-                        readOnly: !viewModel.isChecked,
-                        label: Text(
-                          ksLastName,
-                          style: GoogleFonts.lato(color: kcTextGrey),
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        onSubmitted: (p0) {},
                       ),
 
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 25),
 
                       if (viewModel.selectedResourceType == "audio" ||
                           viewModel.selectedResourceType == "Audio")
-                        AppCommonTextfield(
-                          controller: viewModel.mediaTitleController,
-                          height: height_80,
-                          keyboardType: TextInputType.text,
-                          minLines: 3,
-                          maxLines: null,
-                          label: Text(
-                            ksAudioTrackTitle,
-                            style: GoogleFonts.lato(color: kcTextGrey),
-                          ),
-                          onSubmitted: (p0) {},
+                        Column(
+                          children: [
+                            AppCommonTextfield(
+                              controller: viewModel.mediaTitleController,
+                              keyboardType: TextInputType.text,
+                              // minLines: 3,
+                              // maxLines: null,
+                              contentPadding: const EdgeInsets.only(
+                                left: padding_20,
+                                top: 25.0,
+                                bottom: padding_10,
+                              ),
+                              label: Text(
+                                ksAudioTrackTitle,
+                                style: GoogleFonts.lato(color: kcTextGrey),
+                              ),
+                              onSubmitted: (p0) {},
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            const SizedBox(height: 25),
+                          ],
                         ),
 
                       // Description
                       AppCommonTextfield(
                         controller: viewModel.descController,
-                        height: height_100,
+                        // height: height_100,
                         keyboardType: TextInputType.text,
                         minLines: 3,
                         maxLines: null,
@@ -123,6 +134,10 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           style: GoogleFonts.lato(color: kcTextGrey),
                         ),
                         onSubmitted: (p0) {},
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
 
                       const SizedBox(height: 15),
@@ -168,7 +183,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white30),
+                              border: Border.all(color: Colors.white),
                             ),
                             child: const Center(
                               child: Icon(
@@ -245,7 +260,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white30),
+                              border: Border.all(color: Colors.white),
                             ),
                             child: const Center(
                               child: Icon(

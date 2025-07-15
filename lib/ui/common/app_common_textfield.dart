@@ -24,7 +24,8 @@ class AppCommonTextfield extends StatelessWidget {
       this.maxLength,
       this.maxLines,
       this.minLines,
-      this.hintText});
+      this.hintText,
+      this.cursorColor});
 
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -45,6 +46,7 @@ class AppCommonTextfield extends StatelessWidget {
   final int? maxLines;
   final int? minLines;
   final VoidCallback? onSuffixIconTap;
+  final Color? cursorColor;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +59,7 @@ class AppCommonTextfield extends StatelessWidget {
           return null;
         },
         controller: controller,
+        cursorColor: cursorColor ?? kcWhite,
         keyboardType: keyboardType ?? TextInputType.multiline,
         maxLines: (obscureText ?? false) ? 1 : maxLines,
         minLines: (obscureText ?? false) ? 1 : minLines ?? 1,
@@ -77,6 +80,8 @@ class AppCommonTextfield extends StatelessWidget {
                 )
               : suffixIcon,
           border: border ?? InputBorder.none,
+          enabledBorder: border ?? InputBorder.none,
+          focusedBorder: border ?? InputBorder.none,
           label: label,
           contentPadding: contentPadding ??
               const EdgeInsets.only(

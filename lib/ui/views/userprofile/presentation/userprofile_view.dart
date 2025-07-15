@@ -272,7 +272,7 @@ class UserprofileView extends StackedView<UserprofileViewModel> {
                                               item,
                                               style: GoogleFonts.lato(
                                                 fontSize: size_14,
-                                                color: kcTextGrey,
+                                                color: kcBlack,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
