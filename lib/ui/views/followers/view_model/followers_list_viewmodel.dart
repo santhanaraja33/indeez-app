@@ -1,16 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:music_app/app/app.loader.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/core/api/api_constants.dart';
-import 'package:music_app/core/api/api_endpoints.dart';
 import 'package:music_app/core/api/api_services.dart';
 import 'package:music_app/shared_preferences/shared_preferences.dart';
-import 'package:music_app/ui/common/app_common_toastmessages.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/followers/model/follow_user_model.dart';
-import 'package:music_app/ui/views/followers/model/get_following_list_model.dart';
 import 'package:music_app/ui/views/following/model/get_followers_list_model.dart';
 import 'package:music_app/ui/views/userprofile/model/user_updateprofile_model.dart';
 import 'package:stacked/stacked.dart';

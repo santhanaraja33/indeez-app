@@ -124,6 +124,7 @@ class MediaItems {
   String? s3Key;
   String? mediaUrl;
   String? status;
+  String? videoId;
 
   MediaItems(
       {this.index,

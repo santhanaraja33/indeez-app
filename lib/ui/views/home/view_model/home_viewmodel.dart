@@ -220,9 +220,10 @@ class HomeViewModel extends BaseViewModel {
         }
 
         for (final postItem in post.data!) {
-          if (postItem.resourceType == "image" &&
-              postItem.mediaItems?.any((item) => item.status == "uploaded") ==
-                  true) {
+          if (postItem.resourceType == "image")
+          //  &&  postItem.mediaItems?.any((item) => item.status == "uploaded") ==
+          //         true)
+          {
             await postImageDownloadAPI(postItem.postId!);
           }
         }
@@ -507,31 +508,31 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> pickMultipleImages(Function setState) async {
     try {
-      // FilePickerResult? result =
-      //     await FilePicker.platform.pickFiles(type: FileType.video);
-      // if (result != null && result.files.single.path != null) {
-      //   videoFile = File(result.files.single.path!);
-      //   debugPrint("Selected video file: ${videoFile!.path}");
-      //   uploadVideo(videoFile!);
-      //   debugPrint("Selected video file: ${videoFile}");
-      // }
-      // selectedImages =
-      //     result!.files.map((file) => File(file.path!)).toList(growable: false);
-      // debugPrint("selectedImages: ${selectedImages}");
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.video);
+      if (result != null && result.files.single.path != null) {
+        videoFile = File(result.files.single.path!);
+        debugPrint("Selected video file: ${videoFile!.path}");
+        uploadVideo(videoFile!);
+        debugPrint("Selected video file: $videoFile");
+      }
+      selectedImages =
+          result!.files.map((file) => File(file.path!)).toList(growable: false);
+      debugPrint("selectedImages: $selectedImages");
 
-      // for (var xfile in result!.files) {
-      //   final _ = p.extension(xfile.path ?? '');
-      //   if (xfile.path != null) {
-      //     selectedFiles.add(p.basename(xfile.path!));
-      //   }
-      // }
-      // debugPrint("selectedFiles: ${selectedFiles}");
+      for (var xfile in result!.files) {
+        final _ = p.extension(xfile.path ?? '');
+        if (xfile.path != null) {
+          selectedFiles.add(p.basename(xfile.path!));
+        }
+      }
+      debugPrint("selectedFiles: $selectedFiles");
 
       final List<XFile>? files =
           await ImagePicker().pickMultipleMedia(imageQuality: 100);
       if (files == null || files.isEmpty) return;
       selectedImages = files.map((xfile) => File(xfile.path)).toList();
-      debugPrint("selectedImages: ${selectedImages}");
+      debugPrint("selectedImages: $selectedImages");
 
       for (var xfile in files) {
         final _ = p.extension(xfile.path);
@@ -716,7 +717,6 @@ class HomeViewModel extends BaseViewModel {
       debugPrint("vidoe file path: ${videoFile.path.split('/').last}");
 
       // Dio dio = Dio();
-
       // Response response = await dio.post(
       //   uploadUrl,
       //   data: formData,
