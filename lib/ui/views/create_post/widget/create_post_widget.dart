@@ -32,7 +32,6 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                       onPressed: () {
                         Navigator.of(context).pop();
                       }
-
                       //  => Navigator.of(context).pop(),
                       ),
                   title: const Text('Create Post',
@@ -70,7 +69,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                         border: Border.all(color: Colors.white, width: 1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                       // Post Title
                       AppCommonTextfield(
                         controller: viewModel.titleController,
@@ -91,7 +90,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                         ),
                       ),
 
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 15),
 
                       if (viewModel.selectedResourceType == "audio" ||
                           viewModel.selectedResourceType == "Audio")
@@ -118,7 +117,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            const SizedBox(height: 25),
+                            const SizedBox(height: 15),
                           ],
                         ),
 
@@ -146,6 +145,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           viewModel.selectedResourceType == "Video" ||
                           viewModel.selectedResourceType == "Image" ||
                           viewModel.selectedResourceType == "image")
+<<<<<<< HEAD
                         Column(
                           children: [
                             Row(
@@ -177,10 +177,55 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           ],
                         ),
 
+=======
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color:
+                                Colors.transparent, // or use a background color
+                            border: Border.all(color: Colors.white, width: 0.8),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                ksPrivatePostTitle,
+                                style: GoogleFonts.lato(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              Switch(
+                                value: viewModel.isPrivate,
+                                onChanged: (val) {
+                                  setState(() {
+                                    viewModel.isPrivate = val;
+                                    if (viewModel.isPrivate == true) {
+                                      viewModel.selectedMode = "private";
+                                    } else {
+                                      viewModel.selectedMode = "public";
+                                    }
+                                  });
+                                },
+                                activeColor: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 15),
+>>>>>>> c0f8784a38e8329699d2f816671e8290cdd3f380
                       if (viewModel.selectedFiles.isEmpty)
                         GestureDetector(
                           onTap: () {
-                            viewModel.pickMultipleImages(setState);
+                            if (viewModel.selectedResourceType == "image" ||
+                                viewModel.selectedResourceType == "Image") {
+                              viewModel.pickMultipleImages(setState);
+                            } else if (viewModel.selectedResourceType ==
+                                    "video" ||
+                                viewModel.selectedResourceType == "Video") {
+                              viewModel.selectAndUploadVideo(setState);
+                            }
                           },
                           child: Container(
                             height: 150,
@@ -200,7 +245,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           ),
                         ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
 
                       GridView.builder(
                         shrinkWrap: true,
@@ -252,6 +297,7 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           );
                         },
                       ),
+                      const SizedBox(height: 15),
 
                       if (viewModel.selectedResourceType == "audio" ||
                           viewModel.selectedResourceType == "Audio")
@@ -281,6 +327,10 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                             const SizedBox(height: 20),
                           ],
                         ),
+<<<<<<< HEAD
+=======
+                      const SizedBox(height: 15),
+>>>>>>> c0f8784a38e8329699d2f816671e8290cdd3f380
 
                       // Submit Button
                       SizedBox(

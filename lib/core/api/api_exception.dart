@@ -1,3 +1,5 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
+
 class ApiException implements Exception {
   final dynamic message;
 
@@ -5,10 +7,10 @@ class ApiException implements Exception {
   @override
   String toString() {
     if (message is String) {
-      print("exceptio message: $message");
+      safePrint("exceptio message: $message");
       return message;
     } else {
-      print("exception message: No data found");
+      safePrint("exception message: No data found");
       return "No data found";
     }
   }

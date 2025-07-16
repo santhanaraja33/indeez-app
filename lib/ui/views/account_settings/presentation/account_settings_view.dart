@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
-import 'package:music_app/ui/common/app_common_button.dart';
+import 'package:music_app/ui/common/app_dropdown.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/account_settings/view_model/account_settings_viewmodel.dart';
 import 'package:music_app/ui/views/account_settings/widget/common_button_widget.dart';
-import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart';
-import 'package:music_app/ui/views/email/widget/email_view_widget.dart';
-import 'package:music_app/ui/views/followers/presentation/followers_list_view.dart';
-import 'package:music_app/ui/views/following/presentation/following_list_view.dart';
-import 'package:music_app/ui/views/home/presentation/home_view.dart';
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart'
     show RightmenuView;
 import 'package:music_app/ui/views/startup/startup_view.dart';
@@ -71,6 +67,25 @@ class AccountSettingsView extends StackedView<AccountSettingsViewmodel> {
                     const SizedBox(
                       height: height_20,
                     ),
+                    Center(
+                        child: GestureDetector(
+                      onTap: () {
+                        print("Image tapped");
+                        // You can also call a method or navigate
+                      },
+                      child: const Text(
+                        'Upload Status',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'GoogleSans',
+                        ),
+                      ), // Just an example
+                    )),
+                    const SizedBox(
+                      height: height_20,
+                    ),
                     Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Flexible(
@@ -89,6 +104,58 @@ class AccountSettingsView extends StackedView<AccountSettingsViewmodel> {
                             },
                           ),
                         )),
+                    const SizedBox(
+                      height: height_20,
+                    ),
+                    AppDropDown(
+                      title: 'App Theme',
+                      dropDownHint: 'App Theme',
+                      value: viewModel.resourceTypes
+                              .contains(viewModel.selectedResourceType)
+                          ? viewModel.selectedResourceType
+                          : null,
+                      onChanged: (val) {
+                        viewModel.selectedResourceType = val;
+                        viewModel.notifyListeners();
+                      },
+                      items: viewModel.resourceTypes.map((type) {
+                        return DropdownMenuItem<String>(
+                          value: type,
+                          child: Text(
+                            type,
+                            style: GoogleFonts.lato(
+                                color: Colors.black, fontSize: 16),
+                          ),
+                        );
+                      }).toList(),
+                      titleTextColor: Colors.white,
+                    ),
+                    const SizedBox(
+                      height: height_20,
+                    ),
+                    AppDropDown(
+                      title: 'App Fonts',
+                      dropDownHint: 'App Fonts',
+                      value: viewModel.appFonts
+                              .contains(viewModel.selectedAppFonts)
+                          ? viewModel.selectedAppFonts
+                          : null,
+                      onChanged: (val) {
+                        viewModel.selectedAppFonts = val;
+                        viewModel.notifyListeners();
+                      },
+                      items: viewModel.appFonts.map((type) {
+                        return DropdownMenuItem<String>(
+                          value: type,
+                          child: Text(
+                            type,
+                            style: GoogleFonts.lato(
+                                color: Colors.black, fontSize: 16),
+                          ),
+                        );
+                      }).toList(),
+                      titleTextColor: Colors.white,
+                    ),
                   ])),
             ),
           ),

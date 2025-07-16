@@ -64,6 +64,80 @@ class CreatePostViewmodel extends BaseViewModel {
     rebuildUi();
   }
 
+  Future<void> selectAndUploadVideo(Function setState) async {
+    // Step 1: Pick a video file
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.video,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      String videoPath = result.files.single.path!;
+      await uploadVideoViaPut(videoPath);
+    } else {
+      print("No video file selected.");
+    }
+  }
+
+  Future<void> uploadVideoViaPut(String videoPath) async {
+    final dio = Dio();
+    final videoFile = File(videoPath);
+    final mimeType = lookupMimeType(videoPath) ?? 'video/mp4';
+
+    try {
+      final videoBytes = await videoFile.readAsBytes();
+      String endpoint =
+          "${ApiConstants.baseURL}${ApiEndpoints.createPostAPIVideo}";
+
+      final getUserId =
+          await SharedPreferencesHelper.getLoginUserId(ksLoggedinUserId);
+      final CreateAudioPostModel? createPost =
+          await ApiService().createAudioPostAPI(endpoint: endpoint, data: {
+        /*
+            "posttitle": "All new multiple videos API",
+    "content": "All new multiple videos API",
+    "resourceType": "video",
+    "privacy": "public",
+      "files": [
+        {
+            "fileName": "multi-videopart1.mp4",
+            "mimeType": "video/mp4",
+            "index": 0,
+            // additionall metadta for vdieo
+            "duration": 30,
+            "resolution": "1080p",
+            "format": "mp4"
+        }
+    ]
+            */
+        "userId": getUserId,
+        "posttitle": titleController.text.trim(),
+        "content": descController.text.trim(),
+        "resourceType": selectedResourceType?.toLowerCase(),
+        "privacy": selectedResourceType?.toLowerCase(),
+        "files": [
+          {
+            "fileName": videoFile.path.split('/').last,
+            "mimeType": mimeType,
+            "index": 0,
+            // additional metadata for video
+            "duration": 30, // Example duration
+            "resolution": "1080p", // Example resolution
+            "format": "mp4" // Example format
+          }
+        ],
+      });
+
+      // print('Upload status: ${response.statusCode}');
+      // if (response.statusCode == 200 || response.statusCode == 201) {
+      //   print('✅ Video uploaded successfully.');
+      // } else {
+      //   print('⚠️ Upload failed: ${response.statusMessage}');
+      // }
+    } catch (e) {
+      print('❌ Upload error: $e');
+    }
+  }
+
   Future<void> pickAndUploadAudio(Function setState) async {
     if (_isPickingAudio) return; // prevent double trigger
     _isPickingAudio = true;

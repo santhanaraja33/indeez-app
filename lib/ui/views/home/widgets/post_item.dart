@@ -19,8 +19,6 @@ Widget buildPostItem(BuildContext context, int index, HomeViewModel viewModel) {
     if (viewModel.homePostModel[index].mediaItems!.isNotEmpty) {
       for (var item in viewModel.homePostModel[index].mediaItems!) {
         if (item.status == "uploaded" || item.status == "uplpaded") {
-          safePrint("index ${index}: ${item.mediaUrl}");
-
           bgUrl = item.mediaUrl ?? '';
           fgUrl = item.mediaUrl ?? '';
 

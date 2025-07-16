@@ -4,6 +4,11 @@ import 'package:stacked_services/stacked_services.dart';
 
 class AccountSettingsViewmodel extends ChangeNotifier {
   String? selectedStr;
+  final List<String> resourceTypes = ['Dark', 'Light'];
+  final List<String> appFonts = ['Google-lato', 'Rethink-Sans'];
+
+  String? selectedResourceType;
+  String? selectedAppFonts;
 
   final navigationService = locator<NavigationService>();
   List<String> menuItems = [
