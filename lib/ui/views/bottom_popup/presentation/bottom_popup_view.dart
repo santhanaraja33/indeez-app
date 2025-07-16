@@ -12,11 +12,13 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
   final String postId;
   final Function(String postId, int newCommentCount)? onCommentUpdated;
   final Function(String postId, int newReactionCount)? onReactionUpdated;
+  final Function(String postId, List<EmojiData> emojis)? onEmojisCallback;
 
   const BottomPopupView(
     this.postId, {
     this.onCommentUpdated,
     this.onReactionUpdated,
+    this.onEmojisCallback,
     Key? key,
   }) : super(key: key);
 
@@ -26,9 +28,9 @@ class BottomPopupView extends StackedView<BottomPopupViewModel> {
 
     // 👇 Set the callbacks
     viewModel.initializeCallbacks(
-      onCommentUpdated: onCommentUpdated,
-      onReactionUpdated: onReactionUpdated,
-    );
+        onCommentUpdated: onCommentUpdated,
+        onReactionUpdated: onReactionUpdated,
+        onEmojisCallback: onEmojisCallback);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await viewModel.getCommentsListAPI(postId);

@@ -140,38 +140,43 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                         ),
                       ),
 
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 20),
 
                       if (viewModel.selectedResourceType == "video" ||
                           viewModel.selectedResourceType == "Video" ||
                           viewModel.selectedResourceType == "Image" ||
                           viewModel.selectedResourceType == "image")
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Column(
                           children: [
-                            Text(
-                              ksPrivatePostTitle,
-                              style: GoogleFonts.lato(
-                                  color: Colors.white, fontSize: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  ksPrivatePostTitle,
+                                  style: GoogleFonts.lato(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                                Switch(
+                                  value: viewModel.isPrivate,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      viewModel.isPrivate = val;
+                                      if (viewModel.isPrivate == true) {
+                                        viewModel.selectedMode = "private";
+                                      } else {
+                                        viewModel.selectedMode = "public";
+                                      }
+                                    });
+                                  },
+                                  activeColor: Colors.white,
+                                ),
+                              ],
                             ),
-                            Switch(
-                              value: viewModel.isPrivate,
-                              onChanged: (val) {
-                                setState(() {
-                                  viewModel.isPrivate = val;
-                                  if (viewModel.isPrivate == true) {
-                                    viewModel.selectedMode = "private";
-                                  } else {
-                                    viewModel.selectedMode = "public";
-                                  }
-                                });
-                              },
-                              activeColor: Colors.white,
-                            ),
+                            const SizedBox(height: 20),
                           ],
                         ),
-                      const SizedBox(height: 20),
+
                       if (viewModel.selectedFiles.isEmpty)
                         GestureDetector(
                           onTap: () {
@@ -250,28 +255,32 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
 
                       if (viewModel.selectedResourceType == "audio" ||
                           viewModel.selectedResourceType == "Audio")
-                        GestureDetector(
-                          onTap: () {
-                            viewModel.pickAndUploadAudio(setState);
-                          },
-                          child: Container(
-                            height: 150,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.music_note,
-                                size: 40,
-                                color: Colors.white,
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                viewModel.pickAndUploadAudio(setState);
+                              },
+                              child: Container(
+                                height: 150,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.white),
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.music_note,
+                                    size: 40,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 20),
+                          ],
                         ),
-                      const SizedBox(height: 20),
 
                       // Submit Button
                       SizedBox(

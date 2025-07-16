@@ -30,6 +30,7 @@ class BottomPopupViewModel extends BaseViewModel {
   // Add callback functions to notify HomeView
   Function(String postId, int newCommentCount)? onCommentCountUpdated;
   Function(String postId, int newReactionCount)? onReactionCountUpdated;
+  Function(String postId, List<EmojiData> emojis)? onEmojis;
 
   GetCommentsModel? comments;
   GetReactionsModel? reactions;
@@ -115,9 +116,11 @@ class BottomPopupViewModel extends BaseViewModel {
   void initializeCallbacks({
     Function(String postId, int newCommentCount)? onCommentUpdated,
     Function(String postId, int newReactionCount)? onReactionUpdated,
+    Function(String postId, List<EmojiData> emojis)? onEmojisCallback,
   }) {
     onCommentCountUpdated = onCommentUpdated;
     onReactionCountUpdated = onReactionUpdated;
+    onEmojis = onEmojisCallback;
   }
 
   //Get Comments List API
@@ -205,6 +208,12 @@ class BottomPopupViewModel extends BaseViewModel {
         // Notify HomeView about reaction count update
         if (onReactionCountUpdated != null) {
           onReactionCountUpdated!(postId, reaction.data!.length);
+        }
+
+        print("Matched emojis before callback: $matchedEmojis");
+
+        if (onEmojis != null) {
+          onEmojis!(postId, matchedEmojis);
         }
 
         rebuildUi();

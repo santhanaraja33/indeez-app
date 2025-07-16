@@ -104,6 +104,9 @@ class HomeViewModel extends BaseViewModel {
           print("Updated reaction count: $count for $postId");
           updateReactionCount(postId, count);
         },
+        onEmojisCallback: (postId, emojis) {
+          print("Updated emojis : $emojis for $postId");
+        },
       ),
     );
     rebuildUi();
