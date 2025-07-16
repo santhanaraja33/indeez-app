@@ -145,7 +145,6 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           viewModel.selectedResourceType == "Video" ||
                           viewModel.selectedResourceType == "Image" ||
                           viewModel.selectedResourceType == "image")
-<<<<<<< HEAD
                         Column(
                           children: [
                             Row(
@@ -177,44 +176,6 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                           ],
                         ),
 
-=======
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color:
-                                Colors.transparent, // or use a background color
-                            border: Border.all(color: Colors.white, width: 0.8),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                ksPrivatePostTitle,
-                                style: GoogleFonts.lato(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                              Switch(
-                                value: viewModel.isPrivate,
-                                onChanged: (val) {
-                                  setState(() {
-                                    viewModel.isPrivate = val;
-                                    if (viewModel.isPrivate == true) {
-                                      viewModel.selectedMode = "private";
-                                    } else {
-                                      viewModel.selectedMode = "public";
-                                    }
-                                  });
-                                },
-                                activeColor: Colors.white,
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
->>>>>>> c0f8784a38e8329699d2f816671e8290cdd3f380
                       if (viewModel.selectedFiles.isEmpty)
                         GestureDetector(
                           onTap: () {
@@ -327,10 +288,6 @@ Widget buildCheckbox(CreatePostViewmodel viewModel, BuildContext context) {
                             const SizedBox(height: 20),
                           ],
                         ),
-<<<<<<< HEAD
-=======
-                      const SizedBox(height: 15),
->>>>>>> c0f8784a38e8329699d2f816671e8290cdd3f380
 
                       // Submit Button
                       SizedBox(
