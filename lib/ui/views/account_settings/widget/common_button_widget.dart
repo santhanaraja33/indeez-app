@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
+import 'package:music_app/ui/common/app_font_provider.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/followers/presentation/followers_list_view.dart';
 import 'package:music_app/ui/views/following/presentation/following_list_view.dart';
+import 'package:provider/provider.dart';
 
 Widget accountSettingsWidget(
     dynamic viewModel, BuildContext context, String selectedStr, int index) {
@@ -18,7 +21,7 @@ Widget accountSettingsWidget(
     onPressed: () {
       viewModel.selectedStr = viewModel.menuItems[index];
       debugPrint("Tapped index: $index, value: ${viewModel.selectedStr}");
-      viewModel.selectedStr == ksFollowers
+      viewModel.selectedStr == ksUserFollowers
           ? viewModel.navigationService
               .clearStackAndShowView(const FollowersListView())
           : viewModel.selectedStr == ksFollowingUsers
@@ -32,11 +35,11 @@ Widget accountSettingsWidget(
       children: [
         Text(
           selectedStr,
-          style: const TextStyle(
-            color: Colors.white, // ⚪ Text color
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontSize: size_16.sp,
+              color: kcWhite,
+              fontWeight: FontWeight.w500,
+              fontFamily: Provider.of<FontNotifier>(context).currentFont),
           textAlign: TextAlign.left,
         ),
         const Icon(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_cached_image.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
@@ -72,11 +72,10 @@ class SearchDetailsView extends StackedView<SearchDetailsViewModel> {
                 Center(
                   child: Text(
                     'Beach Bums',
-                    style: GoogleFonts.lato(
-                      fontSize: size_20,
-                      fontWeight: FontWeight.w800,
-                      color: kcWhite,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: size_20.sp,
+                        color: kcWhite,
+                        fontWeight: FontWeight.w800),
                   ),
                 ),
                 const SizedBox(
@@ -87,22 +86,20 @@ class SearchDetailsView extends StackedView<SearchDetailsViewModel> {
                     const Spacer(),
                     Text(
                       '321 $ksFOLLOWERS',
-                      style: GoogleFonts.lato(
-                        fontSize: size_14,
-                        fontWeight: FontWeight.w500,
-                        color: kcTextGrey,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: size_14.sp,
+                          color: kcTextGrey,
+                          fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(
                       width: width_10,
                     ),
                     Text(
                       '245 $ksFOLLOWING',
-                      style: GoogleFonts.lato(
-                        fontSize: size_14,
-                        fontWeight: FontWeight.w500,
-                        color: kcTextGrey,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: size_14.sp,
+                          color: kcTextGrey,
+                          fontWeight: FontWeight.w500),
                     ),
                     const Spacer(),
                   ],
@@ -112,11 +109,10 @@ class SearchDetailsView extends StackedView<SearchDetailsViewModel> {
                 ),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                  style: GoogleFonts.lato(
-                    fontSize: size_16,
-                    fontWeight: FontWeight.bold,
-                    color: kcWhite,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontSize: size_16.sp,
+                      color: kcWhite,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: height_20,
@@ -218,10 +214,13 @@ class SearchDetailsView extends StackedView<SearchDetailsViewModel> {
                       width: 220,
                       child: Text(
                         'Some Song Title - Daisy Dell',
-                        style: GoogleFonts.lato(
-                            color: kcWhite,
-                            fontSize: size_16,
-                            fontWeight: FontWeight.w800),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                                fontSize: size_16.sp,
+                                color: kcWhite,
+                                fontWeight: FontWeight.w800),
                       ),
                     ),
                     const Icon(

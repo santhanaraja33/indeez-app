@@ -1,25 +1,24 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
+import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/account_settings/presentation/account_settings_view.dart';
 import 'package:music_app/ui/views/following/view_model/following_list_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
-class FollowingListView extends StackedView<FollowingListViewmodel> {
+class FollowingListView extends StackedView<FollowingListModel> {
   const FollowingListView({Key? key}) : super(key: key);
 
   @override
-  void onViewModelReady(FollowingListViewmodel viewModel) {
+  void onViewModelReady(FollowingListModel viewModel) {
     WidgetsBinding.instance.addPostFrameCallback((_) {});
-    viewModel.getFollowingListAPI();
   }
 
   @override
   Widget builder(
     BuildContext context,
-    FollowingListViewmodel viewModel,
+    FollowingListModel viewModel,
     Widget? child,
   ) {
     // Replace with your actual widget tree
@@ -43,7 +42,7 @@ class FollowingListView extends StackedView<FollowingListViewmodel> {
           },
         ),
       ),
-      body: viewModel.followUsersList!.isEmpty
+      body: viewModel.followersList.isEmpty
           ? const Center(
               child: Text(
                 ksFollowersNotFound,
@@ -51,35 +50,23 @@ class FollowingListView extends StackedView<FollowingListViewmodel> {
               ),
             )
           : ListView.builder(
-              itemCount: viewModel.followUsersList?.length,
+              itemCount: viewModel.followersList.length,
               itemBuilder: (context, index) {
-                final imageUrl = viewModel.followUsersList?[index].avatarUrl;
-                final validUrl = (imageUrl != null && imageUrl.isNotEmpty)
-                    ? imageUrl
-                    : 'https://via.placeholder.com/150'; // fallback
-
                 return Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Row(
                     children: [
-                      ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: validUrl,
-                          width: 70,
-                          height: 70,
-                          fit: BoxFit.cover,
-                          color: kcWhite,
-                          placeholder: (context, url) => const SizedBox(
-                            width: 70,
-                            height: 70,
-                            child: Center(child: CircularProgressIndicator()),
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            borderRadius_100,
                           ),
-                          errorWidget: (context, url, error) => const SizedBox(
-                            width: 70,
-                            height: 70,
-                            child: Center(
-                                child: Icon(Icons.person_2_rounded,
-                                    color: kcWhite)),
+                          child: Image.asset(
+                            viewModel.followersList[index].dimage ??
+                                AppImage.appBGImage,
+                            height: height_100,
+                            width: width_100,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -89,7 +76,7 @@ class FollowingListView extends StackedView<FollowingListViewmodel> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${viewModel.followUsersList?[index].firstName ?? ''} ${viewModel.followUsersList?[index].lastName ?? ''}',
+                              viewModel.followersList[index].dtitel ?? '',
                               style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -101,11 +88,7 @@ class FollowingListView extends StackedView<FollowingListViewmodel> {
 
                       /// Follow Button
                       ElevatedButton(
-                        onPressed: () {
-                          viewModel.toFollowAUserAPI(
-                              viewModel.followUsersList![index].userId ?? '',
-                              context);
-                        },
+                        onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
@@ -113,7 +96,7 @@ class FollowingListView extends StackedView<FollowingListViewmodel> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(ksFollowing),
+                        child: const Text(ksFOLLOWING),
                       ),
                     ],
                   ),
@@ -124,6 +107,6 @@ class FollowingListView extends StackedView<FollowingListViewmodel> {
   }
 
   @override
-  FollowingListViewmodel viewModelBuilder(BuildContext context) =>
-      FollowingListViewmodel();
+  FollowingListModel viewModelBuilder(BuildContext context) =>
+      FollowingListModel();
 }

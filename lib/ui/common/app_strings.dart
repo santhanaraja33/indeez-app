@@ -2,12 +2,11 @@ const String ksHomeBottomSheetTitle = 'Build Great Apps!';
 const String ksHomeBottomSheetDescription =
     'Stacked is built to help you build better apps. Give us a chance and we\'ll prove it to you. Check out stacked.filledstacks.com to learn more';
 const String ksPassword = 'Password';
+const String ksUsername = 'Username';
+const String ksDisplayname = 'Display name';
 const String ksZipcode = 'Zip code';
 const String ksNEXT = 'NEXT';
-
-const String ksAccessToekn = 'AccessToken';
-const String ksLoggedinUserId = 'userId';
-const String ksRefreshToekn = 'RefreshToken';
+const String ksOTP = 'GET OTP';
 
 const String ksIAgreeToThe = 'I agree to the';
 const String ksTermsConditions = 'Terms & Conditions';
@@ -37,19 +36,12 @@ const String ksImageNotFound = 'Image Not Found';
 const String ksSendOTP = 'Send OTP';
 const String ksResendOTP = 'Resend OTP';
 const String ksForgotPassword = 'Forgot Password';
-const String ksSignup = 'Sign up?';
+const String ksSignup = 'Sign up';
 const String ksSignIn = 'Sign In';
-const String ksTitle = 'Title';
-const String ksDesc = 'Description';
-const String ksAudioTrackTitle = 'Audio Track Title';
 
 const String ksSignout = 'Sign Out';
 const String ksMoreOption = 'More Options';
-const String ksCreatePost = 'Create Post';
-const String ksPrivatePostTitle = 'Private Post ?';
-const String ksUsePassword = 'Use Password';
-const String ksUseBiometrics = 'Use Biometrics';
-const String ksPasswordResetSuccessful = 'Password reset successful';
+
 const String ksProfile = 'Profile';
 const String ksTac = 'Terms & Condition';
 const String ksLogout = 'Log out';
@@ -75,8 +67,6 @@ const String ksDMS = 'DMS';
 const String ksCalendar = 'Calendar';
 const String ksNotifications = 'Notifications';
 const String ksAccountDetails = 'Account details';
-const String ksAccountSettings = 'Account settings';
-const String ksOTPSentSuccess = 'OTP resent successfully!';
 const String ksAccountPrivacy = 'Account privacy';
 const String ksBlockedAccounts = 'Blocked accounts';
 const String ksMediaquality = 'Media quality';
@@ -91,79 +81,15 @@ const String ksUnblockHint =
     'Are you sure, Do you want to Un Block This Account';
 const String unBlockAccount = 'Un Block Account';
 const String ksChangeProfile = 'Change Profile';
-const String ksFollowing = 'Following';
-const String ksFollowers = 'My Followers';
 const String ksFollowersNotFound = 'No Followers Found';
-const String ksSignupConfirmed = 'Sign up confirmed!';
-const String ksUserCreated = 'User created';
-const String ksConfirmationIncomplete = 'Confirmation incomplete';
-//User Profile
-const String ksLoginStatus = 'isLoggedIn';
-const String ksSharedPreferenceOTP = 'otp';
-const String ksSharedPreferenceEmail = 'email';
-const String ksSharedPreferenceFromPage = 'email';
-const String ksSharedPreferenceEmailWithOTP = 'EmailWithOTP';
-const String ksUserFollowedSuccessfully = 'Followed successfully';
-const String ksUserUnFollowedSuccessfully = 'Unfollowed successfully';
+const String ksAccountSettings = 'Account settings';
 
 const String ksFollowingUsers = 'Following Users';
 const String ksUserFollowers = 'My Followers';
-
-const String ksSharedPreferenceFromForgotPasswordPage = 'ForgotPasswordPage';
-const String ksSharedPreferenceForgotPasswordWithOTP = 'ForgotPasswordOTP';
-
-const String ksSharedPreferenceFromSignupPage = 'SignupPage';
-const String ksSharedPreferenceSignupWithOTP = 'true';
-
-const String ksPostTitle = 'Title field is required';
-const String ksPostDescription = 'Description field is required';
-const String ksResourceType = 'Resource type is required';
-
-//error messages
-const String headerValueMissed = 'Internal server error';
-
-const String mobileNumberEmpty = 'Mobile Number Field is Empty';
-const String mobileNumberLength = 'Mobile Number max 10 digits';
-
-const String otpFieldEmpty = 'OTP Field is Empty';
-const String otpLength = 'Enter valid OTP';
-const String ksEnterOTP = 'Please enter OTP';
-const String errorTitle = 'Error';
-const String successTitle = 'Success';
-const String closeTitle = 'Close';
-
-const String loginStatusStr = 'loginStatus';
-const String locationPermissionStatus = 'locationPermission';
-const String saveGetAddress = 'address';
-
-const bool loginStatusBool = true;
-const String logoutTitleMsg = 'Are you sure\nwant to logout ?';
-const String logoutBtnMsg = 'Logout';
-const String cancelBtnMsg = 'Cancel';
-
-const String changeTxt = 'Change';
-const String verifyTxt = 'Verify';
-const String addTxt = 'Add';
-
-const String ksLoginSuccess = 'Login successful';
-const String ksEmailRequired = 'Email is required';
-const String ksValidEmailAddress = 'Please enter a valid email address.';
-const String ksEmailNotRegistered = 'User Email is not registered';
-const String ksAuthenticateBiometrics = 'Authenticated successfully!';
-const String ksBiometricsAuthenticatioFailed = 'Authentication failed.';
-const String ksLoginFailed = 'Login failed. Please try again.';
-//api response
-const String refreshToken = 'refreshToken';
-const String token = 'token';
-const String contactNo = 'contactNo';
-
-const String otpSuccessMsg = 'Verification code sent to mobile number.';
-const String otpErrorMsg = 'Contact information is missing.';
-const String invalidOtp = 'Invalid or expired OTP. Please try again.';
-const String otpVerification = 'Verification already completed.';
+//User Profile
 
 const String ksUserProfile =
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpav1iIAD5EfBHc-QxBecROMSg5a8jouIN5Q&s';
+    'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg';
 
 //Link
 const String ksPlayStoreLink = 'https://play.google.com/';
@@ -181,7 +107,6 @@ const double height_30 = 30.0;
 const double height_150 = 150.0;
 const double height_40 = 40.0;
 const double height_50 = 50.0;
-const double height_60 = 60.0;
 const double height_260 = 260.0;
 const double height_270 = 270.0;
 const double height_15 = 15.0;
@@ -206,6 +131,7 @@ const double width_240 = 240.0;
 const double width_80 = 80;
 const double width_150 = 100.0;
 const double width_20 = 20.0;
+const double width_70 = 70.0;
 
 //Padding
 
@@ -226,6 +152,7 @@ const double size_20 = 20.0;
 const double size_18 = 18.0;
 const double size_30 = 30.0;
 const double size_16 = 16.0;
+const double size_10 = 10.0;
 
 //Border
 const double borderRadius_0 = 0.0;

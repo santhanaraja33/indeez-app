@@ -1,2 +1,0 @@
-C:/Users/hp/Desktop/indeez-app-main/android/app/.cxx/RelWithDebInfo/6g4l225b/x86/CMakeFiles/edit_cache.dir
-C:/Users/hp/Desktop/indeez-app-main/android/app/.cxx/RelWithDebInfo/6g4l225b/x86/CMakeFiles/rebuild_cache.dir

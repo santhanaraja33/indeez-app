@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
-import 'package:music_app/ui/views/email/widget/email_view_widget.dart';
 import 'package:stacked/stacked.dart';
 
 import 'rightmenu_viewmodel.dart';
@@ -27,15 +26,19 @@ class RightmenuView extends StackedView<RightmenuViewModel> {
               height: height_50,
             ),
             Center(
-              child: appLogoImageWidget(AppImage.appLogoGif),
+              child: Image.asset(
+                AppImage.appLogoGif,
+                height: height_100,
+                width: width_100,
+              ),
             ),
             Center(
               child: Text(
                 'JERRY',
-                style: GoogleFonts.lato(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: kcTextGrey),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: size_16.sp,
+                    color: kcTextGrey,
+                    fontWeight: FontWeight.w600),
               ),
             ),
             const Divider(),
@@ -66,11 +69,10 @@ class RightmenuView extends StackedView<RightmenuViewModel> {
                 ),
                 title: Text(
                   (d.title ?? '').toUpperCase(),
-                  style: GoogleFonts.lato(
-                    color: kcTextGrey,
-                    fontSize: size_14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: size_14.sp,
+                      color: kcTextGrey,
+                      fontWeight: FontWeight.w400),
                 ),
                 selected: viewModel.selectedDrawerIndex == i,
                 onTap: () {

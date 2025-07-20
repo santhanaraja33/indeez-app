@@ -50,7 +50,7 @@ class BottomBarView extends StackedView<BottomBarViewModel> {
                   AppImage.appLogoGif,
                   height: height_50,
                   width: width_50,
-                  fit: BoxFit.cover,
+                  // fit: BoxFit.cover,
                 ),
         ),
         backgroundColor: kcBlack,
@@ -58,10 +58,8 @@ class BottomBarView extends StackedView<BottomBarViewModel> {
           children: [
             const AppCommonBGImage(),
             Center(
-              child: IndexedStack(
-                index: viewModel.bottomBarSelectedIndex,
-                children: viewModel.pages,
-              ),
+              child:
+                  viewModel.pages.elementAt(viewModel.bottomBarSelectedIndex),
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
@@ -151,19 +151,23 @@ class SwipeView extends StackedView<SwipeViewModel> {
                     children: [
                       Text(
                         'Klypi',
-                        style: GoogleFonts.lato(
-                          fontSize: size_22,
-                          color: kcLGreen,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                                fontSize: size_22.sp,
+                                color: kcLGreen,
+                                fontWeight: FontWeight.bold),
                       ),
                       Text(
                         'Wyoming\nLolipop Records',
-                        style: GoogleFonts.lato(
-                          fontSize: size_22,
-                          color: kcSkyBlue,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                                fontSize: size_22.sp,
+                                color: kcSkyBlue,
+                                fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

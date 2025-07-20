@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
@@ -74,21 +75,21 @@ class CreateAccountView extends StackedView<CreateAccountViewModel> {
                         }),
                     Text(
                       ksIAgreeToThe,
-                      style: GoogleFonts.lato(
-                        fontSize: size_18,
-                        fontWeight: FontWeight.bold,
-                        color: kcWhite,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontSize: size_16.sp,
+                            color: kcTextGrey,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(
                       width: width_5,
                     ),
                     Text(
                       ksTermsConditions,
-                      style: GoogleFonts.lato(
-                          fontSize: size_18,
-                          fontWeight: FontWeight.bold,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: size_18.sp,
                           color: kcBlack,
+                          fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline),
                     ),
                     const Spacer(),

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_textfield.dart';
 import 'package:music_app/ui/common/app_image.dart';
@@ -193,17 +193,17 @@ class SearchView extends StackedView<SearchViewModel> {
                                                                               index]
                                                                           .title ??
                                                                       '',
-                                                                  style:
-                                                                      GoogleFonts
-                                                                          .lato(
-                                                                    fontSize:
-                                                                        size_16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        kcWhite,
-                                                                  ),
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .titleMedium
+                                                                      ?.copyWith(
+                                                                          fontSize: size_16
+                                                                              .sp,
+                                                                          color:
+                                                                              kcWhite,
+                                                                          fontWeight:
+                                                                              FontWeight.w400),
                                                                 ),
                                                                 Text(
                                                                   viewModel
@@ -211,17 +211,17 @@ class SearchView extends StackedView<SearchViewModel> {
                                                                               index]
                                                                           .subTitle ??
                                                                       '',
-                                                                  style:
-                                                                      GoogleFonts
-                                                                          .lato(
-                                                                    fontSize:
-                                                                        size_14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        kcTextGrey,
-                                                                  ),
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .titleMedium
+                                                                      ?.copyWith(
+                                                                          fontSize: size_14
+                                                                              .sp,
+                                                                          color:
+                                                                              kcTextGrey,
+                                                                          fontWeight:
+                                                                              FontWeight.w400),
                                                                 )
                                                               ],
                                                             ),

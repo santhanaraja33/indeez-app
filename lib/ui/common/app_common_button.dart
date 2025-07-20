@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 
@@ -30,11 +30,10 @@ class AppCommonButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           buttonName ?? '',
-          style: GoogleFonts.lato(
-            fontSize: size_16,
-            fontWeight: FontWeight.bold,
-            color: color ?? kcBlack,
-          ),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontSize: size_16.sp,
+              color: color ?? kcBlack,
+              fontWeight: FontWeight.bold),
         ),
       ),
     );

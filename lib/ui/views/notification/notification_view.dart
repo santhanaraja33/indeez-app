@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
 import 'package:music_app/ui/common/app_strings.dart';
@@ -27,8 +27,7 @@ class NotificationView extends StackedView<NotificationViewModel> {
         title: Image.asset(
           AppImage.appLogoGif,
           height: height_50,
-          width: width_50,
-          fit: BoxFit.cover,
+          width: width_70,
         ),
       ),
       backgroundColor: kcBgColor,
@@ -63,30 +62,39 @@ class NotificationView extends StackedView<NotificationViewModel> {
                             ),
                             Text(
                               viewModel.notificationModel[index].title ?? '',
-                              style: GoogleFonts.lato(
-                                  fontSize: size_18,
-                                  fontWeight: FontWeight.bold,
-                                  color: kcWhite),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      fontSize: size_18.sp,
+                                      color: kcWhite,
+                                      fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
                               height: height_5,
                             ),
                             Text(
                               viewModel.notificationModel[index].subTitle ?? '',
-                              style: GoogleFonts.lato(
-                                  fontSize: size_14,
-                                  fontWeight: FontWeight.bold,
-                                  color: kcTextGrey),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      fontSize: size_14.sp,
+                                      color: kcTextGrey,
+                                      fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
                               height: height_10,
                             ),
                             Text(
                               viewModel.notificationModel[index].date ?? '',
-                              style: GoogleFonts.lato(
-                                  fontSize: size_12,
-                                  fontWeight: FontWeight.bold,
-                                  color: kcTextGrey),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      fontSize: size_12.sp,
+                                      color: kcTextGrey,
+                                      fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
                               height: height_10,
