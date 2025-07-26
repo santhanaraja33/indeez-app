@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_common_button.dart';
 import 'package:music_app/ui/common/app_strings.dart';
@@ -34,8 +34,10 @@ class SearchDetailsTabbarWidget
               return Tab(
                 child: Text(
                   (viewModel.tabbarModel[index].title ?? '').toUpperCase(),
-                  style: GoogleFonts.lato(
-                      fontSize: size_12, fontWeight: FontWeight.w600),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontSize: size_12.sp,
+                      color: kcTextGrey,
+                      fontWeight: FontWeight.w600),
                 ),
               );
             }),
@@ -65,7 +67,7 @@ class SearchDetailsTabbarWidget
           const SizedBox(
             height: height_20,
           ),
-          stashDesignModulesUI(itemWidth, itemHeight, viewModel),
+          stashDesignModulesUI(itemWidth, itemHeight, viewModel, context),
           const SizedBox(
             height: height_20,
           ),
@@ -74,11 +76,8 @@ class SearchDetailsTabbarWidget
     );
   }
 
-  Widget stashDesignModulesUI(
-    double itemWidth,
-    double itemHeight,
-    SearchDetailsViewModel viewModel,
-  ) {
+  Widget stashDesignModulesUI(double itemWidth, double itemHeight,
+      SearchDetailsViewModel viewModel, BuildContext context) {
     return GridView.count(
       crossAxisCount: crossAxisCount_2,
       childAspectRatio: (itemWidth / itemHeight),
@@ -93,7 +92,7 @@ class SearchDetailsTabbarWidget
           child: GridTile(
             child: Padding(
               padding: const EdgeInsets.all(padding_10),
-              child: buildStashMenus(index, viewModel),
+              child: buildStashMenus(index, viewModel, context),
             ),
           ),
         );
@@ -105,7 +104,8 @@ class SearchDetailsTabbarWidget
     //
   }
 
-  Widget buildStashMenus(int index, SearchDetailsViewModel viewModel) {
+  Widget buildStashMenus(
+      int index, SearchDetailsViewModel viewModel, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -129,11 +129,11 @@ class SearchDetailsTabbarWidget
               left: padding_10, right: padding_10, top: padding_10),
           child: Text(
             viewModel.gridviewModel[index].dtitel ?? '',
-            style: GoogleFonts.lato(
-              color: kcWhite,
-              fontSize: size_14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: size_14.sp,
+                color: kcWhite,
+                fontWeight: FontWeight.w400),
+
             //
           ),
         ),
@@ -154,7 +154,7 @@ class SearchDetailsTabbarWidget
             const SizedBox(
               height: height_20,
             ),
-            payListDesignModulesUI(itemWidth, itemHeight, viewModel),
+            payListDesignModulesUI(itemWidth, itemHeight, viewModel, context),
             const SizedBox(
               height: height_20,
             ),
@@ -168,6 +168,7 @@ class SearchDetailsTabbarWidget
     double itemWidth,
     double itemHeight,
     SearchDetailsViewModel viewModel,
+    BuildContext context,
   ) {
     return GridView.count(
       crossAxisCount: crossAxisCount_2,
@@ -183,7 +184,7 @@ class SearchDetailsTabbarWidget
           child: GridTile(
             child: Padding(
               padding: const EdgeInsets.all(padding_10),
-              child: payListbuildMenus(index, viewModel),
+              child: payListbuildMenus(index, viewModel, context),
             ),
           ),
         );
@@ -195,7 +196,8 @@ class SearchDetailsTabbarWidget
     //
   }
 
-  Widget payListbuildMenus(int index, SearchDetailsViewModel viewModel) {
+  Widget payListbuildMenus(
+      int index, SearchDetailsViewModel viewModel, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -219,11 +221,11 @@ class SearchDetailsTabbarWidget
               left: padding_10, right: padding_10, top: padding_10),
           child: Text(
             viewModel.payListModel[index].dtitel ?? '',
-            style: GoogleFonts.lato(
-              color: kcWhite,
-              fontSize: size_14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: size_14.sp,
+                color: kcWhite,
+                fontWeight: FontWeight.bold),
+
             //
           ),
         ),
@@ -260,11 +262,13 @@ class SearchDetailsTabbarWidget
                           padding: const EdgeInsets.all(padding_10),
                           child: Text(
                             viewModel.calenderModel[index].date ?? '',
-                            style: GoogleFonts.lato(
-                              fontSize: size_14,
-                              color: kcWhite,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    fontSize: size_14.sp,
+                                    color: kcWhite,
+                                    fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -279,11 +283,13 @@ class SearchDetailsTabbarWidget
                           ),
                           child: Text(
                             viewModel.calenderModel[index].eventName ?? '',
-                            style: GoogleFonts.lato(
-                              fontSize: size_14,
-                              color: kcWhite,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    fontSize: size_14.sp,
+                                    color: kcWhite,
+                                    fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -313,7 +319,7 @@ class SearchDetailsTabbarWidget
             const SizedBox(
               height: height_20,
             ),
-            shopdesignModulesUI(itemWidth, itemHeight, viewModel),
+            shopdesignModulesUI(itemWidth, itemHeight, viewModel, context),
           ],
         ),
       ),
@@ -324,6 +330,7 @@ class SearchDetailsTabbarWidget
     double itemWidth,
     double itemHeight,
     SearchDetailsViewModel viewModel,
+    BuildContext context,
   ) {
     return GridView.count(
       crossAxisCount: crossAxisCount_2,
@@ -339,7 +346,7 @@ class SearchDetailsTabbarWidget
           child: GridTile(
             child: Padding(
               padding: const EdgeInsets.all(padding_10),
-              child: buildShopMenus(index, viewModel),
+              child: buildShopMenus(index, viewModel, context),
             ),
           ),
         );
@@ -351,7 +358,8 @@ class SearchDetailsTabbarWidget
     //
   }
 
-  Widget buildShopMenus(int index, SearchDetailsViewModel viewModel) {
+  Widget buildShopMenus(
+      int index, SearchDetailsViewModel viewModel, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -372,8 +380,11 @@ class SearchDetailsTabbarWidget
           ),
           child: Text(
             viewModel.gridShopModel[index].dtitel ?? '',
-            style: GoogleFonts.lato(
-                color: kcWhite, fontSize: size_14, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: size_14.sp,
+                color: kcWhite,
+                fontWeight: FontWeight.bold),
+
             //
           ),
         ),
@@ -396,7 +407,7 @@ class SearchDetailsTabbarWidget
             const SizedBox(
               height: height_20,
             ),
-            designMusicModulesUI(itemWidth, itemHeight, viewModel),
+            designMusicModulesUI(itemWidth, itemHeight, viewModel, context),
             const SizedBox(
               height: height_20,
             ),
@@ -410,6 +421,7 @@ class SearchDetailsTabbarWidget
     double itemWidth,
     double itemHeight,
     SearchDetailsViewModel viewModel,
+    BuildContext context,
   ) {
     return GridView.count(
       crossAxisCount: crossAxisCount_2,
@@ -425,7 +437,7 @@ class SearchDetailsTabbarWidget
           child: GridTile(
             child: Padding(
               padding: const EdgeInsets.all(padding_10),
-              child: buildMusicMenus(index, viewModel),
+              child: buildMusicMenus(index, viewModel, context),
             ),
           ),
         );
@@ -437,7 +449,8 @@ class SearchDetailsTabbarWidget
     //
   }
 
-  Widget buildMusicMenus(int index, SearchDetailsViewModel viewModel) {
+  Widget buildMusicMenus(
+      int index, SearchDetailsViewModel viewModel, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -461,8 +474,11 @@ class SearchDetailsTabbarWidget
               left: padding_10, right: padding_10, top: padding_10),
           child: Text(
             viewModel.gridMusicModel[index].dtitel ?? '',
-            style: GoogleFonts.lato(
-                color: kcWhite, fontSize: size_18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: size_18.sp,
+                color: kcWhite,
+                fontWeight: FontWeight.bold),
+
             //
           ),
         ),

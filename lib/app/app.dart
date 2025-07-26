@@ -1,28 +1,28 @@
 import 'package:music_app/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:music_app/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:music_app/ui/views/account_settings/presentation/account_settings_view.dart';
-import 'package:music_app/ui/views/create_post/presentation/create_post_view.dart';
-import 'package:music_app/ui/views/email/presentation/email_view.dart';
+import 'package:music_app/ui/views/email/email_view.dart';
 import 'package:music_app/ui/views/followers/presentation/followers_list_view.dart';
 import 'package:music_app/ui/views/following/presentation/following_list_view.dart';
-import 'package:music_app/ui/views/home/presentation/home_view.dart';
+import 'package:music_app/ui/views/home/home_view.dart';
 import 'package:music_app/ui/views/startup/startup_view.dart';
+import 'package:music_app/ui/views/type_of_user/presentation/typeofuser_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:music_app/ui/views/password/presentation/password_view.dart';
-import 'package:music_app/ui/views/signup/presentation/signup_view.dart';
+import 'package:music_app/ui/views/password/password_view.dart';
+import 'package:music_app/ui/views/signup/signup_view.dart';
 import 'package:music_app/ui/views/create_account/create_account_view.dart';
 import 'package:music_app/ui/views/bottom_bar/bottom_bar_view.dart';
 import 'package:music_app/ui/views/my_playlist/my_playlist_view.dart';
 import 'package:music_app/ui/views/swipe/swipe_view.dart';
 import 'package:music_app/ui/views/event/event_view.dart';
 import 'package:music_app/ui/views/shop/shop_view.dart';
-import 'package:music_app/ui/views/forgotpassword/presentation/forgotpassword_view.dart';
+import 'package:music_app/ui/views/forgotpassword/forgotpassword_view.dart';
 import 'package:music_app/ui/views/otp_verify/otp_verify_view.dart';
-import 'package:music_app/ui/views/changepassword/presentation/changepassword_view.dart';
+import 'package:music_app/ui/views/changepassword/changepassword_view.dart';
 import 'package:music_app/ui/views/rightmenu/rightmenu_view.dart';
-import 'package:music_app/ui/views/userprofile/presentation/userprofile_view.dart';
-import 'package:music_app/ui/views/bottom_popup/presentation/bottom_popup_view.dart';
+import 'package:music_app/ui/views/userprofile/userprofile_view.dart';
+import 'package:music_app/ui/views/bottom_popup/bottom_popup_view.dart';
 import 'package:music_app/ui/views/paylist_popup/paylist_popup_view.dart';
 import 'package:music_app/ui/views/search/search_view.dart';
 import 'package:music_app/ui/views/search_details/search_details_view.dart';
@@ -54,10 +54,10 @@ import 'package:music_app/ui/views/calendar/calendar_view.dart';
     MaterialRoute(page: NotificationView),
     MaterialRoute(page: CalendarView),
     MaterialRoute(page: AccountSettingsView),
-    MaterialRoute(page: EmailView),
     MaterialRoute(page: FollowersListView),
     MaterialRoute(page: FollowingListView),
-    MaterialRoute(page: CreatePostView),
+    MaterialRoute(page: TypeofuserView),
+    MaterialRoute(page: EmailView),
 
 // @stacked-route
   ],

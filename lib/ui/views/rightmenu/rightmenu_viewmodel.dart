@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_app/app/app.locator.dart';
 import 'package:music_app/app/app.router.dart';
-import 'package:music_app/shared_preferences/shared_preferences.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_strings.dart';
 import 'package:music_app/ui/views/rightmenu/model/rightmenu_model.dart';
@@ -21,7 +20,7 @@ class RightmenuViewModel extends BaseViewModel {
     DrawerItem(ksHome, Icons.home, 'dashboard_info', '', ''),
     DrawerItem(ksCalendar, Icons.calendar_month, 'dashboard_info', '', ''),
     DrawerItem(ksNotifications, Icons.notifications, 'dashboard_info', '', ''),
-    DrawerItem(ksAccountDetails, Icons.person_2, 'dashboard_info', '', ''),
+    DrawerItem(ksAccountDetails, Icons.settings, 'dashboard_info', '', ''),
     DrawerItem(ksAccountSettings, Icons.settings, 'dashboard_info', '', ''),
     DrawerItem(ksLogout, Icons.logout, 'dashboard_info', '', ''),
   ];
@@ -42,7 +41,6 @@ class RightmenuViewModel extends BaseViewModel {
     rebuildUi();
     DrawerItem selectedItem = (drawerItems)[index];
     String selectedMenuName = selectedItem.title ?? '';
-
     if (selectedMenuName.contains(ksAccountDetails)) {
       navigationService.back();
       navigationService.navigateToUserprofileView();
@@ -84,16 +82,16 @@ class RightmenuViewModel extends BaseViewModel {
       navigationService.navigateToBottomBarView();
     }
   }
-  //
 
   showAndroidAlertDialog(
       BuildContext context, String vehicleNumber, String vehicleID) {
     Widget cancelButton = TextButton(
       child: Text(
         ksCancel,
-        style: GoogleFonts.lato(
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium
+            ?.copyWith(fontSize: size_16.sp, fontWeight: FontWeight.bold),
       ),
       onPressed: () {
         navigationService.back();
@@ -102,7 +100,8 @@ class RightmenuViewModel extends BaseViewModel {
     Widget continueButton = TextButton(
         child: Text(
           ksLogout,
-          style: GoogleFonts.lato(color: kcRed, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: size_14.sp, color: kcRed, fontWeight: FontWeight.bold),
         ),
         onPressed: () async {
           if (context.mounted) {
@@ -114,17 +113,13 @@ class RightmenuViewModel extends BaseViewModel {
     AlertDialog alert = AlertDialog(
       title: Text(
         ksLogout,
-        style: GoogleFonts.lato(
-          fontSize: size_16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontSize: size_14.sp, color: kcBlack, fontWeight: FontWeight.bold),
       ),
       content: Text(
         '$ksLogoutHint?',
-        style: GoogleFonts.lato(
-          fontSize: size_16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontSize: size_14.sp, color: kcBlack, fontWeight: FontWeight.bold),
       ),
       actions: [
         cancelButton,
@@ -148,25 +143,27 @@ class RightmenuViewModel extends BaseViewModel {
         return CupertinoAlertDialog(
           title: Text(
             ksLogout,
-            style: GoogleFonts.lato(
-              fontSize: size_16,
-              color: kcBlack,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontSize: size_16.sp,
+                color: kcBlack,
+                fontWeight: FontWeight.bold),
           ),
           content: Text(
             '$ksLogoutHint?',
-            style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontSize: size_14.sp,
+                color: kcBlack,
+                fontWeight: FontWeight.bold),
           ),
           actions: [
             CupertinoDialogAction(
                 isDefaultAction: true,
                 child: Text(
                   ksCancel,
-                  style: GoogleFonts.lato(
-                    fontSize: size_16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: size_16.sp,
+                      color: kcBlack,
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   navigationService.back();
@@ -175,8 +172,10 @@ class RightmenuViewModel extends BaseViewModel {
               isDefaultAction: true,
               child: Text(
                 ksLogout,
-                style:
-                    GoogleFonts.lato(color: kcRed, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: size_16.sp,
+                    color: kcRed,
+                    fontWeight: FontWeight.bold),
               ),
               onPressed: () async {
                 if (context.mounted) {
@@ -193,11 +192,7 @@ class RightmenuViewModel extends BaseViewModel {
   }
 
   doLogout() async {
-    await SharedPreferencesHelper.saveLoginStatus(false);
-    await SharedPreferencesHelper.clearAll();
-    navigationService.navigateToStartupView();
-    // SharedPreferencesHelper.clearAll();
-
+    navigationService.navigateToPasswordView();
     rebuildUi();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/ui/common/app_colors.dart';
 import 'package:music_app/ui/common/app_image.dart';
@@ -31,7 +32,7 @@ class CalendarView extends StackedView<CalendarViewModel> {
           AppImage.appLogoGif,
           height: height_50,
           width: width_50,
-          fit: BoxFit.cover,
+          // fit: BoxFit.cover,
         ),
       ),
       backgroundColor: kcBlack,
@@ -47,7 +48,7 @@ class CalendarView extends StackedView<CalendarViewModel> {
               const SizedBox(
                 height: height_20,
               ),
-              buildCarousel(viewModel),
+              buildCarousel(viewModel, context),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Row(
@@ -96,33 +97,48 @@ class CalendarView extends StackedView<CalendarViewModel> {
                 eventLoader: viewModel.getEventsForDay,
                 startingDayOfWeek: StartingDayOfWeek.monday,
                 calendarStyle: CalendarStyle(
-                  selectedTextStyle: GoogleFonts.lato(
-                    color: kcPurple,
-                  ),
+                  selectedTextStyle: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(
+                          fontSize: size_14.sp,
+                          color: kcPurple,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline),
                   tableBorder: TableBorder(
                       borderRadius: BorderRadius.circular(borderRadius_10)),
                   outsideDaysVisible: true,
-                  defaultTextStyle: GoogleFonts.lato(
-                    color: kcPurple,
-                  ),
-                  weekNumberTextStyle: GoogleFonts.lato(
-                    color: kcPurple,
-                  ),
+                  defaultTextStyle:
+                      Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontSize: size_14.sp,
+                            color: kcPurple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                  weekNumberTextStyle: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(
+                          fontSize: size_14.sp,
+                          color: kcPurple,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline),
                 ),
                 headerStyle: HeaderStyle(
-                    leftChevronIcon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: kcPurple,
-                    ),
-                    rightChevronIcon: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: kcPurple,
-                    ),
-                    titleTextStyle: GoogleFonts.lato(
-                      color: kcWhite,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    )),
+                  leftChevronIcon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: kcPurple,
+                  ),
+                  rightChevronIcon: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: kcPurple,
+                  ),
+                  titleTextStyle:
+                      Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontSize: size_14.sp,
+                            color: kcWhite,
+                            fontWeight: FontWeight.bold,
+                          ),
+                ),
                 onDaySelected: viewModel.onDaySelected,
                 onRangeSelected: viewModel.onRangeSelected,
                 onFormatChanged: (format) {
@@ -136,11 +152,11 @@ class CalendarView extends StackedView<CalendarViewModel> {
               ),
               Text(
                 ksComingupnearyou,
-                style: GoogleFonts.lato(
-                  color: kcWhite,
-                  fontSize: size_18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontSize: size_14.sp,
+                      color: kcWhite,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(
                 height: height_10,
@@ -174,21 +190,29 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                       Text(
                                         viewModel.eventListModel[index].time ??
                                             '',
-                                        style: GoogleFonts.lato(
-                                          color: kcWhite,
-                                          fontSize: size_14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                                fontSize: size_14.sp,
+                                                color: kcWhite,
+                                                fontWeight: FontWeight.bold,
+                                                decoration:
+                                                    TextDecoration.underline),
                                       ),
                                       Text(
                                         viewModel.eventListModel[index]
                                                 .eventName ??
                                             '',
-                                        style: GoogleFonts.lato(
-                                          color: kcWhite,
-                                          fontSize: size_14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                                fontSize: size_14.sp,
+                                                color: kcWhite,
+                                                fontWeight: FontWeight.bold,
+                                                decoration:
+                                                    TextDecoration.underline),
                                       ),
                                     ],
                                   ),
@@ -196,20 +220,28 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                     viewModel
                                             .eventListModel[index].eventTitle ??
                                         '',
-                                    style: GoogleFonts.lato(
-                                      color: kcWhite,
-                                      fontSize: size_14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            fontSize: size_14.sp,
+                                            color: kcWhite,
+                                            fontWeight: FontWeight.bold,
+                                            decoration:
+                                                TextDecoration.underline),
                                   ),
                                   Text(
                                     viewModel.eventListModel[index].address ??
                                         '',
-                                    style: GoogleFonts.lato(
-                                      color: kcWhite,
-                                      fontSize: size_14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            fontSize: size_14.sp,
+                                            color: kcWhite,
+                                            fontWeight: FontWeight.bold,
+                                            decoration:
+                                                TextDecoration.underline),
                                   ),
                                 ],
                               ),
@@ -224,11 +256,14 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                 child: Text(
                                   viewModel.eventListModel[index].thisEvent ??
                                       '',
-                                  style: GoogleFonts.lato(
-                                    color: kcWhite,
-                                    fontSize: size_14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontSize: size_14.sp,
+                                        color: kcWhite,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ),
                             ),
@@ -260,7 +295,7 @@ class CalendarView extends StackedView<CalendarViewModel> {
             color: viewModel.current == index ? kcWhite : kcWhite);
   }
 
-  Widget buildCarousel(CalendarViewModel viewModel) {
+  Widget buildCarousel(CalendarViewModel viewModel, BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
         onPageChanged: (index, reason) {
@@ -295,22 +330,28 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                 children: [
                                   Text(
                                     '$ksToday:',
-                                    style: GoogleFonts.lato(
-                                      color: kcPurple,
-                                      fontSize: size_16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontSize: size_12.sp,
+                                          color: kcPurple,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                   const SizedBox(
                                     width: width_5,
                                   ),
                                   Text(
                                     item.time ?? '',
-                                    style: GoogleFonts.lato(
-                                      color: kcWhite,
-                                      fontSize: size_16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontSize: size_14.sp,
+                                          color: kcWhite,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                   const SizedBox(
                                     width: width_5,
@@ -319,11 +360,14 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                     width: height_100,
                                     child: Text(
                                       item.today ?? '',
-                                      style: GoogleFonts.lato(
-                                        color: kcYellow,
-                                        fontSize: size_16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: size_14.sp,
+                                            color: kcYellow,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -335,11 +379,14 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                   ),
                                   Text(
                                     '@',
-                                    style: GoogleFonts.lato(
-                                      color: kcWhite,
-                                      fontSize: size_16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontSize: size_16.sp,
+                                          color: kcWhite,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                   const SizedBox(
                                     width: width_5,
@@ -348,11 +395,14 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                     width: width_100,
                                     child: Text(
                                       item.title ?? '',
-                                      style: GoogleFonts.lato(
-                                        color: kcYellow,
-                                        fontSize: size_16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: size_16.sp,
+                                            color: kcYellow,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -366,11 +416,14 @@ class CalendarView extends StackedView<CalendarViewModel> {
                                     width: width_100,
                                     child: Text(
                                       item.location ?? '',
-                                      style: GoogleFonts.lato(
-                                        color: kcWhite,
-                                        fontSize: size_16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: size_16.sp,
+                                            color: kcWhite,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -386,7 +439,14 @@ class CalendarView extends StackedView<CalendarViewModel> {
                           errorBuilder: (context, error, stackTrace) {
                             return Text(
                               ksImageNotFound,
-                              style: GoogleFonts.lato(color: kcTextGrey),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontSize: size_16.sp,
+                                    color: kcTextGrey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             );
                           },
                         ),

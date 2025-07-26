@@ -6,6 +6,8 @@ import 'package:music_app/ui/views/event/model/event_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+// image:
+// 'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/Astrologer/Astrologer2.jpg',
 class EventViewModel extends BaseViewModel {
   int current = 0;
   final eventModel = [
@@ -14,24 +16,21 @@ class EventViewModel extends BaseViewModel {
       time: '8:30PM',
       title: 'Hi-Dive',
       location: '2431 Cass Ave Detroit, MI',
-      image:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/Astrologer/Astrologer2.jpg',
+      image: 'assets/images/allrock.jpeg',
     ),
     EventModel(
       today: 'Duz Mancini',
       time: '7PM',
       title: 'Hi-Dive',
       location: '7 S Broadway Denver, CO',
-      image:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/Astrologer/Astrologer2.jpg',
+      image: 'assets/images/collage.jpg',
     ),
     EventModel(
       today: 'Astrologer',
       time: '8:30PM',
       title: 'Hi-Dive',
       location: '2431 Cass Ave Detroit, MI',
-      image:
-          'https://indeez.1cczywc7sm4y.us-south.codeengine.appdomain.cloud/homeImgs/Astrologer/Astrologer2.jpg',
+      image: 'assets/images/collage-pink-tape.jpg',
     ),
   ];
 
@@ -61,8 +60,7 @@ class EventViewModel extends BaseViewModel {
       address: 'Address',
     ),
   ];
-  late final ValueNotifier<List<Event>> _selectedEvents =
-      ValueNotifier<List<Event>>([]);
+  late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat calendarFormat = CalendarFormat.month;
   RangeSelectionMode rangeSelectionMode = RangeSelectionMode
       .toggledOff; // Can be toggled on/off by longpressing a date

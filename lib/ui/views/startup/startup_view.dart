@@ -30,7 +30,7 @@ class StartupView extends StackedView<StartupViewModel> {
                     AppImage.appLogoGif,
                     height: height_200,
                     width: width_200,
-                    fit: BoxFit.cover,
+                    // fit: BoxFit.fill,
                   ),
                 ),
                 const Row(

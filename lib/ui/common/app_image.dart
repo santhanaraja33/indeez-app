@@ -14,6 +14,15 @@ class AppImage {
   static const String signupCreateAccountImage =
       '${imagePath}signup_create_account.png';
   static const String signUpZImage = '${imagePath}signup_z.png';
+  static const String whoruImage = '${imagePath}whoRU.png';
+  static const String recordStoreImage = '${imagePath}recordStore.png';
+  static const String labelImage = '${imagePath}label.png';
+  static const String fanImage = '${imagePath}fan.png';
+  static const String bandImage = '${imagePath}band.png';
+  static const String user1 = '${imagePath}user1.jpg';
+  static const String user2 = '${imagePath}user2.png';
+  static const String user3 = '${imagePath}user3.png';
+  static const String user4 = '${imagePath}user4.jpeg';
 
   static const String greenLineGif = '${imagePath}green_line.gif';
   static const String musicLineGif = '${imagePath}music.gif';
