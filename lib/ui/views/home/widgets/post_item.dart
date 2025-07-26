@@ -39,11 +39,12 @@ Widget buildPostItem(BuildContext context, int index, HomeViewModel viewModel) {
   }
   if (viewModel.homePostModel[index].resourceType == "audio") {
     if (viewModel.homePostModel[index].mediaItems!.isNotEmpty) {
-      for (var item in viewModel.homePostModel[index].mediaItems!) {
-        fgUrl = item.mediaUrl ?? '';
-      }
+      safePrint(
+          "audio media url: ${viewModel.homePostModel[index].mediaItems?[0].coverImageUrl}}");
+
+      fgUrl = viewModel.homePostModel[index].mediaItems?[0].coverImageUrl ?? '';
     }
-    precacheImage(CachedNetworkImageProvider(selectedImageUrl), context);
+    precacheImage(CachedNetworkImageProvider(fgUrl), context);
   }
 
   final reactionsMap =

@@ -5,6 +5,7 @@ import 'package:music_app/ui/common/app_colors.dart';
 double imageSize = 300;
 
 Widget buildForegroundImage(String foregroundImageUrl, VoidCallback onTap) {
+  print('forgroun durl $foregroundImageUrl');
   return GestureDetector(
     onTap: onTap,
     child: SizedBox(
